@@ -45,19 +45,24 @@ bool hay_edificio_relacionado(set<edificio>::iterator it, set<edificio> edificio
 	if (it == edificios.end()){
 		res = false;
 	} else {
-		set<edificio>::iterator sig = it++;
-		res = sig->v1.x <= it->v2.x;
+		set<edificio>::iterator sig = it;
+		sig++;
+		res = sig->v1.x < it->v2.x;
 	}
 
 	return res;
 }
 
 
-void procesar_edificio_simple(set<edificio>::iterator it, list<vertice> res){
-
+void procesar_edificio_simple(set<edificio>::iterator it, set<edificio> edificios, list<vertice> res){
+	// Se que mi edificio no se relaciona con otro, pero podria compartir la ultima pared.
+	set<edificio>::iterator sig = it;
+	sig++;
 	res.push_back(it->v1);				//agrego el primer vertice sin modificar
-	vertice insertar = vertice(it->v2.x,0);		//modifico la altura del segundo vertice y la "bajo" al piso y luego la agrego al resultado
-	res.push_back(insertar);		
+	if (it == edificios.end() || sig->v1.x > it->v2.x){
+		vertice insertar = vertice(it->v2.x,0);		//modifico la altura del segundo vertice y la "bajo" al piso y luego la agrego al resultado
+		res.push_back(insertar);
+	}		
 }
 
 
@@ -88,17 +93,18 @@ list<vertice> generar_horizonte(set<edificio>& edificios){
 	set<edificio>::iterator it = edificios.begin();
 
 	while(it!= edificios.end()){
-  
-  		if(!hay_edificio_relacionado(it,edificios)){        //Si no hay edificios relacionados
-			procesar_edificio_simple(it,res);
+ 			bool a =  !hay_edificio_relacionado(it,edificios);
+  		if(a){        //Si no hay edificios relacionados
+			procesar_edificio_simple(it,edificios,res);
 			it++;
 		}else{            //Caso en el que se relacionan 2 edificios o mas
-			set<edificio>::iterator sig = it++;
+			set<edificio>::iterator sig = it;
+			sig++;
 			if(edificio_contenido(it,sig)){
 				edificios.erase(sig);
 	
 				if(!hay_edificio_relacionado(it,edificios)){
-					procesar_edificio_simple(it,res);
+					procesar_edificio_simple(it,edificios,res);
 					it++;
 				}
 									
@@ -107,9 +113,6 @@ list<vertice> generar_horizonte(set<edificio>& edificios){
 				if(rompe_techo(it,sig)){
 					// agrego el primer vertice del primer edificio, ya que se que no hay otro antes
 					res.push_back(it->v1);
-					//creo iterador al siguiente elemento
-					set<edificio>::iterator sig = it++;
-
 					// creo el nuevo edificio, el cual se desprende de la interseccion entre el edificio siguiente y el actual.
 					edificio a_insertar = edificio(sig->v2.x,it->v1.y,it->v2.x);
 					 // inserto ordenadamente el nuevo edificio en mi avl para analizarlo en el futuro.
@@ -126,8 +129,8 @@ list<vertice> generar_horizonte(set<edificio>& edificios){
 						edificios.erase(sig);
 						//inserto ordenadamente el nuevo edificio que cree
 						edificios.insert(nuevo_edificio);
-						
-						if(!hay_edificio_relacionado(it,edificios)){
+						bool b = !hay_edificio_relacionado(it,edificios);
+						if(b){
 						
 							res.push_back(it->v1);
 							it++;
