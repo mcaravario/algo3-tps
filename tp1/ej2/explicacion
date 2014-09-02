@@ -1,0 +1,5 @@
+Tenés el siguiente error:
+Si compilás test.cc con `g++ -o test test.cc`, vas a ver que toma como
+distintos set<T> de set<T, comparador>. De hecho, no compila, te tira un eror
+por no tener definido el operador == entre esos tipos.
+Viene por ahí la mano. Google it.

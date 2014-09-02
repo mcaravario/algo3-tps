@@ -10,7 +10,8 @@ using namespace std;
 
 
 struct vertice{
-	
+  vertice();
+  vertice(int x, int y);	
   int x;
   int y;
   	
@@ -18,11 +19,37 @@ struct vertice{
 
 
 struct edificio{
-
+   edificio();
+   edificio(int x1, int y, int x2);		
    vertice v1;
    vertice v2;	
 
 };
+
+vertice::vertice(){
+	x=0;
+	y=0;
+}
+
+vertice::vertice(int a, int b){
+	x = a;
+	y = b;	
+}
+
+edificio::edificio(int x1, int y, int x2){
+	v1 = vertice(x1,y);
+	v2 = vertice(x2,y);	
+}
+
+edificio::edificio(){
+	v1.x = 0;
+	v1.y = 0;
+	v2.x = 0;
+	v2.y = 0;
+	
+	}
+
+
 
 
 bool hay_x_edificios_relacionados(set<edificio>::iterator it, int cant, set<edificio> edificios){
@@ -35,7 +62,7 @@ bool hay_x_edificios_relacionados(set<edificio>::iterator it, int cant, set<edif
 
   while(it != edificios.end() && !parar && cant > 0){
 
-		set<edificio>::iterator sig = next(it,1);
+		set<edificio>::iterator sig = it++;
 
     if(!(sig->v1.x <= e.v2.x)){  	// Caso en el quei no hay un edificio relacionado  
 
@@ -54,11 +81,6 @@ bool hay_x_edificios_relacionados(set<edificio>::iterator it, int cant, set<edif
 
 return res;
 
-}
-
-
-bool comparar_edificios(edificio e1, edificio e2){
-return false;
 }
 
 void procesar_edificio_simple(set<edificio>::iterator it, list<vertice> res){
@@ -118,9 +140,21 @@ void reordenar_estructura(set<edificio> edificios, set<edificio>::iterator it){
 bool rompe_techo(set<edificio>::iterator it,set<edificio>::iterator sig){
 }
 
+bool comparar_edificios(edificio e1, edificio e2){
+ 
+	return ((e1.v1.x < e2.v1.x) || ((e1.v1.x == e2.v1.x) && (e1.v1.y > e2.v1.y)) ||  ((e1.v1.x == e2.v1.x) && (e1.v1.y == e2.v1.y) && (e1.v2.x < e2.v2.x)) );
+
+}
 
 
-list<vertice> generar_horizonte(set<edificio> edificios){
+bool vertice_contenido(set<edificio>::iterator it, vertice v){
+	
+	return ((v.x < it->v2.x) && (v.x > it->v1.x) && (v.y < it->v1.y));
+} 
+
+
+
+list<vertice> generar_horizonte(set<edificio>& edificios){
 
 list<vertice>  res;
 
@@ -128,75 +162,67 @@ set<edificio>::iterator it = edificios.begin();
 
 
 
- while(it!= edificios.end()){
+	while(it!= edificios.end()){
   
-    if(hay_x_edificios_relacionados(it,0,edificios)){         //Si no hay edificios relacionados
-    
+		if(hay_x_edificios_relacionados(it,0,edificios)){         //Si no hay edificios relacionados
+		
 
-        procesar_edificio_simple(it,res);
-        it++;
+			procesar_edificio_simple(it,res);
+			it++;
 
-    }	else{            //Caso en el que se relacionan 2 edificios o mas
-    
-      	if(edificio_contenido(it,next(it,1))){
+		}else{            //Caso en el que se relacionan 2 edificios o mas
+		
+			set<edificio>::iterator sig = it++;
+			
+			if(edificio_contenido(it,sig)){
 
-						edificios.erase(next(it,1));
-					
-						if(hay_x_edificios_relacionados(it,0,edificios)){
-
-							procesar_edificio_simple(it,res);
-							 
-							it++;				
-	
-						}
-
-    
-					
-      	}else{
-				
-					if(rompe_techo(it,next(it,1))){
-					
-						res.push_back(it->v1);
-
-						set<edificio>::iterator sig = next(it,1);		//creo iterador al siguiente elemento
-
-						res.push_back(it->v1);				// agrego el primer vertice del primer edificio, ya que se que no hay otro antes
-
-						vertice nuevo_v1;
-
-						vertice nuevo_v2;
-						
-						nuevo_v1.x = sig->v2.x;		//le asigno el mismo x que tenia el vertice 2 del edficio siguiente.
-
-						nuevo_v1.y = it->v1.y;
-
-						nuevo_v2 = it->v2;			// el nuevo v2 es el mismo v2 que el del edificio en el que estoy parado.
-
-						edificio a_insertar;		// creo el nuevo edificio, el cual se desprende de la interseccion entre el edificio siguiente y el actual.
-
-						a_insertar.v1 = nuevo_v1;
-						a_insertar.v2 = nuevo_v2;
-					
-						edificios.insert(it,a_insertar); // inserto ordenadamente el nuevo edificio en mi avl para analizarlo en el futuro.
-
-						it++;
-					
-					}
-				
+				edificios.erase(sig);
+			
+				if(hay_x_edificios_relacionados(it,0,edificios)){
+					procesar_edificio_simple(it,res);
+					it++;
 				}
+									
+			}else{
+					
+				if(rompe_techo(it,sig)){
+					// agrego el primer vertice del primer edificio, ya que se que no hay otro antes
+					res.push_back(it->v1);
+					//creo iterador al siguiente elemento
+					set<edificio>::iterator sig = it++;
+
+					// creo el nuevo edificio, el cual se desprende de la interseccion entre el edificio siguiente y el actual.
+					edificio a_insertar = edificio(sig->v2.x,it->v1.y,it->v2.x);
+					 // inserto ordenadamente el nuevo edificio en mi avl para analizarlo en el futuro.
+					edificios.insert(a_insertar);
+
+					it++;
 				
-				
-
-
-
-    	}	
-                                                      
-	}
-
-
-
-return res;
-
+				}else{
+					/*
+					if(vertice_contenido(it,sig->v1)){
+						//creo nuevo edificio con el vertice corrido de lugar
+						edificio nuevo_edificio = edificio(it->v2.x,sig->v1.y,sig->v2.x);
+						//elimino el siguiente
+						edicios.erase(sig);
+						//inserto ordenadamente el nuevo edificio que cree
+						edificios.insert(nuevo_edificio);
+						
+						if(hay_x_edificios_relacionados(it,0,edificios){
+						
+							res.push_back(it->v1);
+							it++;
+						}
+					*/	
+						
+					}	
+					
+				}			
+			}					
+		}                                                      
+	
+	return res;
 }
+
 
 

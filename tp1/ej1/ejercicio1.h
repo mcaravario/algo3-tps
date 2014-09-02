@@ -16,17 +16,17 @@ list<int> tablones_recorridos;
 */
 
 
-int siguiente_salto(int actual, vector<int> puente, int c){
+int siguiente_salto(int actual, vector<int> puente, int c, int tam){
 	int n = 0; 							//variable para evitar bugs cuando estoy fuera del puente
 	int res = c;						//cuanto voy a poder saltar
-	
-	if(actual+c >= puente.size()){
-		
+
+	if(actual+c >= tam){
+
 		return actual+c;} //si con mi capacidad logro salir del puente salgo
-	
+
 	if(actual == -1){ 					//chequeo del primer salto
 		n=0;
-		
+
 
 	}else{
 		n=actual;
@@ -43,23 +43,23 @@ int siguiente_salto(int actual, vector<int> puente, int c){
 bool saltar_puente(vector<int> puente, int c, int& saltos, vector<int>& tablones_recorridos ){
 
 int actual = 0; 						//arranco fuera del puente
+int tam = puente.size();
+while (actual <= tam -1){ 		//recorro hasta salir del puente
 
-while (actual <= puente.size()-1){ 		//recorro hasta salir del puente
-
-	int whereTo = siguiente_salto(actual,puente,c); 	//calculo mi proximo salto
+	int whereTo = siguiente_salto(actual,puente,c, tam); 	//calculo mi proximo salto
 
 	if (whereTo == actual){ 						//significa que no hay salto posible
-	
+
 		return false;
-	
-	}else{ 
+
+	}else{
 		actual = whereTo; 				//me muevo al proximo tablon
 		saltos++;		  				//incremento los saltos que realice
 		tablones_recorridos.push_back(actual); //grabo los tablones por donde pase
 
 		}
 }
- 	
+
 
 
 return true;
