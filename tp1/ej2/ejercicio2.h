@@ -71,7 +71,7 @@ void procesar_edificio_simple(set<edificio>::iterator it, set<edificio>& edifici
 
 
 bool vertice_contenido(set<edificio>::iterator it, vertice v){	
-	return ((v.x < it->v2.x) && (v.x > it->v1.x) && (v.y < it->v1.y));
+	return ((v.x < it->v2.x) && (v.x >= it->v1.x) && (v.y < it->v1.y));
 } 
 
 bool edificio_contenido(set<edificio>::iterator it, set<edificio>::iterator sig){

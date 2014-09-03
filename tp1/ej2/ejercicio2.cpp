@@ -1,46 +1,57 @@
 #include "ejercicio2.h"
 #include <iostream>
+#include <string>
 #include <set>
+#include <sstream>
 
 using namespace std;
 
 
-void mostrar_edificio(edificio ed){
-	cout << "[ (" << ed.v1.x << "," << ed.v1.y << ") (" << ed.v2.x << "," << ed.v2.y << ") ]   "; 
+void mostrar_edificios(list<vertice>& edificios){
+	list<vertice>::iterator it = edificios.begin();
+	while (it != edificios.end()){
+		cout << it->x << " " << it->y << " ";
+		it++;
+	}
+	cout << endl;
+}
+
+
+list<vertice> pasar_params_y_correr(int cant_ed){
+
+	list<vertice> res;
+	set<edificio> edificios;
+
+	int izq;
+	int alt;
+	int der;
+	int i;
+
+	for (i = 0; i < cant_ed; i++){
+	
+		cin >> izq;
+		cin >> alt;
+		cin >> der;
+	
+		edificio nuevo = edificio(izq,alt,der);
+		edificios.insert(nuevo);
+	}
+	res = generar_horizonte(edificios);
+	return res;
 }
 
 int main(int argc, char** argv){
-	
 
-		int cant_edificios = atoi(argv[1]);
-		list<vertice> res;
-		set<edificio> edificios;
-	
-		for(int i=0; i<cant_edificios; i++){
-
-			int izq = atoi(argv[2+i*3]);
-			int alt = atoi(argv[2+i*3+1]);
-			int der = atoi(argv[2+i*3+2]); 
- 
-			edificio ed = edificio(izq,alt,der); 
-			edificios.insert(ed);
-		}
-		set<edificio>::iterator its = edificios.begin();
-		while(its != edificios.end()){
-			mostrar_edificio(*its);
-			its++; 
-		}
-		cout << endl;
-
-	
-		res = generar_horizonte(edificios);
-		list<vertice>::iterator it = res.begin();
-		
-		while(it != res.end()){
-		cout << "(" <<  it->x << "," << it->y << ")" << endl;
-		it++; 
-		}
-		
-		
+		int cant_ed;
+		bool parar = false;
+		while (!parar){
+			cin >> cant_ed;
+			if (cant_ed == 0){
+				parar = true;
+			} else {
+				list<vertice> res = pasar_params_y_correr(cant_ed);
+				mostrar_edificios(res);
+			}
+	}
 	return 0;
 }
