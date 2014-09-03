@@ -9,11 +9,14 @@ using namespace std;
 
 void mostrar_edificios(list<vertice>& edificios){
 	list<vertice>::iterator it = edificios.begin();
-	while (it != edificios.end()){
+	list<vertice>::iterator fin = edificios.end();
+	fin--;
+	while (it != fin){
 		cout << it->x << " " << it->y << " ";
 		it++;
 	}
-	cout << endl;
+	
+	cout << it->x << " " << it->y << endl;
 }
 
 
