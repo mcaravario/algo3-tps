@@ -39,10 +39,12 @@ edificio::edificio(int x1, int y, int x2){
 }
 
 
-bool hay_edificio_relacionado(set<edificio>::iterator it, set<edificio> edificios){
+bool hay_edificio_relacionado(set<edificio>::iterator it, set<edificio>& edificios){
 
-	bool res;	
-	if (it == edificios.end()){
+	bool res;
+	set<edificio>::iterator elem_fin = edificios.end();
+	elem_fin--;	
+	if (it == elem_fin){
 		res = false;
 	} else {
 		set<edificio>::iterator sig = it;
@@ -54,12 +56,14 @@ bool hay_edificio_relacionado(set<edificio>::iterator it, set<edificio> edificio
 }
 
 
-void procesar_edificio_simple(set<edificio>::iterator it, set<edificio> edificios, list<vertice> res){
+void procesar_edificio_simple(set<edificio>::iterator it, set<edificio>& edificios, list<vertice>& res){
 	// Se que mi edificio no se relaciona con otro, pero podria compartir la ultima pared.
 	set<edificio>::iterator sig = it;
 	sig++;
 	res.push_back(it->v1);				//agrego el primer vertice sin modificar
-	if (it == edificios.end() || sig->v1.x > it->v2.x){
+	set<edificio>::iterator elem_fin = edificios.end();
+	elem_fin--;
+	if (it == elem_fin || (sig->v1.x > it->v2.x)){
 		vertice insertar = vertice(it->v2.x,0);		//modifico la altura del segundo vertice y la "bajo" al piso y luego la agrego al resultado
 		res.push_back(insertar);
 	}		
