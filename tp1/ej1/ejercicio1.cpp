@@ -1,63 +1,36 @@
 #include "ejercicio1.h"
-#include <cstdlib>
-#include <stdio.h>
-
 
 int main(int argc,char** argv ){
-
-string line;
-
-/*while (true) {
-
-    getline(cin, line);
-
-    if (line.empty()) {
-
-        break;
-
-    }else{*/
-
-	int saltos = 0;
-
+	string participante;
 	vector<int> tablones_recorridos;
-
-	int n = atoi(argv[1]);
-
-	int c = atoi(argv[2]);
-
 	vector<int> puente;
-	puente.push_back(0); //creo el primer tablon en cero, el cual representa que estoy parado  en la tierra
-
-        for (int i = 0; i < n; i++){
-
-            int j = 3+i;
-            puente.push_back(atoi(argv[j]));
-
-        }
-
-        bool res = saltar_puente(puente, c, saltos, tablones_recorridos);
-
-        if(res){
-
-            printf ("%u", saltos);
-            //cout << saltos << " " ;
-
-            for(int l = 0; l< tablones_recorridos.size();l++){
-
-                printf ("%u ", tablones_recorridos[l]);
-              //  cout << tablones_recorridos[l] << " ";
-
-            }
-
-            printf ("\n");
-
-        }else {
-
-            printf ("%s \n", "no");
-            cout << "no" << endl;
-        }
-    //}
-//}
-
-return 0;
+	puente.push_back(0); 												//creo el primer tablon en cero, el cual representa que estoy parado  en la tierra
+	int saltos = 0;
+	int n;
+	cin >> n;
+		
+	while (getline(cin, participante)){ 				//cargo un participante
+		if(!participante.empty()){  							//verifico si ya procese a todos
+			//int n = puente_size(participante);  		//cargo el tamaño del puente
+			int c = capacidad_salto(participante);  //cargo la capacidad de salto del participante siendo procesado
+			vector<int> tablones_recorridos;
+			vector<int> puente;
+			puente.push_back(0); 												//creo el primer tablon en cero, el cual representa que estoy parado  en la tierra
+			int saltos = 0;
+			crear_puente(puente,participante,n);		//cargo el puente del participante
+			vector<int>::iterator it = puente.begin();
+			bool res = saltar_puente(puente, c, saltos, tablones_recorridos, n); //verifico si el participante puede saltar el puente
+			if(res){                								//si lo logro saltar imprimo la solucion
+				cout <<  saltos <<" ";
+				for(int l = 0; l< tablones_recorridos.size();l++){
+					cout << tablones_recorridos[l] << " ";
+				}
+				cout << endl;
+			}else{         													//si no lo logra saltar se imprime un "no"
+			cout << "no" << endl;
+}
+		}
+		cin >> n;
+	}
+	return 0;
 }
