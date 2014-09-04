@@ -12,11 +12,12 @@ int main(int argc, char** argv){
 	// Recibe como parametros el C y el N.
 	int c = atoi(argv[1]);
 	int n = atoi(argv[2]);			
-	cout << n << " " << c << " "
+	cout << n << " " << c << " ";
 	generar_valida(n,c);
 
 	return 0;
 }
+
 
 void generar_random(){	
 	for(int i = 0; i<10; i++){
@@ -41,6 +42,18 @@ void generar_instancia_aleatoria(vector<int>& puente){
 	}
 }
 
+void generar_instancia_pseudo_aleatoria(vector<int>& puente,int c){
+	// Para crear una instancia valida no debe haber un sub vector con c-tablones invalidos contiguos.
+	int contiguos = 0;
+	for (int i=0; i < puente.size();i++){
+		if (contiguos == c-1){
+			puente[i] = 0;
+		} else {
+			puente[i] = rand() % 2;
+		}
+	}
+}
+
 void mostrar_vector(vector<int>& vec){
 	
 	int i;
@@ -53,16 +66,6 @@ void mostrar_vector(vector<int>& vec){
 void generar_valida(int n, int c){
 
 	vector<int> puente(n);
-	vector<int> tablones_recorridos;
-	int saltos;
-	bool parar = false;
-
-	while (!parar){
-		generar_instancia_aleatoria(puente);
-		parar = saltar_puente(puente,c,saltos,tablones_recorridos,n);
-	}
-
-	// Salgo del while cuando la instancia es valida.
-	
+	generar_instancia_pseudo_aleatoria(puente,c);	
 	mostrar_vector(puente);
 }

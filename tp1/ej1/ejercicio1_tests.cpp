@@ -1,5 +1,5 @@
 #include "ejercicio1.h"
-#include "tiempo.h"
+#include "time.h"
 //El programa recibe la cantidad de iteraciones a realizar y devuelve el promedio y el minimo por pantalla
 
 int main(int argc,char** argv ){
@@ -23,22 +23,22 @@ int main(int argc,char** argv ){
 			int saltos = 0;
 			crear_puente(puente,participante,n);		//cargo el puente del participante
 			vector<int>::iterator it = puente.begin();
-			int inicio,fin,total,acum,copia_iteraciones,min;
+			int copia_iteraciones = iteraciones;
+			clock_t total,acum,inicio,fin,min;
 			acum = 0;
-			copia_iteraciones = iteraciones;
 
 			while(iteraciones != 0){
 				vector<int> copia_tablones = tablones_recorridos;
 				int copia_saltos = saltos;
-				MEDIR_TIEMPO_START(inicio);
+				inicio = clock();
 				bool res = saltar_puente(puente, c, copia_saltos, copia_tablones, n); //verifico si el participante puede saltar el puente
-				MEDIR_TIEMPO_STOP(fin);
+				fin = clock();
 				total = fin - inicio;
 				acum += total;
 				if (iteraciones == copia_iteraciones || total < min)	min = total;
 				iteraciones--;
 			}
-			cout << (float) acum/ (float)copia_iteraciones << " " << min <<endl;	
+				cout << n << " " << (float)acum/ (float)copia_iteraciones << " " <<endl;	
 			}
 		cin >> n;
 	}
