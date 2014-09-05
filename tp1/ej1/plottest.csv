@@ -1,0 +1,13 @@
+set term x11 persist
+set title "Caso promedio, peor caso y mejor caso."
+set xlabel "Cantidad de tablones"
+set ylabel "Ciclos de Clock"
+set style line 2 lt 0 lc 1 lw 2
+set size
+set output 'test1_todos.png'
+set term png
+
+plot "< cat  test1_bueno_c5_i500.txt test1_malo_c5_i500.txt test1_prom_c5_i500.txt", \
+				"Mejor Caso" w p,\
+				"Peor Caso" w p,\
+				 "Caso Promedio" w p

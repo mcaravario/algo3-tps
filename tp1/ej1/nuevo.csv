@@ -1,0 +1,15 @@
+set term png
+set title "Animation curves"
+set xlabel "Time (secs.)"
+set ylabel "Parameter"
+set x2label "Phoneme1" offset -35
+set pointsize 2
+set key off
+set style line 2 lt 0 lc 1 lw 2
+set output "nuevo.png"
+
+plot "< cat test1_bueno_c5_i500.txt test1_malo_c5_i500.txt  | sort -n" u 1:2 smooth csplines ls 1, \
+                         "" u 1:(0):(0):2 w vectors nohead ls 2, \
+                         "" u ($1 + 0.005):(1):(sprintf("P %d", $0)) w labels, \
+                         "file1.dat" u 1:2 w p, \
+                         "file2.dat" u 1:2 w p 
