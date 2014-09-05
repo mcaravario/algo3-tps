@@ -45,18 +45,20 @@ void generar_instancia_aleatoria(vector<int>& puente){
 void generar_instancia_pseudo_aleatoria(vector<int>& puente,int c){
 	// Para crear una instancia valida no debe haber un sub vector con c-tablones invalidos contiguos.
 	int contiguos = 0;
-	for (int i=0; i < puente.size();i++){
+	for (unsigned int i=0; i < puente.size();i++){
 		if (contiguos == c-1){
 			puente[i] = 0;
+			contiguos = 0;
 		} else {
 			puente[i] = rand() % 2;
+			if (puente[i] == 1) contiguos++;
 		}
 	}
 }
 
 void mostrar_vector(vector<int>& vec){
 	
-	int i;
+	unsigned int i;
 	for (i = 0; i < vec.size() -1; i++){
 		cout << vec[i] << " ";
 	}

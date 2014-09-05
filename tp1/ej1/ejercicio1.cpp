@@ -2,16 +2,11 @@
 
 int main(int argc,char** argv ){
 	string participante;
-	vector<int> tablones_recorridos;
-	vector<int> puente;
-	puente.push_back(0); 												//creo el primer tablon en cero, el cual representa que estoy parado  en la tierra
-	int saltos = 0;
 	int n;
 	cin >> n;
 		
 	while (getline(cin, participante)){ 				//cargo un participante
 		if(!participante.empty()){  							//verifico si ya procese a todos
-			//int n = puente_size(participante);  		//cargo el tamaño del puente
 			int c = capacidad_salto(participante);  //cargo la capacidad de salto del participante siendo procesado
 			vector<int> tablones_recorridos;
 			vector<int> puente;
