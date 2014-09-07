@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #define producto int
 #define coef int
-//#define matriz_coef coef*
 using namespace std;
 
 struct camion{
@@ -22,6 +21,7 @@ struct resultado{
 	//INV: cant == camiones.size()
 	list<camion> camiones;
 	int cant;
+	vector<int> a_imprimir;
 	resultado();
 };
 
@@ -35,6 +35,7 @@ camion::camion(){
 resultado::resultado(){
 	camiones = list<camion>();
 	cant = 0;
+	a_imprimir = vector<int>();
 }
 
 int peligrosidad_elem(list<producto>& ls, producto p, vector< vector<coef> > mz){
@@ -77,7 +78,6 @@ bool sigue_siendo_sol(resultado& r, producto p, vector< vector<coef> > mz, int u
 }
 
 void agregar_producto(resultado& res_parcial, producto p, vector< vector<coef> > mz, int umbral){
-
   if (res_parcial.cant == 0 || !es_posible_agregar(res_parcial,p, mz, umbral) ){//Si no es posible agregar un producto, o no existia el 
     camion nuevo = camion();																										//camion, se tiene que crear el camion y dps agregar
     res_parcial.camiones.push_back(nuevo);
@@ -87,6 +87,7 @@ void agregar_producto(resultado& res_parcial, producto p, vector< vector<coef> >
     res_parcial.camiones.back().pelig_acum += pelig_nueva;
   }
   res_parcial.camiones.back().productos.push_back(p);
+	res_parcial.a_imprimir.push_back(res_parcial.cant);
 }
 
 void mostrar_camiones(resultado& ls){
@@ -108,19 +109,12 @@ void mostrar_camiones(resultado& ls){
 
 void mostrar_res(resultado& ls){
   cout << ls.cant;
-  list<camion>::iterator itc = ls.camiones.begin();
-  int i =1;
-  while(itc != ls.camiones.end()){
-    cout <<" ";
-    list<producto>::iterator itp = itc->productos.begin();
-    while(itp != itc->productos.end()){
-      cout <<i;
-      itp++;
-    }
-    i++;
-    itc++;
-  }
-  cout << endl;
+  vector<int>::iterator it = ls.a_imprimir.begin();
+  while(it != ls.a_imprimir.end()){
+    cout <<" " << *it;
+		it++;
+	}
+	cout << endl;
 }
 
 void llenar_camiones(resultado& res_parcial, list<producto>& Q, vector< vector<coef> > mz, int umbral, resultado& res_g){
