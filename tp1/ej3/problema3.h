@@ -71,7 +71,7 @@ bool sigue_siendo_sol(resultado& r, producto p, vector< vector<coef> > mz, int u
   if(!es_posible_agregar(r,p,mz,umbral)){
     cant_camiones ++;
   }
-  if(cant_camiones <= res_g.cant){
+  if(cant_camiones < res_g.cant){
     return true;
   }else return false;
 
@@ -87,7 +87,7 @@ void agregar_producto(resultado& res_parcial, producto p, vector< vector<coef> >
     res_parcial.camiones.back().pelig_acum += pelig_nueva;
   }
   res_parcial.camiones.back().productos.push_back(p);
-	res_parcial.a_imprimir.push_back(res_parcial.cant);
+	res_parcial.a_imprimir[p-1]= res_parcial.cant;
 }
 
 void mostrar_camiones(resultado& ls){
@@ -125,9 +125,7 @@ void llenar_camiones(resultado& res_parcial, list<producto>& Q, vector< vector<c
     while(it != Q.end()){
       if(sigue_siendo_sol(res_parcial,*it,mz, umbral, res_g)){
         resultado res_parcial_copy = resultado();
-        if(res_parcial.cant == 0){//tengo que preguntar si la lista camiones es vacia, pero me da segmentation fault
-          res_parcial_copy.camiones = list<camion>();
-        }else res_parcial_copy = res_parcial;
+				res_parcial_copy = res_parcial;
         list<producto> Q_copy = Q;
         agregar_producto(res_parcial_copy,*it,mz, umbral);
         list<producto>::iterator itp = find(Q_copy.begin(),Q_copy.end(),*it);

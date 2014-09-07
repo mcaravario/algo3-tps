@@ -30,8 +30,10 @@ int main(int argc,char* argv[]){
 			//peor solucion
 			resultado res_g = resultado();
 			res_g.cant = elems;
-			//res_g.imprimir.resize(elems);
+			res_g.a_imprimir.resize(elems);
+			vacio.a_imprimir.resize(elems);
 			llenar_camiones(vacio,lista_productos,matriz, umbral,res_g); 
+			mostrar_camiones(res_g);
 			mostrar_res(res_g);
 		}
  	}
