@@ -2,7 +2,65 @@
 void mostrar_techos(set<intervalo>);
 void mostrar_y(map<int, int> res);
 void mostrar_res(set<vertice>);
+int max(int a, int b){
+  return (a >= b) ? a : b;
+}
 
+
+void mostrar_edificios(set<edificio,cmp_y> res)
+{
+	auto it = res.begin();
+	auto fin = res.end();
+  fin--;
+	while (it != fin){
+		cout << "( " << it->x1 << ", " << it->y << ", " << it ->x2 <<")  ";
+		it++;
+	}
+	cout << "( " << it->x1 << ", " << it->y << ", " << it ->x2 <<")  ";
+}
+
+
+/* Esta funcion mergea (si es posible) los edificios e inserta el mergeado.*/
+void merge(dicc_y& por_altura, dicc_y::iterator it, edificio ed)
+{
+  if (ed.x1 <= it->x2) {
+    ed.x1 = it->x1;
+    ed.x2 = max(it->x2, ed.x2);
+    por_altura.erase(it);
+  } else if (ed.x2 >= it->x1) {
+    ed.x2 = max(ed.x2,it->x2);
+    por_altura.erase(it);
+  }
+
+  por_altura.insert(ed);
+}
+
+void merge2(dicc_y& por_altura, dicc_y::iterator menor, dicc_y::iterator
+mayor, edificio ed)
+{
+  /* Los 3 se relacionan */
+  if (menor->x2 >= ed.x1 && ed.x2 >= mayor->x1){
+   ed.x1 = menor->x1;
+   ed.x2 = max(mayor->x2, ed.x2);
+   por_altura.erase(menor);
+   por_altura.erase(mayor);
+   por_altura.insert(ed);
+   /* Menor se relaciona con ed*/
+  } else if (menor->x2 >= ed.x1){
+    merge(por_altura, menor, ed);
+    /* Mayor se relaciona con ed */
+  } else if (ed.x2 >= mayor->x1) {
+    merge(por_altura, mayor, ed);
+    /* No se relaciona con nadie*/
+  } else {
+    por_altura.insert(ed);
+  }
+}
+
+
+void mostrar_edificio(edificio it){
+		cout << "( " << it.x1 << ", " << it.y << ", " << it.x2 <<")  ";
+}
 
 void generar_estructuras(int cant_ed, dicc_y& por_altura)
 {
@@ -16,9 +74,40 @@ void generar_estructuras(int cant_ed, dicc_y& por_altura)
 		cin >> izq;
 		cin >> alt;
 		cin >> der;
-	
-		por_altura.insert(edificio(izq, alt, der));
-	}
+
+    edificio a_insertar = (edificio(izq, alt, der));
+    /* Testing  */
+    cout << "El edificio es: ";
+    mostrar_edificio(a_insertar);
+    cout << endl;
+
+    if(por_altura.empty()){
+      por_altura.insert(a_insertar);  
+    } else {
+		  auto lower = por_altura.lower_bound(a_insertar);
+      if (lower == por_altura.begin()) {
+        if (lower->y == a_insertar.y) merge(por_altura, lower, a_insertar);
+      } else if (lower == por_altura.end()) {
+        lower--;
+        if (lower->y == a_insertar.y) merge(por_altura, lower,
+        a_insertar);
+
+      } else {
+        auto upper = lower;
+        lower--;
+        if (lower->y == a_insertar.y && upper->y == a_insertar.y) {
+          merge2(por_altura, lower, upper, a_insertar);
+        } else if (lower->y == a_insertar.y) {
+          merge(por_altura, lower, a_insertar);
+        } else {
+          merge(por_altura, upper, a_insertar);
+        }
+	   }
+   }
+   cout << "Este es la nueva lista de edificios: ";
+   mostrar_edificios(por_altura);
+   cout << endl;
+  }
 }
 
 /* techo_y tiene que mantener dada una altura, el intervalo que finalize 'mas adelante'.*/
@@ -163,6 +252,7 @@ void mostrar_res(set<vertice> res)
 }
 
 
+
 int main(){
 	
 		int cant_ed;
@@ -172,13 +262,12 @@ int main(){
 			if (cant_ed == 0){
 				parar = true;
 			} else {
-				cout << "Procesando...." << endl;			
 				dicc_y por_altura;
 				set<vertice> res;
 				generar_estructuras(cant_ed, por_altura);
-				generar_horizonte(por_altura, res);
-				mostrar_res(res);
-
+//				generar_horizonte(por_altura, res);
+//				mostrar_res(res);
+        mostrar_edificios(por_altura);
 			}
 	}
 	return 0;
