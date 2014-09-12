@@ -17,13 +17,15 @@ struct edificio{
 };
 
 struct vertice{
+	vertice(const int& a, const int& b) : x(a), y(b)  {}
 	bool operator<(vertice) const;
 	int x;
 	int y;			
 };
 
 struct intervalo{
-	intervalo(int c, int d) : a(c), b(d) {}			
+	intervalo(const intervalo& i) : a(i.a), b(i.b) {}
+	intervalo(const int& c, const int& d) : a(c), b(d) {}			
 	bool operator<(intervalo) const;
 	int a;
 	int b;			
