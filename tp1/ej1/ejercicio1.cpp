@@ -10,6 +10,8 @@ int main(int argc,char** argv ){
 			int c = capacidad_salto(participante);  //cargo la capacidad de salto del participante siendo procesado
 			vector<int> tablones_recorridos;
 			vector<int> puente;
+			tablones_recorridos.reserve(n+1);
+			puente.reserve(n+1);
 			puente.push_back(0); 												//creo el primer tablon en cero, el cual representa que estoy parado  en la tierra
 			int saltos = 0;
 			crear_puente(puente,participante,n);		//cargo el puente del participante

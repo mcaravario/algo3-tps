@@ -1,9 +1,12 @@
 # !/bin/bash
 # PARAMS: cantidad de tablones ini,cantidad de tablones hasta,tablones incremento, capacidad de salto, cantidad de iteraciones
-typeset -i i END
-let i=$1 END=$2 INC=$3
+CAPACIDAD_SALTO=$1
+CANT_TABLONES=$2
+END=$3
+INC=$4
+ITERACIONES=$5
 
-while ((i<END)); do
-	./bueno $4 $i | ./ej1test $5
-	i=$i+$INC
+while ((CANT_TABLONES<END)); do
+	./bueno $CAPACIDAD_SALTO $CANT_TABLONES | ./ej1test $ITERACIONES
+	let CANT_TABLONES=$CANT_TABLONES+$INC
 done

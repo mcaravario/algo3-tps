@@ -8,7 +8,7 @@
 
 using namespace std;
 
-int siguiente_salto(int actual, vector<int> puente, int c, int tam){
+int siguiente_salto(int actual,const vector<int>& puente, int c, int tam){
 	int res = c;					//cuanto voy a poder saltar
 	if(actual+c >= tam){
 		return actual+c;
@@ -21,7 +21,7 @@ int siguiente_salto(int actual, vector<int> puente, int c, int tam){
 
 
 
-bool saltar_puente(vector<int> puente, int c, int& saltos, vector<int>& tablones_recorridos, int n ){
+bool saltar_puente(const vector<int>& puente, int c, int& saltos, vector<int>& tablones_recorridos, int n ){
 
     int actual = 0; 																						//arranco fuera del puente
     while (actual <= n -1){ 																	//recorro hasta salir del puente

@@ -1,13 +1,10 @@
-set term x11 persist
-set title "Caso promedio, peor caso y mejor caso."
-set xlabel "Cantidad de tablones"
-set ylabel "Ciclos de Clock"
-set style line 2 lt 0 lc 1 lw 2
-set size
-set output 'test1_todos.png'
-set term png
-
-plot "< cat  test1_bueno_c5_i500.txt test1_malo_c5_i500.txt test1_prom_c5_i500.txt", \
-				"Mejor Caso" w p,\
-				"Peor Caso" w p,\
-				 "Caso Promedio" w p
+f(x)=a*x
+fit f(x) "test_bueno_100_1000_100000_100_100.txt" using 1:2 via a
+set terminal png 
+set xlabel "Cantidad de Tablones"
+set ylabel "Ciclos de clocks"
+set title "Mejor caso" 
+set grid
+set output 'mejor_caso.png'
+set style data linespoints 
+plot "test_bueno_100_1000_100000_100_100.txt" using 1:2 lt 1 lw 2 smooth bezier title 'Clock', 1.1*f(x) with lines 
