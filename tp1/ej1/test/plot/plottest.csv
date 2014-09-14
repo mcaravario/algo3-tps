@@ -1,0 +1,10 @@
+set terminal png
+set title "Caso promedio - Peor caso - Mejor caso"
+set xlabel "Cantidad de tablones"
+set ylabel "Microsegundos"
+set grid
+set output 'todos.png'
+set style data linespoints
+set autoscale x
+plot "test_bueno_15_1000_1000000_500_50.txt" using 1:2 lt 1 lw 2 smooth bezier title 'Mejor Caso',"test_malo_15_1000_1000000_500_50.txt" using 1:2 lt 2 lw 2 smooth bezier title 'Peor caso',"test_promedio_15_1000_1000000_500_50.txt" using 1:2 lt 3 lw 2 smooth bezier title 'Caso Promedio'
+
