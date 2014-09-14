@@ -111,8 +111,18 @@ void generar_estructuras(int cant_ed, dicc_y& por_altura)
   }
 }
 
+/* techo_y tiene que mantener dada una altura, el intervalo que finalize 'mas adelante'.*/
+inline void actualizar_techos_y(map<int, int>& ts, intervalo& nv, int alt){
+	if (ts.find(alt) == ts.end() || ts[alt] < nv.b) ts[alt] = nv.b;
+}
+
+/* Dado un edificio devuelve true si se solapa con un edificio de su misma altura . */
+bool misma_altura_y_solapa(map<int, int>& ts, edificio ed){
+	return (ts.find(ed.y) == ts.end()) ? false : !(ts[ed.y] < ed.x1);
+}
 
 
+	
 /* Voy a ir procesando los edificios del dicc_y, de forma tal que voy tomando siempre los de mayor altura.
  * Los proceso, actualizando techos, y res.
 **/
@@ -121,6 +131,13 @@ void generar_estructuras(int cant_ed, dicc_y& por_altura)
 *  Como escribo primero los de mayor altura, se que cuando voy a escribir un elemento i, los i-1
 *  anteriores eran de mayor o igual altura, con lo cual si me fijo en 'techos' los intervalos que hay
 *  puedo saber cuales me hacen "sombra", es decir, con cuales de los [0..i-1] se solapa el i .
+*	La estructura techos_y la voy a usar para determinar si efectivamente al agregar el edificio sobre
+*	el que itero se produce un cambio de nivel. Voy a guardar aquí el último edificio agregado
+*	(por cada altura) para luego chequear si el edificio que estoy evaluando se solapa con dicho elemento.
+*	(Notar que los edificios de dicc_y se ordenan por y, luego
+*	 por x1, y luego por x2; de manera tal que el subconjunto de edificios de una misma altura se agrega
+*	 de forma ordenada creciente por x1).
+*
 * Debo chequear, al momento de agregar el v1, si el edificio anterior tiene la misma altura que el actual.
 * Pues si la tienen, no hay cambio de nivel, con lo cual v1 no debe formar parte de la solución.
 * Entonces, debo ver que si tienen la misma altura, qué sucede con el x1 de actual, en relación con el 
@@ -146,56 +163,62 @@ void generar_estructuras(int cant_ed, dicc_y& por_altura)
 *
 * */	
 
-
-/* INV: No hay edificios de misma altura solapadas */
 void generar_horizonte(dicc_y& por_altura, set<vertice>& res)
 {
 	set<intervalo> techos_x;
 	set<int> segundos_vertices;
+	map<int, int> techos_y;
 	dicc_y::iterator it = por_altura.begin();
 
 	while (it != por_altura.end()){
 	
 		intervalo actual = intervalo(it->x1, it->x2);
 		auto lower = techos_x.lower_bound(intervalo(it->x1, it->x2));
-		if (techos_x.empty()) {
-			res.insert(vertice(it->x1, it->y));
+		/* Si hay alguien de la misma altura y nos solapamos, o si ya hay un intervalo en techos_x
+		 * igual al que yo genero, no agrego nada a res. Solo actualizo los techos. */
+		if (misma_altura_y_solapa(techos_y, *it) || (lower->a == it->x1 && lower->b == it->x2))	{
 			techos_x.insert(actual);
-		} else {
-			/* Veo si lower es end, en cuyo caso, mi techo va último. */
-			if (lower == techos_x.end()){
-				lower--;
-				if (actual.a <= lower->b) actual.a = lower->b;
-				/* Si el intervalo sigue siendo valido, agrego el primer vertice. */
-				if (actual.a < actual.b) res.insert(vertice(actual.a,it->y));
-				techos_x.insert(actual);
-			} else if (lower == techos_x.begin()) {
-				if (actual.a < lower->a) res.insert(vertice(actual.a, it->y));
+		} else {		
+				if (techos_x.empty()) {
+					res.insert(vertice(it->x1, it->y));
 					techos_x.insert(actual);
 				} else {
-					auto menor = lower;
-					menor--;
-					if (actual.a < menor->b) actual.a = menor->b;
-					/* Si el intervalo sigue siendo valido, agrego el primer vertice. */
-					if (actual.a < actual.b && lower->a > actual.a) res.insert(vertice(actual.a,it->y));
-					techos_x.insert(actual);
-				}
-		}				
+					/* Veo si lower es end, en cuyo caso, mi techo va último. */
+					if (lower == techos_x.end()){
+						lower--;
+						if (lower->b < actual.b) res.insert(vertice(lower->b, it->y));
+						/* Agrando el intervalo que se superponía con actual, de forma que termina donde termina actual. */
+						techos_x.insert(intervalo(lower->a, actual.b));
+						techos_x.erase(lower);
+					} else if (lower == techos_x.begin()) {
+						if (actual.a < lower->a) res.insert(vertice(actual.a, it->y));
+							techos_x.insert(actual);
+						} else {
+							auto menor = lower;
+							menor--;
+							if (actual.a < menor->b) actual.a = menor->b;
+							if (actual.a < actual.b && lower->a > menor->b) res.insert(vertice(actual.a,it->y));
+							techos_x.insert(actual);
+						}
+				}				
+		}
+		actualizar_techos_y(techos_y, actual, it->y);
 
-		/* Si el intervalo es valido, reviso en segundos_vertices si hay alguno que choque conmigo*/
-		if (actual.a < actual.b) {	
-			auto arriba = segundos_vertices.upper_bound(actual.b);
-			auto abajo = segundos_vertices.lower_bound(actual.a);
+		/* Reviso en segundos_vertices si hay alguno que choque conmigo*/
+		auto arriba = segundos_vertices.upper_bound(actual.b);
+		auto abajo = segundos_vertices.lower_bound(actual.a);
 
+		//if (abajo != segundos_vertices.end() || arriba != segundos_vertices.begin() || arriba != abajo) {
 			while (abajo != arriba){
 				res.insert(vertice(*abajo,it->y));
 				segundos_vertices.erase(abajo);
 				abajo++;
 			}
-			segundos_vertices.insert(actual.b);
-			it++;
-		}
+	//	}
+		segundos_vertices.insert(actual.b);
+		it++;
 	}
+
 	auto is = segundos_vertices.begin();
 
 	while (is != segundos_vertices.end()) {
