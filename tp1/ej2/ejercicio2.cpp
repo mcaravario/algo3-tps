@@ -153,100 +153,40 @@ void generar_estructuras(int cant_ed, dicc_y& por_altura)
 /* PC: No hay edificios de misma altura solapadas */
 void generar_horizonte(dicc_y& por_altura, set<vertice>& res)
 {
-	set<intervalo, cmp_b> techos_por_b; 
-	set<intervalo> techos_por_a;
-	set<int> segundos_vertices;
+	set<intervalo> techos;
+	set<int> candidatos;
 	dicc_y::iterator it = por_altura.begin();
 
 	while (it != por_altura.end()){
-		
-		/* Este bloque de código evalúa si agregar o no v1*/			
-		vertice vr = vertice(it->x1, it->y);
-				if (techos_por_a.empty()) {
-			res.insert(vr);
-		} else {
-			/* Creo búsqueda de esta forma para encontrar los dos posibles intervalos que me solapen
-			 * el primer intervalo que termina antes de este vr.x, y el último que empieza antes de vr.x
-			 * Busco con -1 para que upper me traiga el intervalo que cuyo b = vr.x.
-			 **/
-			intervalo busqueda_a = intervalo(vr->x, vr->x);
-			intervalo busqueda_b = intervalo(vr->x-1, vr->x-1);
-			auto lower = techos_por_a.lower_bound(busqueda);
-			auto upper = techos_por_b.upper_bound(busqueda);
-			
-			if (lower == techos_por_a.end()) {
-				lower--;
-				if (vr.x > lower->b && ( upper == techos_por_b.end() || vr.x <  ))
 
-					
-			/* Veo si lower es end, en cuyo caso, mi techo va último. */
-			if (lower == techos_por_a.end()){
-				lower--;
-				if (vr.x >= lower->b) res.insert(vr);
-			} else if (lower == techos_por_a.begin() && vr.x < lower->a) {
-				res.insert(vr);
-			} else {
-				/* Caso en el que estoy en el medio. */
-				auto menor = lower;
-				menor--;
-				if (vr.x < lower->a && vr.x >= menor->b) res.insert(vr);
-				}
-			}
-		/* Fin de Agregar o no v1*/
-		
-		/* Actualizo techos_por_a */
-		techos_por_a.insert(intervalo(it->x1, it->x2));
+		/* Si no hay intervalo que contenga al x de mi vertice, lo agrego. */			
+		if (!contenido(techos, it->x1)) res.insert(vertice(it->x1, it->y));
 
 		/* Este while agrega todos los posibles v2 que vienen de pasadas iteraciones 
 		 * si dichos v2 (solo está el x en realidad) caen en el intervalo de actual
-		 *
-		 * Buscar con b-1 me asegura que no procesaré los vertices de x = b
+		 * Buscar con x2-1 me asegura que no procesaré los vertices de x = x2
 		 **/
-		auto arriba = segundos_vertices.upper_bound(actual.b-1);
-		auto abajo = segundos_vertices.lower_bound(actual.a);
+		auto arriba = candidatos.upper_bound(it->x2-1);
+		auto abajo = candidatos.lower_bound(it->x1);
 
 		while (abajo != arriba){
 			res.insert(vertice(*abajo,it->y));
-			segundos_vertices.erase(abajo);
+			candidatos.erase(abajo);
 			abajo++;
 		}
-		/* Fin de Agregar o no los v2*/
-
-		/* Ahora debo ver si si agrego o no el v2 como un futuro posible vertice resultado.
-		 * Para ver si lo agrego, debo ver si hay un techo que le haga sombra.
-		 * Para buscar en el diccionario de intervalos, creo el intervalo (actual.b, actual.b)
-		 * y busco el menor y el mayor a este.
-	   * OBS: Notar que nunca puede haber un intervalo de la forma (x,x) en cualquiera de los dicc
-		 * de techos, ya que los intervalos que están, son de edificios bien formados (a < b).
-		 * Entonces nunca voy a encontrar un elemento igual al que utilizo en la busqueda.
-		 **/
-	
-		if (techos_por_b.empty()){
-			segundos_vertices.insert(actual.b);
-			techos_por_b.insert(actual);
-		} else {
-			intervalo v2 = intervalo(actual.b, actual.b);
-			auto menor_v2 = techos_por_b.lower_bound(v2);
-			auto mayor_v2 = techos_por_b.upper_bound(v2);
-			if (menor_v2 == techos_por_b.end()) {
-				menor_v2--;
-				if (menor_v2->b < v2.b) segundos_vertices.insert(v2.b);
-			} else if (menor_v2 == techos_por_b.begin()) {
-				if (!(menor_v2->a <= v2.b && menor_v2->b >= v2.b)) segundos_vertices.insert(v2.b);
-			} else {
-				if (!( (menor_v2->a <= v2.b && menor_v2->b >= v2.b) || (mayor_v2->a <= v2.b && mayor_v2->b >= v2.b) )){
-					segundos_vertices.insert(v2.b);
-				}
-			}				
-			techos_por_b.insert(actual);
-		}
 		
+		/* Si el x2 no está contenido por algún intervalo, lo agrego como posible res. */
+		if (!contenido(techos, it->x2)) candidatos.insert(it->x2);
+
+		/* Agrego el intervalo que genera el edificio actual a techos. */
+		techos.insert(intervalo(it->x1, it->x2));
+
 		it++;
-	} /*Esta llave cierra el while general */
+	}
 
 	/* Una vez revisado todos los edificios, agrego los v2 que chocan contra el piso (y = 0)*/
-	auto is = segundos_vertices.begin();
-	while (is != segundos_vertices.end()) {
+	auto is = candidatos.begin();
+	while (is != candidatos.end()) {
 		res.insert(vertice(*is,0));
 		is++;
 	}
