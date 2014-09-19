@@ -1,8 +1,11 @@
-#include "ejercicio2_nuevo.h"
+#include "ejercicio2.h"
 void mostrar_techos(set<intervalo>);
 void mostrar_y(map<int, int> res);
 void mostrar_res(set<vertice>);
 void mostrar_edificio(edificio);
+void insertar(set<intervalo>& is, intervalo i);
+bool contenido(set<intervalo>& is, int n);
+
 
 int max(int a, int b){
   return (a >= b) ? a : b;
@@ -151,93 +154,98 @@ void generar_estructuras(int cant_ed, dicc_y& por_altura)
 void generar_horizonte(dicc_y& por_altura, set<vertice>& res)
 {
 	set<intervalo, cmp_b> techos_por_b; 
-	set<intervalo> techos_x;
+	set<intervalo> techos_por_a;
 	set<int> segundos_vertices;
 	dicc_y::iterator it = por_altura.begin();
 
 	while (it != por_altura.end()){
-	
-		intervalo actual = intervalo(it->x1, it->x2);
-		auto lower = techos_x.lower_bound(intervalo(it->x1, it->x2));
-		if (techos_x.empty()) {
-			res.insert(vertice(it->x1, it->y));
-			techos_x.insert(actual);
-		} else {
-			/* Veo si lower es end, en cuyo caso, mi techo va último. */
-			if (lower == techos_x.end()){
-				lower--;
-				if (actual.a <= lower->b) actual.a = lower->b;
-				/* Si el intervalo sigue siendo valido, agrego el primer vertice. */
-				if (actual.a < actual.b) {
-					res.insert(vertice(actual.a,it->y));
-					techos_x.insert(actual);
-				}
-			} else if (lower == techos_x.begin()) {
-				if (actual.a < lower->a) res.insert(vertice(actual.a, it->y));
-					techos_x.insert(actual);
-				} else {
-					/* Caso en el que estoy en el medio. */
-					auto menor = lower;
-					menor--;
-					if (actual.a <= menor->b) actual.a = menor->b;
-					/* Si el intervalo sigue siendo valido, agrego el primer vertice. */
-					if (actual.a < actual.b) {
-						if (lower->a > actual.a) res.insert(vertice(actual.a,it->y));
-						techos_x.insert(actual);
-					}
-				}
-			}
-		/* Si el intervalo es valido, reviso en segundos_vertices si hay alguno que choque conmigo*/
-		if (actual.a < actual.b) {
-			/* Buscar con b-1 me asegura que no procesaré los vertices de x = b */
-			auto arriba = segundos_vertices.upper_bound(actual.b-1);
-			auto abajo = segundos_vertices.lower_bound(actual.a);
-
-			while (abajo != arriba){
-				res.insert(vertice(*abajo,it->y));
-				segundos_vertices.erase(abajo);
-				abajo++;
-			}
-		}
-		/* Analizo si si agrego o no, el v2, como un futuro posible vertice resultado. */
 		
-		/* Para ver si lo agrego, debo ver si hay un techo que le haga sombra.
+		/* Este bloque de código evalúa si agregar o no v1*/			
+		vertice vr = vertice(it->x1, it->y);
+				if (techos_por_a.empty()) {
+			res.insert(vr);
+		} else {
+			/* Creo búsqueda de esta forma para encontrar los dos posibles intervalos que me solapen
+			 * el primer intervalo que termina antes de este vr.x, y el último que empieza antes de vr.x
+			 * Busco con -1 para que upper me traiga el intervalo que cuyo b = vr.x.
+			 **/
+			intervalo busqueda_a = intervalo(vr->x, vr->x);
+			intervalo busqueda_b = intervalo(vr->x-1, vr->x-1);
+			auto lower = techos_por_a.lower_bound(busqueda);
+			auto upper = techos_por_b.upper_bound(busqueda);
+			
+			if (lower == techos_por_a.end()) {
+				lower--;
+				if (vr.x > lower->b && ( upper == techos_por_b.end() || vr.x <  ))
+
+					
+			/* Veo si lower es end, en cuyo caso, mi techo va último. */
+			if (lower == techos_por_a.end()){
+				lower--;
+				if (vr.x >= lower->b) res.insert(vr);
+			} else if (lower == techos_por_a.begin() && vr.x < lower->a) {
+				res.insert(vr);
+			} else {
+				/* Caso en el que estoy en el medio. */
+				auto menor = lower;
+				menor--;
+				if (vr.x < lower->a && vr.x >= menor->b) res.insert(vr);
+				}
+			}
+		/* Fin de Agregar o no v1*/
+		
+		/* Actualizo techos_por_a */
+		techos_por_a.insert(intervalo(it->x1, it->x2));
+
+		/* Este while agrega todos los posibles v2 que vienen de pasadas iteraciones 
+		 * si dichos v2 (solo está el x en realidad) caen en el intervalo de actual
+		 *
+		 * Buscar con b-1 me asegura que no procesaré los vertices de x = b
+		 **/
+		auto arriba = segundos_vertices.upper_bound(actual.b-1);
+		auto abajo = segundos_vertices.lower_bound(actual.a);
+
+		while (abajo != arriba){
+			res.insert(vertice(*abajo,it->y));
+			segundos_vertices.erase(abajo);
+			abajo++;
+		}
+		/* Fin de Agregar o no los v2*/
+
+		/* Ahora debo ver si si agrego o no el v2 como un futuro posible vertice resultado.
+		 * Para ver si lo agrego, debo ver si hay un techo que le haga sombra.
 		 * Para buscar en el diccionario de intervalos, creo el intervalo (actual.b, actual.b)
 		 * y busco el menor y el mayor a este.
-		 *
 	   * OBS: Notar que nunca puede haber un intervalo de la forma (x,x) en cualquiera de los dicc
-		 * de techos, ya que antes de agregar un intervalo chequeo a < b. Entonces nunca voy a
-		 * encontrar un elemento igual al que utilizo en la busqueda.
-		*/
+		 * de techos, ya que los intervalos que están, son de edificios bien formados (a < b).
+		 * Entonces nunca voy a encontrar un elemento igual al que utilizo en la busqueda.
+		 **/
 	
-		if (actual.a < actual.b){
-			if (techos_por_b.empty()){
-				segundos_vertices.insert(actual.b);
-				techos_por_b.insert(actual);
+		if (techos_por_b.empty()){
+			segundos_vertices.insert(actual.b);
+			techos_por_b.insert(actual);
+		} else {
+			intervalo v2 = intervalo(actual.b, actual.b);
+			auto menor_v2 = techos_por_b.lower_bound(v2);
+			auto mayor_v2 = techos_por_b.upper_bound(v2);
+			if (menor_v2 == techos_por_b.end()) {
+				menor_v2--;
+				if (menor_v2->b < v2.b) segundos_vertices.insert(v2.b);
+			} else if (menor_v2 == techos_por_b.begin()) {
+				if (!(menor_v2->a <= v2.b && menor_v2->b >= v2.b)) segundos_vertices.insert(v2.b);
 			} else {
-				intervalo v2 = intervalo(actual.b, actual.b);
-				auto menor_v2 = techos_por_b.lower_bound(v2);
-				auto mayor_v2 = techos_por_b.upper_bound(v2);
-				if (menor_v2 == techos_por_b.end()) {
-					menor_v2--;
-					if (menor_v2->b < v2.b) segundos_vertices.insert(v2.b);
-				} else if (menor_v2 == techos_por_b.begin()) {
-					if (!(menor_v2->a <= v2.b && menor_v2->b >= v2.b)) segundos_vertices.insert(v2.b);
-				} else {
-					if (!( (menor_v2->a <= v2.b && menor_v2->b >= v2.b) || (mayor_v2->a <= v2.b && mayor_v2->b >= v2.b) )){
-						segundos_vertices.insert(v2.b);
-					}
-				}				
-				techos_por_b.insert(actual);
-			}
+				if (!( (menor_v2->a <= v2.b && menor_v2->b >= v2.b) || (mayor_v2->a <= v2.b && mayor_v2->b >= v2.b) )){
+					segundos_vertices.insert(v2.b);
+				}
+			}				
+			techos_por_b.insert(actual);
 		}
-
 		
 		it++;
-	} /*Esta llave cierra el while */
+	} /*Esta llave cierra el while general */
 
+	/* Una vez revisado todos los edificios, agrego los v2 que chocan contra el piso (y = 0)*/
 	auto is = segundos_vertices.begin();
-
 	while (is != segundos_vertices.end()) {
 		res.insert(vertice(*is,0));
 		is++;
@@ -284,6 +292,87 @@ void mostrar_res(set<vertice> res)
 	cout << it->x << " " << it->y << endl;
 }
 
+bool contenido(set<intervalo>& is, int n){
+	
+	auto lower = is.lower_bound(intervalo(n,n));
+	if (is.empty()) return false;
+	if (lower == is.end()) {
+		lower--;
+		return lower->b >= n;
+	} else if (lower == is.begin()) {
+		return lower->a == n;
+	} else {
+		auto anterior = lower;
+		anterior--;
+		return anterior->b >= n || lower->a == n;
+	}
+}
+
+
+/* Esta función inserta un intervalo de forma ordena y mergea si se solapa.*/
+void insertar(set<intervalo>& is, intervalo i){
+
+	if (is.empty()){
+		is.insert(i);
+	} else if (is.find(i) == is.end()){
+		auto lower = is.lower_bound(i);
+		if (lower == is.end()){
+			lower--;
+			if (i.a <= lower->b && i.b > lower->b){
+				intervalo fusion = intervalo(lower->a,i.b);
+				is.erase(lower);
+				is.insert(fusion);	
+			} else {
+				is.insert(i);
+			}
+		} else if (lower == is.begin()){
+				set<intervalo>::iterator desde, hasta;
+				int a = i.a;
+				int b = i.b;
+				if (i.b >= lower->a){
+					desde = lower;
+					auto it = lower;
+					while (is.end() != it && it->a <= b){
+						b = max(it->b, b);
+						it++;
+					}
+					hasta = it;
+					is.erase(desde,hasta);
+					is.insert(intervalo(a,b));
+				} else {
+					is.insert(i);
+				}
+		}	else {
+			/* Esta en el medio.*/
+			/* Verifico si mergeo con alguien, y si es asi desde donde. */
+				int a = i.a;
+				int b = i.b;
+				set<intervalo>::iterator desde, hasta;
+				desde = is.end();
+				auto anterior = lower;
+				anterior--;
+				if (a <= anterior->b){
+					a = anterior->a;
+					desde = anterior;
+				} else if (b >= lower->a) {
+					desde = lower;
+				}
+				
+				if (desde != is.end()) {
+					auto it = desde;
+					while ( is.end() != it && it->a <= b ) {
+						b = max(b,it->b);
+						it++;
+					}
+					hasta = it;
+					is.erase(desde,hasta);
+					is.insert(intervalo(a,b));
+				} else {
+					is.insert(i);
+				}
+		}
+	}
+}
 
 
 int main(){
