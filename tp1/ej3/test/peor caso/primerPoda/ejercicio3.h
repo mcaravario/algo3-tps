@@ -90,23 +90,6 @@ void agregar_producto(resultado& res_parcial, producto p, vector< vector<coef> >
 	res_parcial.a_imprimir[p-1]= res_parcial.cant;
 }
 
-void mostrar_camiones(resultado& ls){
-  list<camion>::iterator itc = ls.camiones.begin();
-  int i=1;
-  while(itc != ls.camiones.end()){
-    list<producto>::iterator itp = itc->productos.begin();
-    cout << "C" << i <<": ";
-    while(itp != itc->productos.end()){
-      cout << *itp <<" ";
-      itp++;
-    }
-    itc++;
-    cout << endl;
-    i++;
-  }
-  cout << endl << endl;
-}
-
 void mostrar_res(resultado& ls){
   cout << ls.cant;
   vector<int>::iterator it = ls.a_imprimir.begin();
@@ -120,8 +103,6 @@ void mostrar_res(resultado& ls){
 void llenar_camiones(resultado& res_parcial, list<producto>& Q, vector< vector<coef> > mz, int umbral, resultado& res_g){
   if (Q.empty()){
     res_g = res_parcial;
-		cout << "camion resul: " << endl;
-		mostrar_camiones(res_g);
   }else{
     list<producto>::iterator it = Q.begin();
     while(it != Q.end()){
@@ -129,8 +110,7 @@ void llenar_camiones(resultado& res_parcial, list<producto>& Q, vector< vector<c
         resultado res_parcial_copy = resultado();
 				res_parcial_copy = res_parcial;
         list<producto> Q_copy = Q;
-        
-				cout << "producto: " << *it <<  endl;
+				
 				agregar_producto(res_parcial_copy,*it,mz, umbral);
         
 				list<producto>::iterator itp = find(Q_copy.begin(),Q_copy.end(),*it);
@@ -138,7 +118,7 @@ void llenar_camiones(resultado& res_parcial, list<producto>& Q, vector< vector<c
         
 				llenar_camiones(res_parcial_copy,Q_copy, mz, umbral, res_g);
 			}
-        it++;
+			it++;
     }
   }
 }
