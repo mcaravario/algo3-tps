@@ -1,0 +1,229 @@
+#include <iostream>
+#include <cstdlib>
+#include <stdio.h>
+#include <vector>
+#include <list>
+#include <algorithm>
+#include <sstream>
+#include <stdlib.h>
+#define producto int
+#define coef int
+using namespace std;
+
+struct camion{
+	list<producto> productos;
+	int pelig_acum;
+	camion();
+};
+
+
+struct resultado{
+	//INV: cant == camiones.size()
+	list<camion> camiones;
+	int cant;
+	vector<int> a_imprimir;
+	resultado();
+};
+
+struct soluciones{
+	list<resultado> resultados;
+	int cant;
+	soluciones();
+};
+
+
+camion::camion(){
+	//INV: pelig_acum == sumar_peligrosidades_lista(productos);
+	productos = list<producto>();
+	pelig_acum = 0;	
+}
+
+resultado::resultado(){
+	camiones = list<camion>();
+	cant = 0;
+	a_imprimir = vector<int>();
+}
+
+soluciones::soluciones(){
+	resultados = list<resultado>();
+	cant = 0;
+}
+
+int peligrosidad_elem(list<producto>& ls, producto p, vector< vector<coef> > mz){
+    list<producto>::iterator it = ls.begin();
+    int res = 0;
+    while(it != ls.end()){
+      if(*it < p){
+        res = res + mz[(*it)-1][p-1-(*it)]; // EJEMPlO: Producto en Lista 1, y producto a calc peligrosidad 2, res = res + mz[0][0]
+      }else{
+        res = res + mz[p-1][(*it)-1-p];			// EJEMPLO: Producto en Lista 3, y producto a calc peligrosidad 2, res = res + mz[1][0]
+      }
+      it++;
+    }
+  return res;
+}
+
+bool es_posible_agregar(resultado& res_parcial, producto p, vector< vector<coef> > mz, int umbral){
+  if(!res_parcial.cant == 0){															//Si no hay elementos, es posible agregar
+    list<camion>::iterator it = res_parcial.camiones.end();
+    it--;																									// Se retorcede al ultimo elemnto
+    int peligrosidad = it->pelig_acum;
+    int pelig_nueva = peligrosidad_elem(it->productos,p, mz);
+    if((peligrosidad + pelig_nueva) > umbral){
+      return false;
+    }else return true;
+  }else return true;
+}
+
+bool camion_igual(camion& c1, camion& c2){
+	cout << "entro en camion_igual" << endl;
+	list<producto>::iterator it1 = c1.productos.begin();
+	list<producto>::iterator it2 = c2.productos.begin();
+	bool res_1 = false;
+	bool res_2 = true;
+	while(it2 != c2.productos.end()){
+		if (res_2 = false){
+			 res_1 = false;
+		}else res_1 = true;
+		while(it1 != c1.productos.end() || res_2){
+			if (*it1 == *it2){
+				 res_2= true;
+			} else res_2 = false;
+			it1 ++;
+		}	
+		it2++;
+	}
+}
+
+void mostrar_camiones(resultado& ls){
+  list<camion>::iterator itc = ls.camiones.begin();
+  int i=1;
+  while(itc != ls.camiones.end()){
+    list<producto>::iterator itp = itc->productos.begin();
+    cout << "C" << i <<": ";
+    while(itp != itc->productos.end()){
+      cout << *itp <<" ";
+      itp++;
+    }
+    itc++;
+    cout << endl;
+    i++;
+  }
+  cout << endl << endl;
+}
+//Esa funcion se encarga de descartar los casos que ya no son solucion. Es decir descar los casos al ir armandose
+//cuando ya superan la cantidad de camiones de la solucion que se guardo anteriormente
+bool sigue_siendo_sol(resultado& r, soluciones& solus){
+	/*bool res = false;
+	list<resultado>::iterator it1 = solus.resultados.begin();
+	if(r.cant == it1->camiones.cant -1){
+		while(it1 != solus.resultados.end()){
+			list<camion>::iterator it2 = it1->camiones.begin();
+			lis<camion>::iterator it_b1 = r.camiones.begin();
+			int i = 0;
+			while(i < it1->cant -1){
+				list<producto>::iterator it_b2 = it_b1->productos.begin();
+				list<producto>::iterator it3 = it2->productos.begin();
+				while(it3 != it2->productos.end()){
+					list<producto>::iterator itp = find(Q_copy.begin(),Q_copy.end(),*it);
+					it3++;
+				}
+				it2++;
+				i++;
+			}
+			it1++;
+		}
+	}*/
+	if (solus.cant != 0){
+			cout << "entro? " << endl;
+			cout << "camion en sigue siendo sol " << endl;
+			mostrar_camiones(r);
+			list<resultado>::iterator it1 = solus.resultados.begin();
+			list<camion>::iterator it2 = it1->camiones.begin();
+			list<camion>::iterator it3 =  r.camiones.begin();
+			return !camion_igual(*it2,*it3);
+	} else return true;
+	//return !res;
+}
+
+void agregar_producto(resultado& res_parcial, producto p, vector< vector<coef> > mz, int umbral){
+  if (res_parcial.cant == 0 || !es_posible_agregar(res_parcial,p, mz, umbral) ){//Si no es posible agregar un producto, o no existia el 
+    camion nuevo = camion();																										//camion, se tiene que crear el camion y dps agregar
+    res_parcial.camiones.push_back(nuevo);
+    res_parcial.cant++;
+  } else {
+    int pelig_nueva = peligrosidad_elem(res_parcial.camiones.back().productos,p,mz);
+    res_parcial.camiones.back().pelig_acum += pelig_nueva;
+  }
+  res_parcial.camiones.back().productos.push_back(p);
+	res_parcial.a_imprimir[p-1]= res_parcial.cant;
+}
+
+
+
+void mostrar_soluciones(soluciones& solus){
+	int i = solus.cant;
+	list<resultado>::iterator it = solus.resultados.begin(); 
+	while(i != 0){
+		mostrar_camiones(*it);
+		i--;
+		it++;
+	}
+}
+
+void mostrar_res(resultado& ls){
+  cout << ls.cant;
+  vector<int>::iterator it = ls.a_imprimir.begin();
+  while(it != ls.a_imprimir.end()){
+    cout <<" " << *it;
+		it++;
+	}
+	cout << endl;
+}
+
+void llenar_camiones(resultado& res_parcial, list<producto>& Q, vector< vector<coef> > mz, int umbral, resultado& res_g, soluciones& solus){
+  if (Q.empty()){
+    res_g = res_parcial;
+		solus.resultados.push_back(res_parcial);
+		solus.cant ++;
+		cout << "solus " << endl;
+		mostrar_soluciones(solus);
+		cout << "camion resul: " << endl;
+		mostrar_camiones(res_g);
+  }else{
+    list<producto>::iterator it = Q.begin();
+    while(it != Q.end()){
+			resultado res_parcial_copy = resultado();
+			res_parcial_copy = res_parcial;
+			list<producto> Q_copy = Q;
+			cout << "producto: " << *it <<  endl;
+			agregar_producto(res_parcial_copy,*it,mz, umbral);
+        
+			if(sigue_siendo_sol(res_parcial_copy, solus)){
+				list<producto>::iterator itp = find(Q_copy.begin(),Q_copy.end(),*it);
+        Q_copy.erase(itp);
+        
+				llenar_camiones(res_parcial_copy,Q_copy, mz, umbral, res_g, solus);
+			}
+        it++;
+    }
+  }
+}
+
+int tomar_elementos(string linea){
+  stringstream l(linea);
+  string cant_elem;
+  getline(l, cant_elem);
+  int cant = atoi(cant_elem.c_str());
+  return cant;
+}
+
+int tomar_umbral(string linea){
+  stringstream l(linea);
+  string umbral;
+  getline(l,umbral,' ');
+  getline(l,umbral,' ');
+  int um = atoi(umbral.c_str());
+  return um;
+}
+
