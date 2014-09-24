@@ -322,29 +322,32 @@ int main(int argc, char** argv){
 	
 		int cant_ed;
 		bool parar = false;
-		int iteraciones = atoi(argv[1]);
-		int copia = iteraciones;
-		size_t acum = 0, mi = 99999999;
-		while (!parar){
+		while (!parar){	
 			cin >> cant_ed;
-			high_resolution_clock reloj;
 			if (cant_ed == 0){
-				parar = true;
-			} else {
-				while (iteraciones != 0){
+				parar = true;	
+			}	else {
+				int iteraciones = atoi(argv[1]);
+				size_t acum = 0, mi = 99999999;
+				high_resolution_clock reloj;
 				dicc_y por_altura;
 				set<vertice> res;
-				auto t1 = reloj.now();
+				auto g1 = reloj.now();
 				generar_estructuras(cant_ed, por_altura);
-				generar_horizonte(por_altura, res);
-				auto t2 = reloj.now();
-				auto total = duration_cast<microseconds>(t2 - t1).count();
-				if (total < mi)	mi = total;
-				iteraciones --;
-				}
-				cout << mi  << endl;	
-			}
-			iteraciones = copia;
+				auto g2 = reloj.now();
+				auto total_estructura = duration_cast<microseconds>(g2 - g1).count();
+
+				while (iteraciones != 0){
+					
+					auto t1 = reloj.now();
+					generar_horizonte(por_altura, res);
+					auto t2 = reloj.now();
+					auto total = duration_cast<microseconds>(t2 - t1).count() + total_estructura;
+					if (total < mi)	mi = total;
+					iteraciones --;
+					}
+				cout << mi  << endl;
+			}	
 		}
 	return 0;
 }
