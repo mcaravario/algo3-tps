@@ -1,8 +1,14 @@
-#include "ejercicio2_nuevo.h"
+#include "ejercicio2.h"
+#include <chrono>
+#include "time.h"
 void mostrar_techos(set<intervalo>);
 void mostrar_y(map<int, int> res);
 void mostrar_res(set<vertice>);
 void mostrar_edificio(edificio);
+void insertar(set<intervalo>& is, intervalo i);
+bool contenido(set<intervalo>& is, int n);
+
+using namespace std::chrono;
 
 int max(int a, int b){
   return (a >= b) ? a : b;
@@ -147,58 +153,43 @@ void generar_estructuras(int cant_ed, dicc_y& por_altura)
 * */	
 
 
-/* INV: No hay edificios de misma altura solapadas */
+/* PC: No hay edificios de misma altura solapadas */
 void generar_horizonte(dicc_y& por_altura, set<vertice>& res)
 {
-	set<intervalo> techos_x;
-	set<int> segundos_vertices;
+	set<intervalo> techos;
+	set<int> candidatos;
 	dicc_y::iterator it = por_altura.begin();
 
 	while (it != por_altura.end()){
-	
-		intervalo actual = intervalo(it->x1, it->x2);
-		auto lower = techos_x.lower_bound(intervalo(it->x1, it->x2));
-		if (techos_x.empty()) {
-			res.insert(vertice(it->x1, it->y));
-			techos_x.insert(actual);
-		} else {
-			/* Veo si lower es end, en cuyo caso, mi techo va último. */
-			if (lower == techos_x.end()){
-				lower--;
-				if (actual.a <= lower->b) actual.a = lower->b;
-				/* Si el intervalo sigue siendo valido, agrego el primer vertice. */
-				if (actual.a < actual.b) res.insert(vertice(actual.a,it->y));
-				techos_x.insert(actual);
-			} else if (lower == techos_x.begin()) {
-				if (actual.a < lower->a) res.insert(vertice(actual.a, it->y));
-					techos_x.insert(actual);
-				} else {
-					auto menor = lower;
-					menor--;
-					if (actual.a < menor->b) actual.a = menor->b;
-					/* Si el intervalo sigue siendo valido, agrego el primer vertice. */
-					if (actual.a < actual.b && lower->a > actual.a) res.insert(vertice(actual.a,it->y));
-					techos_x.insert(actual);
-				}
-		}				
 
-		/* Si el intervalo es valido, reviso en segundos_vertices si hay alguno que choque conmigo*/
-		if (actual.a < actual.b) {	
-			auto arriba = segundos_vertices.upper_bound(actual.b);
-			auto abajo = segundos_vertices.lower_bound(actual.a);
+		/* Si no hay intervalo que contenga al x de mi vertice, lo agrego. */			
+		if (!contenido(techos, it->x1)) res.insert(vertice(it->x1, it->y));
 
-			while (abajo != arriba){
-				res.insert(vertice(*abajo,it->y));
-				segundos_vertices.erase(abajo);
-				abajo++;
-			}
-			segundos_vertices.insert(actual.b);
-			it++;
+		/* Este while agrega todos los posibles v2 que vienen de pasadas iteraciones 
+		 * si dichos v2 (solo está el x en realidad) caen en el intervalo de actual
+		 * Buscar con x2-1 me asegura que no procesaré los vertices de x = x2
+		 **/
+		auto arriba = candidatos.upper_bound(it->x2-1);
+		auto abajo = candidatos.lower_bound(it->x1);
+
+		while (abajo != arriba){
+			res.insert(vertice(*abajo,it->y));
+			candidatos.erase(abajo);
+			abajo++;
 		}
-	}
-	auto is = segundos_vertices.begin();
+		
+		/* Si el x2 no está contenido por algún intervalo, lo agrego como posible res. */
+		if (!contenido(techos, it->x2)) candidatos.insert(it->x2);
 
-	while (is != segundos_vertices.end()) {
+		/* Agrego el intervalo que genera el edificio actual a techos. */
+		techos.insert(intervalo(it->x1, it->x2));
+
+		it++;
+	}
+
+	/* Una vez revisado todos los edificios, agrego los v2 que chocan contra el piso (y = 0)*/
+	auto is = candidatos.begin();
+	while (is != candidatos.end()) {
 		res.insert(vertice(*is,0));
 		is++;
 	}
@@ -241,27 +232,120 @@ void mostrar_res(set<vertice> res)
 		cout << it->x << " " << it->y << " ";
 		it++;
 	}
-	cout << it->x << " " << it->y;
+	cout << it->x << " " << it->y << endl;
+}
+
+bool contenido(set<intervalo>& is, int n){
+	
+	auto lower = is.lower_bound(intervalo(n,n));
+	if (is.empty()) return false;
+	if (lower == is.end()) {
+		lower--;
+		return lower->b >= n;
+	} else if (lower == is.begin()) {
+		return lower->a == n;
+	} else {
+		auto anterior = lower;
+		anterior--;
+		return anterior->b >= n || lower->a == n;
+	}
 }
 
 
+/* Esta función inserta un intervalo de forma ordena y mergea si se solapa.*/
+void insertar(set<intervalo>& is, intervalo i){
 
-int main(){
+	if (is.empty()){
+		is.insert(i);
+	} else if (is.find(i) == is.end()){
+		auto lower = is.lower_bound(i);
+		if (lower == is.end()){
+			lower--;
+			if (i.a <= lower->b && i.b > lower->b){
+				intervalo fusion = intervalo(lower->a,i.b);
+				is.erase(lower);
+				is.insert(fusion);	
+			} else {
+				is.insert(i);
+			}
+		} else if (lower == is.begin()){
+				set<intervalo>::iterator desde, hasta;
+				int a = i.a;
+				int b = i.b;
+				if (i.b >= lower->a){
+					desde = lower;
+					auto it = lower;
+					while (is.end() != it && it->a <= b){
+						b = max(it->b, b);
+						it++;
+					}
+					hasta = it;
+					is.erase(desde,hasta);
+					is.insert(intervalo(a,b));
+				} else {
+					is.insert(i);
+				}
+		}	else {
+			/* Esta en el medio.*/
+			/* Verifico si mergeo con alguien, y si es asi desde donde. */
+				int a = i.a;
+				int b = i.b;
+				set<intervalo>::iterator desde, hasta;
+				desde = is.end();
+				auto anterior = lower;
+				anterior--;
+				if (a <= anterior->b){
+					a = anterior->a;
+					desde = anterior;
+				} else if (b >= lower->a) {
+					desde = lower;
+				}
+				
+				if (desde != is.end()) {
+					auto it = desde;
+					while ( is.end() != it && it->a <= b ) {
+						b = max(b,it->b);
+						it++;
+					}
+					hasta = it;
+					is.erase(desde,hasta);
+					is.insert(intervalo(a,b));
+				} else {
+					is.insert(i);
+				}
+		}
+	}
+}
+
+
+int main(int argc, char** argv){
 	
 		int cant_ed;
 		bool parar = false;
+		int iteraciones = atoi(argv[1]);
+		int copia = iteraciones;
+		size_t acum = 0, mi = 99999999;
 		while (!parar){
 			cin >> cant_ed;
+			high_resolution_clock reloj;
 			if (cant_ed == 0){
 				parar = true;
 			} else {
+				while (iteraciones != 0){
 				dicc_y por_altura;
 				set<vertice> res;
+				auto t1 = reloj.now();
 				generar_estructuras(cant_ed, por_altura);
 				generar_horizonte(por_altura, res);
-				mostrar_res(res);
+				auto t2 = reloj.now();
+				auto total = duration_cast<microseconds>(t2 - t1).count();
+				if (total < mi)	mi = total;
+				iteraciones --;
+				}
+				cout << mi  << endl;	
 			}
-	}
+			iteraciones = copia;
+		}
 	return 0;
 }
 
