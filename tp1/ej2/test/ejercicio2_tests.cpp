@@ -325,7 +325,7 @@ void insertar(set<intervalo>& is, intervalo i){
 	}
 }
 
-//Recibe cantidad de iteraciones
+//Recibe cantidad de iteraciones y la cantidad de edificios
 int main(int argc, char** argv){
 	
 		int cant_ed;
@@ -336,6 +336,7 @@ int main(int argc, char** argv){
 				parar = true;	
 			}	else {
 				int iteraciones = atoi(argv[1]);
+				int edificios = atoi(argv[2]);
 				size_t acum = 0, mi = 99999999;
 				high_resolution_clock reloj;
 				dicc_y por_altura;
@@ -378,7 +379,7 @@ int main(int argc, char** argv){
 					if (total < mi)	mi = total;
 					iteraciones --;
 					}
-				cout << mi  << endl;
+				cout << edificios  << " " <<  mi  << endl;
 			}	
 		}
 	return 0;
