@@ -155,6 +155,19 @@ void mostrar_productos(camion& c){
 
 //Esa funcion se encarga de descartar los casos que ya no son solucion. Es decir descar los casos al ir armandose
 //cuando ya superan la cantidad de camiones de la solucion que se guardo anteriormente
+bool sigue_siendo_sol(resultado& r, producto p, vector< vector<coef> > mz, int umbral,resultado& res_g){
+  int cant_camiones = r.cant;
+  if(!es_posible_agregar(r,p,mz,umbral)){
+    cant_camiones ++;
+  }
+  if(cant_camiones < res_g.cant){
+    return true;
+  }else return false;
+
+}
+
+
+
 bool resultados_iguales(resultado& r, soluciones& solus){
 	if(solus.cant != 0){
 		bool res = false;
@@ -164,9 +177,9 @@ bool resultados_iguales(resultado& r, soluciones& solus){
 				if (camiones_iguales(it_resultados_solus->camiones,r.camiones)) res = true;
 				it_resultados_solus++;
 			}
-			if(res){
+			/*if(res){
 				cout << "TRUE" << endl;
-			}else cout << "FALSE"<< endl;
+			}else cout << "FALSE"<< endl;*/
 			return res;
 		} else return false;
 	}else return false;
@@ -213,36 +226,40 @@ void llenar_camiones(resultado& res_parcial, list<producto>& Q, vector< vector<c
     res_g = res_parcial;
 		solus.resultados.push_back(res_parcial);
 		solus.cant ++;
-		cout << "camion resul: " << endl;
-		mostrar_camiones(res_g);
+		//cout << "camion resul: " << endl;
+		//mostrar_camiones(res_g);
   }else{
 		list<producto>::iterator it = Q.begin();
     	while(it != Q.end()){
-				cout << "producto: " << *it <<  endl;
-				if(!es_posible_agregar(res_parcial,*it,mz,umbral)){
+				//cout << "producto: " << *it <<  endl;
+			if(!es_posible_agregar(res_parcial,*it,mz,umbral)){
+				if(sigue_siendo_sol(res_parcial,*it,mz, umbral, res_g)){
 					if(!resultados_iguales(res_parcial, solus)){
-					resultado res_parcial_copy = resultado();
-					res_parcial_copy = res_parcial;
-					list<producto> Q_copy = Q;
-					agregar_producto(res_parcial_copy,*it,mz, umbral);
+						resultado res_parcial_copy = resultado();
+						res_parcial_copy = res_parcial;
+						list<producto> Q_copy = Q;
+						agregar_producto(res_parcial_copy,*it,mz, umbral);
         
-					list<producto>::iterator itp = find(Q_copy.begin(),Q_copy.end(),*it);
-        	Q_copy.erase(itp);
+						list<producto>::iterator itp = find(Q_copy.begin(),Q_copy.end(),*it);
+        		Q_copy.erase(itp);
         
-					llenar_camiones(res_parcial_copy,Q_copy, mz, umbral, res_g, solus);
-        	it++;
+						llenar_camiones(res_parcial_copy,Q_copy, mz, umbral, res_g, solus);
 					}else it = Q.end();
-				}else{
-					resultado res_parcial_copy = resultado();
-					res_parcial_copy = res_parcial;
-					list<producto> Q_copy = Q;
-					agregar_producto(res_parcial_copy,*it,mz, umbral);
-        
-					list<producto>::iterator itp = find(Q_copy.begin(),Q_copy.end(),*it);
-        	Q_copy.erase(itp);
-        
-					llenar_camiones(res_parcial_copy,Q_copy, mz, umbral, res_g, solus);
+				}
         	it++;
+				}else{
+					if(sigue_siendo_sol(res_parcial,*it,mz, umbral, res_g)){
+						resultado res_parcial_copy = resultado();
+						res_parcial_copy = res_parcial;
+						list<producto> Q_copy = Q;
+						agregar_producto(res_parcial_copy,*it,mz, umbral);
+        
+						list<producto>::iterator itp = find(Q_copy.begin(),Q_copy.end(),*it);
+        		Q_copy.erase(itp);
+        
+						llenar_camiones(res_parcial_copy,Q_copy, mz, umbral, res_g, solus);
+        	}
+					it++;
 				}
 		}
   }/*

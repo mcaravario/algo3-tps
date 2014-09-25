@@ -1,12 +1,13 @@
 # !/bin/bash
 # PARAMS: cantidad de tablones ini,cantidad de tablones hasta,tablones incremento, capacidad de salto, cantidad de iteraciones
-CAPACIDAD_SALTO=$1
-CANT_TABLONES=$2
+CANT_PRODUCTOS=$1
+UMBRAL=$2
 END=$3
 INC=$4
 ITERACIONES=$5
 
-while ((CANT_TABLONES<END)); do
-	./bueno $CAPACIDAD_SALTO $CANT_TABLONES | ./ej1test $ITERACIONES
-	let CANT_TABLONES=$CANT_TABLONES+$INC
+while ((CANT_PRODUCTOS<END)); do
+        ./prom $CANT_PRODUCTOS $UMBRAL | ./ej3test $ITERACIONES
+        let CANT_PRODUCTOS=$CANT_PRODUCTOS+$INC
 done
+

@@ -77,6 +77,23 @@ bool sigue_siendo_sol(resultado& r, producto p, vector< vector<coef> > mz, int u
 
 }
 
+void mostrar_camiones(resultado& ls){
+  list<camion>::iterator itc = ls.camiones.begin();
+  int i=1;
+  while(itc != ls.camiones.end()){
+    list<producto>::iterator itp = itc->productos.begin();
+    cout << "C" << i <<": ";
+    while(itp != itc->productos.end()){
+      cout << *itp <<" ";
+      itp++;
+    }
+    itc++;
+    cout << endl;
+    i++;
+  }
+  cout << endl << endl;
+}
+
 void agregar_producto(resultado& res_parcial, producto p, vector< vector<coef> > mz, int umbral){
   if (res_parcial.cant == 0 || !es_posible_agregar(res_parcial,p, mz, umbral) ){//Si no es posible agregar un producto, o no existia el 
     camion nuevo = camion();																										//camion, se tiene que crear el camion y dps agregar
