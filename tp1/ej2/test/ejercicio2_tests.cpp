@@ -1,4 +1,5 @@
 #include "ejercicio2.h"
+#include <list>
 #include <chrono>
 #include "time.h"
 void mostrar_techos(set<intervalo>);
@@ -68,18 +69,25 @@ void mostrar_edificio(edificio it){
 		cout << "( " << it.x1 << ", " << it.y << ", " << it.x2 <<")  ";
 }
 
-void generar_estructuras(int cant_ed, dicc_y& por_altura)
+void generar_estructuras(list<int> estructuras, dicc_y& por_altura)
 {
 	int izq;
 	int alt;
 	int der;
 	int i;
+	auto it = estructuras.begin();
 
-	for (i = 0; i < cant_ed; i++){
-	
-		cin >> izq;
-		cin >> alt;
-		cin >> der;
+	while(it != estructuras.end()){
+		
+		izq = *it;
+		it++;		
+		
+		alt = *it;
+		it++;		
+		
+		der = *it;
+		it++;		
+		
 
     edificio a_insertar = (edificio(izq, alt, der));
 
@@ -317,7 +325,7 @@ void insertar(set<intervalo>& is, intervalo i){
 	}
 }
 
-
+//Recibe cantidad de iteraciones
 int main(int argc, char** argv){
 	
 		int cant_ed;
@@ -332,17 +340,41 @@ int main(int argc, char** argv){
 				high_resolution_clock reloj;
 				dicc_y por_altura;
 				set<vertice> res;
-				auto g1 = reloj.now();
-				generar_estructuras(cant_ed, por_altura);
-				auto g2 = reloj.now();
-				auto total_estructura = duration_cast<microseconds>(g2 - g1).count();
-
+				
+				/* Leo desde stdin antes de calcular los tiempos */
+				list<int> estructuras;
+				int i = 0;
+				while (i < cant_ed){
+					int izq;
+					int alt;
+					int der;
+					cin >> izq;
+					cin >> alt;
+					cin >> der;
+					
+					estructuras.push_back(izq);
+					estructuras.push_back(alt);
+					estructuras.push_back(der);
+					i++;
+				}
+				/*cout << "genere lista" << endl;
+				
+				auto it = estructuras.begin();
+				while (it != estructuras.end()){
+					cout <<  *it;
+					it++;
+					cout << *it;
+				  it++;
+					cout << *it;	
+					it++;
+				}*/
 				while (iteraciones != 0){
 					
 					auto t1 = reloj.now();
+					generar_estructuras(estructuras, por_altura);
 					generar_horizonte(por_altura, res);
 					auto t2 = reloj.now();
-					auto total = duration_cast<microseconds>(t2 - t1).count() + total_estructura;
+					auto total = duration_cast<microseconds>(t2 - t1).count();
 					if (total < mi)	mi = total;
 					iteraciones --;
 					}

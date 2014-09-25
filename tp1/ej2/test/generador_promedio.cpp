@@ -29,6 +29,7 @@ int main(int argc, char** argv){
         if(i!=cant_ed-1)
           cout << " ";
       }
+	cout << endl << 0;
       return 0;
 
 }
