@@ -1,0 +1,12 @@
+f(x)=x*log(x)
+fit f(x) "test_promedio_10000_5_100_1000.txt" using 1:2 via a
+set terminal png 
+set xlabel "Cantidad de Edificios"
+set ylabel "Milisegundos"
+set title "Caso Promedio" 
+set size
+set xrange [0:10000]
+set grid
+set output 'Promedio.png'
+set style data linespoints 
+plot "test_promedio_10000_5_100_1000.txt" using 1:2 lt 1 lw 2 smooth bezier title 'Clock', 1.1*f(x) with lines 
