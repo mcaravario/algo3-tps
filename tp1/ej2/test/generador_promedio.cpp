@@ -6,19 +6,20 @@
 
 using namespace std;
 
-// La funcion recibe la cantidad de edificios a crear y genera una instancia valida aleatoria.
+// La funcion recibe la cantidad de edificios a crear, una semilla y genera una instancia valida aleatoria.
 int main(int argc, char** argv){
 	int cant_ed;
-        cant_ed = atoi(argv[1]);
+  cant_ed = atoi(argv[1]);
+	srand(atoi(argv[2]));
 	cout << cant_ed << " ";
 	for (int i = 0; i < cant_ed; i++){
 		int x1 = rand() % 100;
 		int x2 = rand() % 50;
 		int y = rand() % 200;
 		if(x2 < x1 ){
-                        int c = x2;
+ 		  int c = x2;
 			x2 = x1;
-                        x1 = c;
+    	x1 = c;
 		}		
 		
 		if(y == 0){
