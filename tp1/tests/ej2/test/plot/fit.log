@@ -1,0 +1,284 @@
+
+
+*******************************************************************************
+Thu Sep 25 14:25:47 2014
+
+
+FIT:    data read from "test_promedio_10000_5_100_1000.txt" using 1:2
+        format = x:z
+        #datapoints = 100
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.15897e+11       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 50915.1
+
+initial set of free parameter values
+
+a               = 1
+
+After 3 iterations the fit converged.
+final sum of squares of residuals : 7.89735e+06
+rel. change during last iteration : -2.67929e-08
+
+degrees of freedom    (FIT_NDF)                        : 99
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 282.438
+variance of residuals (reduced chisquare) = WSSR/ndf   : 79771.2
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0874253        +/- 0.0005547    (0.6345%)
+
+
+correlation matrix of the fit parameters:
+
+               a      
+a               1.000 
+
+
+*******************************************************************************
+Thu Sep 25 14:28:26 2014
+
+
+FIT:    data read from "test_promedio_10000_5_100_1000.txt" using 1:2
+        format = x:z
+        #datapoints = 100
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.15897e+11       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 50915.1
+
+initial set of free parameter values
+
+a               = 1
+
+After 3 iterations the fit converged.
+final sum of squares of residuals : 7.89735e+06
+rel. change during last iteration : -2.67929e-08
+
+degrees of freedom    (FIT_NDF)                        : 99
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 282.438
+variance of residuals (reduced chisquare) = WSSR/ndf   : 79771.2
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0874253        +/- 0.0005547    (0.6345%)
+
+
+correlation matrix of the fit parameters:
+
+               a      
+a               1.000 
+
+
+*******************************************************************************
+Thu Sep 25 14:28:33 2014
+
+
+FIT:    data read from "test_promedio_10000_5_100_1000.txt" using 1:2
+        format = x:z
+        #datapoints = 100
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.15897e+11       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 50915.1
+
+initial set of free parameter values
+
+a               = 1
+
+After 3 iterations the fit converged.
+final sum of squares of residuals : 7.89735e+06
+rel. change during last iteration : -2.67929e-08
+
+degrees of freedom    (FIT_NDF)                        : 99
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 282.438
+variance of residuals (reduced chisquare) = WSSR/ndf   : 79771.2
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0874253        +/- 0.0005547    (0.6345%)
+
+
+correlation matrix of the fit parameters:
+
+               a      
+a               1.000 
+
+
+*******************************************************************************
+Thu Sep 25 14:45:11 2014
+
+
+FIT:    data read from "test_promedio_10000_5_100_1000.txt" using 1:2
+        format = x:z
+        #datapoints = 100
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.15897e+11       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 50915.1
+
+initial set of free parameter values
+
+a               = 1
+
+After 3 iterations the fit converged.
+final sum of squares of residuals : 7.89735e+06
+rel. change during last iteration : -2.67929e-08
+
+degrees of freedom    (FIT_NDF)                        : 99
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 282.438
+variance of residuals (reduced chisquare) = WSSR/ndf   : 79771.2
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0874253        +/- 0.0005547    (0.6345%)
+
+
+correlation matrix of the fit parameters:
+
+               a      
+a               1.000 
+
+
+*******************************************************************************
+Thu Sep 25 14:46:58 2014
+
+
+FIT:    data read from "test_promedio_10000_5_100_1000.txt" using 1:2
+        format = x:z
+        #datapoints = 100
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.15897e+11       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 50915.1
+
+initial set of free parameter values
+
+a               = 1
+
+After 3 iterations the fit converged.
+final sum of squares of residuals : 7.89735e+06
+rel. change during last iteration : -2.67929e-08
+
+degrees of freedom    (FIT_NDF)                        : 99
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 282.438
+variance of residuals (reduced chisquare) = WSSR/ndf   : 79771.2
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0874253        +/- 0.0005547    (0.6345%)
+
+
+correlation matrix of the fit parameters:
+
+               a      
+a               1.000 
+
+
+*******************************************************************************
+Thu Sep 25 14:47:39 2014
+
+
+FIT:    data read from "test_promedio_10000_5_100_1000.txt" using 1:2
+        format = x:z
+        #datapoints = 100
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.15897e+11       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 0
+
+initial set of free parameter values
+
+a               = 1
+BREAK:          Singular matrix in Givens()
+
+
+
+*******************************************************************************
+Thu Sep 25 14:47:56 2014
+
+
+FIT:    data read from "test_promedio_10000_5_100_1000.txt" using 1:2
+        format = x:z
+        #datapoints = 100
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+fitted parameters initialized with current variable values
+
+
+
+ Iteration 0
+ WSSR        : 2.15897e+11       delta(WSSR)/WSSR   : 0
+ delta(WSSR) : 0                 limit for stopping : 1e-05
+ lambda	  : 50915.1
+
+initial set of free parameter values
+
+a               = 1
+
+After 3 iterations the fit converged.
+final sum of squares of residuals : 7.89735e+06
+rel. change during last iteration : -2.67929e-08
+
+degrees of freedom    (FIT_NDF)                        : 99
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 282.438
+variance of residuals (reduced chisquare) = WSSR/ndf   : 79771.2
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+
+a               = 0.0874253        +/- 0.0005547    (0.6345%)
+
+
+correlation matrix of the fit parameters:
+
+               a      
+a               1.000 
