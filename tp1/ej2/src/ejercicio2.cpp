@@ -3,7 +3,7 @@ void mostrar_techos(set<intervalo>);
 void mostrar_y(map<int, int> res);
 void mostrar_res(set<vertice>);
 void mostrar_edificio(edificio);
-void insertar(set<intervalo>& is, intervalo i);
+void insertar_y_mergear(set<intervalo>& is, intervalo i);
 bool contenido(set<intervalo>& is, int n);
 
 
@@ -179,7 +179,7 @@ void generar_horizonte(dicc_y& por_altura, set<vertice>& res)
 		if (!contenido(techos, it->x2)) candidatos.insert(it->x2);
 
 		/* Agrego el intervalo que genera el edificio actual a techos. */
-		techos.insert(intervalo(it->x1, it->x2));
+		insertar_y_mergear(techos, intervalo(it->x1, it->x2));
 
 		it++;
 	}
@@ -250,7 +250,7 @@ bool contenido(set<intervalo>& is, int n){
 
 
 /* Esta función inserta un intervalo de forma ordena y mergea si se solapa.*/
-void insertar(set<intervalo>& is, intervalo i){
+void insertar_y_mergear(set<intervalo>& is, intervalo i){
 
 	if (is.empty()){
 		is.insert(i);
