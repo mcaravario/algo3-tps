@@ -1,9 +1,15 @@
 #include "ejercicio3.h"
+#include <chrono>
 
-int main(){
+using namespace std::chrono;
+
+int main(int argc,char* argv[]){
 	int elems;
 	string linea;
 	int umbral;
+	high_resolution_clock reloj;
+	int iteraciones;
+	iteraciones = atoi(argv[1]);
 	while(getline(cin, linea)){
 		if(linea.size()>2){
 			elems = tomar_elementos(linea);
@@ -32,9 +38,16 @@ int main(){
 			res_g.cant = elems;
 			res_g.a_imprimir.resize(elems);
 			vacio.a_imprimir.resize(elems);
-			llenar_camiones(vacio,lista_productos,matriz, umbral,res_g); 
-			mostrar_camiones(res_g);
-			mostrar_res(res_g);
+			size_t minimo = 99999999;
+			while(iteraciones !=0 ){
+				auto t1 = reloj.now();
+				llenar_camiones(vacio,lista_productos,matriz, umbral,res_g); 
+				auto t2= reloj.now();
+				auto total = duration_cast<seconds>(t2 - t1).count();
+				if (total < minimo) minimo = total;
+				iteraciones--;
+			}
+			cout << elems << " " << minimo << endl;
 		}
  	}
 	return 0;

@@ -1,5 +1,16 @@
 #include "ejercicio3.h"
 
+
+void test_minimo(){
+  cout << "3 menor o igual a 5? " << minimo(3,5) << endl;
+  cout << "5 menor o igual a 4? " << minimo(5,4) << endl;
+}
+
+void test_min_coef(list<producto>& Q, vector< vector<coef> > mz){
+  cout << "El minimo es: " << min_coef(Q, mz) << endl;
+}
+
+
 int main(){
 	int elems;
 	string linea;
@@ -32,9 +43,11 @@ int main(){
 			res_g.cant = elems;
 			res_g.a_imprimir.resize(elems);
 			vacio.a_imprimir.resize(elems);
-			llenar_camiones(vacio,lista_productos,matriz, umbral,res_g); 
-			mostrar_camiones(res_g);
-			mostrar_res(res_g);
+      test_minimo();
+      test_min_coef(lista_productos, matriz);
+//			llenar_camiones(vacio,lista_productos,matriz, umbral,res_g); 
+//			mostrar_camiones(res_g);
+//			mostrar_res(res_g);
 		}
  	}
 	return 0;
