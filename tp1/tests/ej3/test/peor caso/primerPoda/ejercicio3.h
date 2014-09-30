@@ -145,45 +145,47 @@ coef min_coef(list<producto>& Q, vector< vector<coef> > mz){
 //PRE: existe un camión en resultado
 bool poda_min(list<producto>& Q, vector< vector<coef> > mz, resultado& res_parcial, unsigned int max_camiones, unsigned int umbral){
 
-  /* Primero me fijo cuantos productos puedo agregar en el camión a medio
+	if(Q.size() > 1 && res_parcial.cant !=0){ 
+	/* Primero me fijo cuantos productos puedo agregar en el camión a medio
    * llenar */
-  auto itp = Q.begin();
-  auto itc = res_parcial.camiones.end();
-  itc--;
-  unsigned int min = min_coef(Q,mz);
-  unsigned int pelig_nuevo = itc->pelig_acum;
-  unsigned int cant_agregados = itc->productos.size();
-  while ((((pelig_nuevo + min*cant_agregados)) <= umbral) && (itp != Q.end()) ){
-    pelig_nuevo += min*cant_agregados;
-    cant_agregados++;
-    itp++;
-  }
-  /* Si se llego al final de la lista de productos, entonces la poda no fue
-    * fructífera*/
-  if (itp == Q.end()) return true;
+  	auto itp = Q.begin();
+  	auto itc = res_parcial.camiones.end();
+		itc--;
+  	unsigned int min = min_coef(Q,mz);
+ 		unsigned int pelig_nuevo = itc->pelig_acum;
+  	unsigned int cant_agregados = itc->productos.size();
+		while ((((pelig_nuevo + min*cant_agregados)) <= umbral) && (itp != Q.end()) ){
+    	pelig_nuevo += min*cant_agregados;
+    	cant_agregados++;
+    	itp++;
+  	}
+  	/* Si se llego al final de la lista de productos, entonces la poda no fue
+    	* fructífera*/
+  	if (itp == Q.end()) return true;
 
-  /* Necesito saber cuantos productos quedan para agregar, para así calcular
-   * la cantidad de camiones que necesito para agregar a todos.
-   **/
-  unsigned productos_restantes = Q.size() - cant_agregados;
+  	/* Necesito saber cuantos productos quedan para agregar, para así calcular
+   	* la cantidad de camiones que necesito para agregar a todos.
+   	**/
+  	unsigned productos_restantes = Q.size() - cant_agregados;
   
-  /* Con un while calculo la cantidad de productos que entran en un camión
-   * vacío.
-   **/
-  unsigned int peligrosidad = 0;
-  unsigned int productos_por_camion = 0;
-  while ( (peligrosidad + min*productos_por_camion) <= umbral){
-    peligrosidad += min*productos_por_camion;
-    productos_por_camion++;
-  }
+  	/* Con un while calculo la cantidad de productos que entran en un camión
+   	* vacío.
+   	**/
+  	unsigned int peligrosidad = 0;
+  	unsigned int productos_por_camion = 0;
+  	while ( (peligrosidad + min*productos_por_camion) <= umbral){
+    	peligrosidad += min*productos_por_camion;
+    	productos_por_camion++;
+  	}
 
-  /* En cant_agregados tengo los productos que entran por camión*/
-  /* Veamos cuantos camiones tengo disponibles, y cuantos necesito para
-   * ocupar con los productos*/
+  	/* En cant_agregados tengo los productos que entran por camión*/
+  	/* Veamos cuantos camiones tengo disponibles, y cuantos necesito para
+   	* ocupar con los productos*/
 
-  unsigned int camiones_disponibles = max_camiones - res_parcial.cant;
-  unsigned int camiones_necesarios = productos_restantes/productos_por_camion + ((productos_restantes%productos_por_camion != 0) ? 1 : 0);
-  return camiones_necesarios < camiones_disponibles;
+		unsigned int camiones_disponibles = max_camiones - res_parcial.cant;
+ 		unsigned int camiones_necesarios = productos_restantes/productos_por_camion + ((productos_restantes%productos_por_camion != 0) ? 1 : 0);
+ 		return camiones_necesarios < camiones_disponibles;
+	}else return true;
 }
 
 void llenar_camiones(resultado& res_parcial, list<producto>& Q, vector<vector<coef> > mz, unsigned int umbral, resultado& res_g){
