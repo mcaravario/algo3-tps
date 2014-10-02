@@ -16,11 +16,10 @@ int main(int argc, char** argv){
 
 void generar_valida(int n,int M){
   int cant_elem = n;
-	int umbral = M +1;
+  int umbral = M+1;
   for(int j = 1; j < cant_elem; j++){
     for(int k =j;k<cant_elem; k++){
-     int  coef = rand() %  umbral;
-			cout << coef << " ";
+      cout << umbral << " ";
     }
     cout << endl;
   }

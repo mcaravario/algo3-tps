@@ -7,7 +7,7 @@ INC=$4
 ITERACIONES=$5
 
 while ((CANT_PRODUCTOS<END)); do
-        ./prom $CANT_PRODUCTOS $UMBRAL | ./ej3test $ITERACIONES
+        ./poda $CANT_PRODUCTOS $UMBRAL | ./ej3test $ITERACIONES
         let CANT_PRODUCTOS=$CANT_PRODUCTOS+$INC
 done
 
