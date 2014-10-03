@@ -6,13 +6,14 @@
 #include <algorithm>
 #include <sstream>
 #include <stdlib.h>
-#define producto int
-#define coef int
+#define MAX_INT 2147483647
+#define producto unsigned int
+#define coef unsigned int
 using namespace std;
 
 struct camion{
 	list<producto> productos;
-	int pelig_acum;
+	unsigned int pelig_acum;
 	camion();
 };
 
@@ -20,8 +21,8 @@ struct camion{
 struct resultado{
 	//INV: cant == camiones.size()
 	list<camion> camiones;
-	int cant;
-	vector<int> a_imprimir;
+  unsigned	int cant;
+	vector<unsigned int> a_imprimir;
 	resultado();
 };
 
@@ -35,7 +36,7 @@ camion::camion(){
 resultado::resultado(){
 	camiones = list<camion>();
 	cant = 0;
-	a_imprimir = vector<int>();
+	a_imprimir = vector<unsigned int>();
 }
 
 int peligrosidad_elem(list<producto>& ls, producto p, vector< vector<coef> > mz){
@@ -52,42 +53,25 @@ int peligrosidad_elem(list<producto>& ls, producto p, vector< vector<coef> > mz)
   return res;
 }
 
-bool es_posible_agregar(resultado& res_parcial, producto p, vector< vector<coef> > mz, int umbral){
+bool es_posible_agregar(resultado& res_parcial, producto p, vector< vector<coef> > mz, unsigned  int umbral){
   if(!res_parcial.cant == 0){															//Si no hay elementos, es posible agregar
     list<camion>::iterator it = res_parcial.camiones.end();
     it--;																									// Se retorcede al ultimo elemnto
-    int peligrosidad = it->pelig_acum;
-    int pelig_nueva = peligrosidad_elem(it->productos,p, mz);
-    if((peligrosidad + pelig_nueva) > umbral){
-      return false;
-    }else return true;
+    unsigned int peligrosidad = it->pelig_acum;
+    unsigned int pelig_nueva = peligrosidad_elem(it->productos,p, mz);
+    return (peligrosidad + pelig_nueva) <= umbral;
   }else return true;
 }
 
 //Esa funcion se encarga de descartar los casos que ya no son solucion. Es decir descar los casos al ir armandose
 //cuando ya superan la cantidad de camiones de la solucion que se guardo anteriormente
-bool sigue_siendo_sol(resultado& r, producto p, vector< vector<coef> > mz, int umbral,resultado& res_g){
-  int cant_camiones = r.cant;
+bool sigue_siendo_sol(resultado& r, producto p, vector< vector<coef> > mz, unsigned int umbral,resultado& res_g){
+  unsigned int cant_camiones = r.cant;
   if(!es_posible_agregar(r,p,mz,umbral)){
     cant_camiones ++;
   }
-  if(cant_camiones < res_g.cant){
-    return true;
-  }else return false;
-
-}
-
-void agregar_producto(resultado& res_parcial, producto p, vector< vector<coef> > mz, int umbral){
-  if (res_parcial.cant == 0 || !es_posible_agregar(res_parcial,p, mz, umbral) ){//Si no es posible agregar un producto, o no existia el 
-    camion nuevo = camion();																										//camion, se tiene que crear el camion y dps agregar
-    res_parcial.camiones.push_back(nuevo);
-    res_parcial.cant++;
-  } else {
-    int pelig_nueva = peligrosidad_elem(res_parcial.camiones.back().productos,p,mz);
-    res_parcial.camiones.back().pelig_acum += pelig_nueva;
-  }
-  res_parcial.camiones.back().productos.push_back(p);
-	res_parcial.a_imprimir[p-1]= res_parcial.cant;
+  
+  return cant_camiones < res_g.cant;
 }
 
 void mostrar_camiones(resultado& ls){
@@ -107,9 +91,22 @@ void mostrar_camiones(resultado& ls){
   cout << endl << endl;
 }
 
+void agregar_producto(resultado& res_parcial, producto p, vector< vector<coef> > mz, unsigned int umbral){
+  if (res_parcial.cant == 0 || !es_posible_agregar(res_parcial,p, mz, umbral) ){//Si no es posible agregar un producto, o no existia  
+    camion nuevo = camion();																										//camion, se tiene que crear el camion y dps agregar
+    res_parcial.camiones.push_back(nuevo);
+    res_parcial.cant++;
+  } else {
+    int pelig_nueva = peligrosidad_elem(res_parcial.camiones.back().productos,p,mz);
+    res_parcial.camiones.back().pelig_acum += pelig_nueva;
+  }
+  res_parcial.camiones.back().productos.push_back(p);
+	res_parcial.a_imprimir[p-1]= res_parcial.cant;
+}
+
 void mostrar_res(resultado& ls){
   cout << ls.cant;
-  vector<int>::iterator it = ls.a_imprimir.begin();
+  auto it = ls.a_imprimir.begin();
   while(it != ls.a_imprimir.end()){
     cout <<" " << *it;
 		it++;
@@ -117,22 +114,32 @@ void mostrar_res(resultado& ls){
 	cout << endl;
 }
 
-void llenar_camiones(resultado& res_parcial, list<producto>& Q, vector< vector<coef> > mz, int umbral, resultado& res_g){
+inline coef minimo(coef a, coef b){
+  return (a <= b) ? a : b;
+}
+
+
+void llenar_camiones(resultado& res_parcial, list<producto>& Q, vector<vector<coef> > mz, unsigned int umbral, resultado& res_g){
   if (Q.empty()){
     res_g = res_parcial;
   }else{
     list<producto>::iterator it = Q.begin();
     while(it != Q.end()){
-      if(sigue_siendo_sol(res_parcial,*it,mz, umbral, res_g)){
+      
+			if(sigue_siendo_sol(res_parcial,*it,mz, umbral, res_g)){
+        
         resultado res_parcial_copy = resultado();
 				res_parcial_copy = res_parcial;
         list<producto> Q_copy = Q;
-        agregar_producto(res_parcial_copy,*it,mz, umbral);
-        list<producto>::iterator itp = find(Q_copy.begin(),Q_copy.end(),*it);
+				
+				agregar_producto(res_parcial_copy,*it,mz, umbral);
+        
+				list<producto>::iterator itp = find(Q_copy.begin(),Q_copy.end(),*it);
         Q_copy.erase(itp);
-        llenar_camiones(res_parcial_copy,Q_copy, mz, umbral, res_g);
-      }
-        it++;
+        
+				llenar_camiones(res_parcial_copy,Q_copy, mz, umbral, res_g);
+			}
+			it++;
     }
   }
 }
@@ -150,7 +157,7 @@ int tomar_umbral(string linea){
   string umbral;
   getline(l,umbral,' ');
   getline(l,umbral,' ');
-  int um = atoi(umbral.c_str());
+  unsigned int um = atoi(umbral.c_str());
   return um;
 }
 
