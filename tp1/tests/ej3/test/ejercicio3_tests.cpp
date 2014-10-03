@@ -35,7 +35,7 @@ int main(int argc,char* argv[]){
 			lista_productos.push_back(i+1);
 			//peor solucion
 			resultado res_g = resultado();
-			res_g.cant = elems;
+			res_g.cant = elems+1;
 			res_g.a_imprimir.resize(elems);
 			vacio.a_imprimir.resize(elems);
 			size_t minimo = 999999999;
