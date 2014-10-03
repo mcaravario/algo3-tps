@@ -5,6 +5,7 @@
 using namespace std;
 
 
+/******* ESTRUCTURAS UTILIZADAS *******/
 
 struct edificio{
 	edificio(int a, int b, int c) : x1(a), y(b), x2(c) {}
@@ -21,14 +22,13 @@ struct vertice{
 	int y;			
 };
 
-struct intervalo{
-	intervalo(const intervalo& i) : a(i.a), b(i.b) {}
-	intervalo(const int& c, const int& d) : a(c), b(d) {}			
-	bool operator<(intervalo) const;
+struct techo{
+	techo(const techo& i) : a(i.a), b(i.b) {}
+	techo(const int& c, const int& d) : a(c), b(d) {}			
+	bool operator<(techo) const;
 	int a;
 	int b;			
 };
-
 
 /* Clase comparadora para ordenar set por y. Para ordenar decrecientemente. (Mas alto al principio) */
 struct cmp_y{
@@ -37,14 +37,14 @@ struct cmp_y{
 	}			
 };
 
-/* Clase comparadora para odernar el set por b  (segundo componente de intervalo) de forma creciente. */
+/* Clase comparadora para odernar el set por b  (segundo componente de techo) de forma creciente. */
 struct cmp_b{
-	bool operator()(const intervalo& u, const intervalo& v) const{
+	bool operator()(const techo& u, const techo& v) const{
 		return (u.b < v.b) || (u.b == v.b && u.a < v.a);
 	}			
 };
 
-bool intervalo::operator<(intervalo otro) const{
+bool techo::operator<(techo otro) const{
 	return (this->a < otro.a) || (this->a == otro.a && this->b < otro.b); 
 } 
 
@@ -57,3 +57,30 @@ bool vertice::operator<(vertice otro) const{
 bool edificio::operator<(edificio other) const{
 		return ((this->x1 < other.x1) || ((this->x1 == other.x1) && (this->y > other.y)) ||  ((this->x1 == other.x1) && (this->y == other.y) && (this->x2 < other.x2)) );
 }
+
+/******* DECLARACION DE FUNCIONES ********/
+
+
+void merge(dicc_y& por_altura, dicc_y::iterator it, edificio ed);
+
+void merge2(dicc_y& por_altura, dicc_y::iterator menor, dicc_y::iterator mayor, edificio ed);
+
+void generar_edificios_ordenados(int cant_ed, dicc_y& por_altura);
+
+void generar_horizonte(dicc_y& por_altura, set<vertice>& res);
+
+void mostrar_res(set<vertice> res);
+
+void insertar_y_mergear(set<techo>& is, techo i);
+
+void mostrar_techos(set<techo>);
+
+void mostrar_y(map<int, int> res);
+
+void mostrar_res(set<vertice>);
+
+void insertar_y_mergear(set<techo>& is, techo i);
+
+bool contenido(set<techo>& is, int n);
+
+
