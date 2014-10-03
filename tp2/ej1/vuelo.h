@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <sstream>
 #include <stdlib.h>
+#include <map>
 
 using namespace std; 
 
@@ -26,17 +27,6 @@ struct ordenar_menor_por_llegada
   }
 };
 
-struct ciudad{
-  priority_queue<vuelo, vector<vuelo>, ordenar_menor_por_llegada> vuelos;
-  string nombre;
-  ciudad();
-};
-
-struct mundo{
-  list<ciudad> ciudades;
-  mundo();
-};
-
 struct resultado{
   list<int> itinerario; 
   int cant;
@@ -44,21 +34,15 @@ struct resultado{
   resultado();
 };
 
+typedef std::priority_queue<vuelo,vector<vuelo>,ordenar_menor_por_llegada> cola_vuelos;
+typedef std::map<string, cola_vuelos> mundo;
+
 vuelo::vuelo(){
   salida = 0;
   llegada = 0;
   origen = "ciudad vacia";
   destino = "ciudad vacia";
-  id = 1000000 ;	
-}
-
-mundo::mundo(){
-  ciudades = list<ciudad>();	
-}
-
-ciudad::ciudad(){
-  vuelos = priority_queue<vuelo, vector<vuelo>, ordenar_menor_por_llegada>();
-  nombre = "ciudad vacia";
+  id = 0 ;	
 }
 
 resultado::resultado(){
@@ -67,48 +51,39 @@ resultado::resultado(){
   fin = 0;
 }
 
-vuelo proximo_vuelo(ciudad& destino, int& hora, vector<bool>& vuelos)
+vuelo proximo_vuelo(cola_vuelos disponibles, int& hora, vector<bool>& habilitados)
 {
   vuelo candidato;
-  priority_queue<vuelo, vector<vuelo>, ordenar_menor_por_llegada> disponibles = destino.vuelos;
-  while(!disponibles.empty()){
+  while(!(disponibles.empty())){
+    if (hora <= 0 ) break;
     candidato = disponibles.top();
     disponibles.pop();
-    if (hora <= 0 ) hora = 2;
-    if(candidato.llegada <= (hora-2) && vuelos[candidato.id]){
-      vuelos[candidato.id] = false;
+    if(candidato.llegada <= (hora-2) && habilitados[candidato.id]){
+      habilitados[candidato.id] = false;
       return candidato;
     }
   }
 return vuelo();
 }
 
-ciudad buscar_ciudad(mundo& m, string& target)
-{
-  list<ciudad>::iterator first = m.ciudades.begin(); 
-  list<ciudad>::iterator last = m.ciudades.end();
-  while (first != last){
-    if (first->nombre == target) return *first;
-      ++first;
-    }
-  return *last;
-}
-
-resultado armar_ruta(ciudad& destino, ciudad& origen, vector<bool>& vuelos, mundo& m, int& hora_max)
-{
-  ciudad ciudad_anterior = ciudad();
-  int hora_anterior = 0; 
-  ciudad ciudad_a_revisar = destino;
+resultado armar_ruta(string& destino, string& origen, vector<vuelo>& vuelos, mundo& m)
+{ 
+  mundo::iterator ciudad_a_revisar = m.find(destino);
   resultado result;
-  int hora = hora_max +2;
-    while(ciudad_a_revisar.nombre != origen.nombre){
-      vuelo candidato = proximo_vuelo(ciudad_a_revisar, hora, vuelos);
+  vector<bool> habilitados(vuelos.size() , true);
+  int hora = m.find(destino)->second.top().llegada +2;
+    while(ciudad_a_revisar->first != origen){
+      vuelo candidato = proximo_vuelo(ciudad_a_revisar->second, hora, habilitados);
       if(candidato.origen == "ciudad vacia"){
         if(result.itinerario.empty()){
           break;
         }else{
- 	  ciudad_a_revisar = ciudad_anterior;
-	  hora = hora_anterior;
+ 	  ciudad_a_revisar = m.find(vuelos[result.itinerario.front()].destino);
+	  if(ciudad_a_revisar->first == destino){
+	    hora = ciudad_a_revisar->second.top().llegada +2;
+	  }else{
+	    hora = vuelos[result.itinerario.front()].llegada + 2;
+	  }
   	  result.itinerario.pop_front();
 	  result.cant--;
 	  continue;
@@ -116,11 +91,9 @@ resultado armar_ruta(ciudad& destino, ciudad& origen, vector<bool>& vuelos, mund
       }else{
 	result.itinerario.push_front(candidato.id);
 	result.cant++; 
-	if(ciudad_a_revisar.nombre == destino.nombre) result.fin = candidato.llegada;
-	ciudad_anterior = ciudad_a_revisar;
-	hora_anterior = hora;
-	hora = candidato.salida;
-	ciudad_a_revisar = buscar_ciudad(m, candidato.origen); 
+	if(ciudad_a_revisar->first == destino) result.fin = candidato.llegada;
+        hora = candidato.salida;
+	ciudad_a_revisar = m.find(candidato.origen);
       }
     }
 return result;
