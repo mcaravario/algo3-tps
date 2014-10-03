@@ -43,7 +43,7 @@ int main(int argc,char* argv[]){
 				auto t1 = reloj.now();
 				llenar_camiones(vacio,lista_productos,matriz, umbral,res_g); 
 				auto t2= reloj.now();
-				auto total = duration_cast<microseconds>(t2 - t1).count();
+				auto total = duration_cast<seconds>(t2 - t1).count();
 				if (total < minimo) minimo = total;
 				iteraciones--;
 			}
