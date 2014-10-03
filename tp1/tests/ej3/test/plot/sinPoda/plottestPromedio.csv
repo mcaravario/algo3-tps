@@ -1,0 +1,14 @@
+fac(x) = (int(x)==0) ? 1.0 : int(x) * fac(int(x)-1.0)
+#f(x)= fac(x)
+#g(x) =a*x
+#fit f(x) "test_promedio_3_15_14_1_5.txt" using 1:2 via a
+set terminal png 
+set xlabel "Cantidad de Productos"
+set ylabel "Microsegundos"
+set title "Caso Promedio" 
+set grid
+set output 'ej3_caso_promedio.png'
+set style data linespoints 
+set autoscale x
+plot "test_promedio_3_15_14_1_5.txt" using 1:2 lt -1 lw 3 smooth bezier title 'Ej 1'#, f(x) lt "gray" lw 3 title 'f(x)=a*x'
+

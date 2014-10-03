@@ -1,0 +1,10 @@
+f(x)=a*x
+fit f(x) "test_malo_15_1000_1000000_500_50.txt" using ($1/100):2 via a
+set terminal png 
+set xlabel "Cantidad de Tablones(x100)"
+set ylabel "Microsegundos"
+set title "Peor caso" 
+set grid
+set output 'peor_caso.png'
+set style data linespoints 
+plot "test_malo_15_1000_1000000_500_50.txt" using ($1/100):2 lt -1 lw 3 smooth bezier title 'Ej 1', 1.1*f(x) lt "gray" lw 3 title 'f(x)=a*x' 
