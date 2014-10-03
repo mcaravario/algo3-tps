@@ -193,7 +193,7 @@ void llenar_camiones(resultado& res_parcial, list<producto>& Q, vector<vector<co
     list<producto>::iterator it = Q.begin();
     while(it != Q.end()){
       
-			if(sigue_siendo_sol(res_parcial,*it,mz, umbral, res_g)){
+			if(poda_min(Q,mz, res_parcial,umbral,res_g.cant) && sigue_siendo_sol(res_parcial,*it,mz, umbral, res_g)){
         
         resultado res_parcial_copy = resultado();
 				res_parcial_copy = res_parcial;
@@ -227,49 +227,4 @@ int tomar_umbral(string linea){
   unsigned int um = atoi(umbral.c_str());
   return um;
 }
-
-/* Devuelve TRUE si todos los coeficientes del producto son mayores o iguales al umbral.
- * Esta funcion tiene una complejidad lineal en la cant de productos, pues recorre todos 
- * los productos.
- **/
-bool supera_siempre_umbral(list<producto>& ls, producto p, vector<vector<coef> > mz, unsigned int umbral){
-	auto it = ls.begin();
-	bool res = true;
-	while(it != ls.end() && res){
-  	if(*it < p){
-   		res = res &&  (mz[(*it)-1][p-1-(*it)] >= umbral);
-		}else if (p != *it) {
-		// No tiene sentido preguntar por el coeficiente de sí mismo.
-	   	res = res && (mz[p-1][(*it)-1-p] >= umbral);
-    }
-    it++;
-  }
-	return res;
-}
-
-/* Este algoritmo aisla a todos los productos cuyos coeficientes asociados
- * son mayores o iguales al umbral, poniéndolos en un camión propio,
- * (uno por cada producto).
- * Esta poda se invoca al iniciar el algoritmo que resuelve el pro blema,
- * entonces sé que no Q está llena, y res_parcial vacía.
- * La complejidad es cuadrática en la cantidad de productos, pues para cada
- * uno reviso sus coeficientes, que son tantos como productos hay.
- **/
-void poda_peligrosa(resultado& res_parcial, list<producto>& Q, vector<vector<coef> > mz, unsigned int umbral){
-	auto it = Q.begin();
-	while(it != Q.end()){
-		auto it3 = Q.begin();
-		if (supera_siempre_umbral(Q, *it, mz, umbral)){
-			camion nuevo = camion();
-			nuevo.productos.push_back(*it);
-			res_parcial.camiones.push_back(nuevo);
-			res_parcial.cant++;
-			res_parcial.a_imprimir[*it-1] = res_parcial.cant;
-			auto it2 = it;
-			it++;
-			Q.erase(it2);
-		} else it++;
-	}
-}
-
 

@@ -24,12 +24,14 @@ int main(){
 					j++;
 				}
 				lista_productos.push_back(i+1);
+				cout << i+1 << " ";
       	i++;
 			}
 			lista_productos.push_back(i+1);
+			cout << i+1 << endl;
 			//peor solucion
 			resultado res_g = resultado();
-			res_g.cant = elems;
+			res_g.cant = elems +1;
 			res_g.a_imprimir.resize(elems);
 			vacio.a_imprimir.resize(elems);
 			poda_peligrosa(vacio, lista_productos, matriz, umbral);

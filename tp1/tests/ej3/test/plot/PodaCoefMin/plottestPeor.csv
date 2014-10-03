@@ -1,0 +1,11 @@
+set terminal png 
+set xlabel "Cantidad de Productos"
+set ylabel "Microsegundos"
+set title "Poda: Coeficiente mínimo" 
+set grid
+set output 'ej3_poda_coef_min.png'
+set style data linespoints 
+set autoscale x
+plot "test_peor_3_15_14_1_1.txt" using 1:2 lt -1 lw 3 smooth bezier title 'Ej 3'
+
+
