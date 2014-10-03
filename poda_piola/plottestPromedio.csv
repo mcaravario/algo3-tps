@@ -1,0 +1,9 @@
+set terminal png 
+set xlabel "Cantidad de productos"
+set ylabel "Microsegundos"
+set title "Caso promedio con y sin poda" 
+set size
+set grid
+set output 'comparacion_con_y_sin_poda.png'
+set style data linespoints 
+plot "res_test_poda_2_6_14_1_5.out" using 1:2 lt 1 lw 2 smooth bezier title 'con poda', "res_test_sin_poda_2_6_14_1_5.out" using 1:2 smooth bezier title 'sin poda' with lines 
