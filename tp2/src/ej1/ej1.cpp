@@ -14,7 +14,6 @@ int main(int argc,char* argv[])
   cin >> cantVuelos;
   vectorVuelos.resize(cantVuelos+1);
   vectorVuelos[0] = vuelo();
-  cola_vuelos vuelosLoad; 
   for(i = 0; i < cantVuelos; i++){ 
     string origenV;
     string destinoV;
@@ -31,12 +30,13 @@ int main(int argc,char* argv[])
     load.llegada = fin;
     load.id = i+1;
     if (m.count(destinoV) == 0){
+      cola_vuelos vuelosLoad; 
       vuelosLoad.push(load);
       m.insert(pair<string,cola_vuelos>(destinoV, vuelosLoad));
     }else{
       m.find(destinoV)->second.push(load);
     }
-    if (m.count(origenV) == 0) m.insert(pair<string,cola_vuelos>(origenV, vuelosLoad));
+    if (m.count(origenV) == 0) m.insert(pair<string,cola_vuelos>(origenV, cola_vuelos()));
     vectorVuelos[i+1] = load;
   }
   resultado res = armar_ruta(destino, origen, vectorVuelos, m);
