@@ -1,15 +1,19 @@
-//typedef vector< vector<int> > matriz
 #include <utility>
 #include <iostream>
 #include <tuple>
-
+#include <vector>
+#include <queue>
+#include <list>
 using namespace std;
+typedef vector<vector<int> > matriz_int;
+
+
 
 /*Esta funcion devuelve true si no hay solucion y false en caso contrario */ 
-bool no_hay_sol(int** matriz, int n){
+bool no_hay_sol(matriz_int mz, int n){
 	for(int i = 0; i < n; i++){
 		for (int j = 0; j < n; j++){
-			if(matriz[i][j] == -1){
+			if(mz[i][j] == -1){
 				return true;
 			}
 		}
@@ -21,7 +25,7 @@ return false;
 
 /* Esta funcion modifica la primer matriz, dejando la suma de todas las
 matrices pasadas como parametro */
-void sumar_matrices(int** matriz_res, int*** matrices_caballos, int n, int k){
+void sumar_matrices(matriz_int&  matriz_res, vector<matriz_int>& matrices_caballos, int n, int k){
 	
 	//inicializo el resultado en 0
 	for(int i = 0; i < n; i++){
@@ -45,8 +49,9 @@ void sumar_matrices(int** matriz_res, int*** matrices_caballos, int n, int k){
 		}
 	}
 }
-
-tuple<int,int,int> buscar_minimo(int** matriz, int n){
+/* Esta funcion devuelve el minimo de la matriz, junto con la respectiva
+ * fila y columna del valor */
+tuple<int,int,int> buscar_minimo(matriz_int matriz, int n){
 	/*inicializo el resultado con el valor del primer casillero de
 	 * la matriz*/
 	tuple<int,int,int> res(matriz[0][0],0,0) ;
@@ -61,11 +66,56 @@ tuple<int,int,int> buscar_minimo(int** matriz, int n){
 return res;
 
 }
+/* Devuelve true si la posicion i,j es valida dentro del tablero de n*n */ 
+inline bool es_valido(int i, int j, int n){	
+	return (i < n && j < n && i >= 0 && j >= 0);
+}
+
+/* Calcula los casilleros alcanzables por un caballo desde una determinada posicion*/
+void calcular_vecinos(list<pair<int,int> > vecinos, pair<int,int> actual, int n){
+	int i = get<0>(actual);	
+	int j = get<1>(actual);	
+
+	if(es_valido(i+1,j-2,n)) vecinos.push_back(pair<int,int>(i+1,j-2));
+	if(es_valido(i+1,j+2,n)) vecinos.push_back(pair<int,int>(i+1,j+2));
+	if(es_valido(i-1,j-2,n)) vecinos.push_back(pair<int,int>(i-1,j-2));
+	if(es_valido(i-1,j+2,n)) vecinos.push_back(pair<int,int>(i-1,j+2));
+	if(es_valido(i-2,j+1,n)) vecinos.push_back(pair<int,int>(i-2,j+1));
+	if(es_valido(i-2,j-1,n)) vecinos.push_back(pair<int,int>(i-2,j-1));
+	if(es_valido(i+2,j+1,n)) vecinos.push_back(pair<int,int>(i+2,j+1));
+	if(es_valido(i+2,j-1,n)) vecinos.push_back(pair<int,int>(i+2,j-1));
+
+} 
+
+
+/*Esta funcion llena la matriz, con el costo de movimientos de cada caballo a su respectivo casillero
+ * comenzando por la posicion pasada como parametro. */
+void calcular_posiciones(matriz_int matriz, pair<int,int> pos, int n){
+	queue<pair<int,int> > proximos_casilleros;
+	proximos_casilleros.push(pos);
+
+	while(!proximos_casilleros.empty()){
+		pair<int,int> actual = proximos_casilleros.front();
+		list<pair<int,int> > vecinos;
+		proximos_casilleros.pop();
+		calcular_vecinos(vecinos,actual,n);
+		auto it = vecinos.begin();
+
+		//Reviso a los vecinos y actualizo sus valores segun corresponda.
+		while(it != vecinos.end()){
+			if(matriz[get<0>(*it)][get<1>(*it)] < 0){
+				matriz[get<0>(*it)][get<1>(*it)] = matriz[get<0>(actual)][get<1>(actual)] + 1;
+				proximos_casilleros.push(*it);	
+			}
+			it++;
+		}
+	}
+}
 
 // Esta funcion devuelve una terna con m f c.
 tuple<int, int, int> caballos_salvajes(int n, int k, pair<int, int> posiciones_caballos[]){
 
-	int matrices_caballos[k][n][n];
+	vector<matriz_int> matrices_caballos(k, vector<vector<int> >(n, vector<int>(n))) ;
 	
 	/* LLeno la matriz con -1 para indicar las posiciones invalidas */
 	for(int h = 0; h < k; h++){
@@ -83,13 +133,13 @@ tuple<int, int, int> caballos_salvajes(int n, int k, pair<int, int> posiciones_c
 	for(int i = 0; i<k; i++){
 		pair<int, int> pos = posiciones_caballos[i];
 		matrices_caballos[i][get<0>(pos)][get<1>(pos)] = 0;
-		calcular_posiciones(matrices_caballos[i],pos);
+		calcular_posiciones(matrices_caballos[i],pos,n);
 	}
 	
-	int matriz_res[n][n];
+	matriz_int  matriz_res(n, vector<int>(n));
 	sumar_matrices(matriz_res, matrices_caballos,n,k);
 
-	if(no_hay_sol(matriz_res)){
+	if(no_hay_sol(matriz_res,n)){
 		/* Si no hay solucion devuelvo -1 */
 		tuple<int, int, int> res(-1, -1, -1);
 		return res;
