@@ -9,17 +9,18 @@ typedef vector<vector<int> > matriz_int;
 
 
 
-/*Esta funcion devuelve true si no hay solucion y false en caso contrario */ 
+/*Esta funcion devuelve true si no hay solucion, es decir que todos los valores
+ * son -1,  y false en caso contrario */ 
 bool no_hay_sol(matriz_int mz, int n){
 	for(int i = 0; i < n; i++){
 		for (int j = 0; j < n; j++){
-			if(mz[i][j] == -1){
-				return true;
+			if(mz[i][j] != -1){
+				return false;
 			}
 		}
 	}
 
-return false;
+return true;
 }
 
 
@@ -55,6 +56,14 @@ tuple<int,int,int> buscar_minimo(matriz_int matriz, int n){
 	/*inicializo el resultado con el valor del primer casillero de
 	 * la matriz*/
 	tuple<int,int,int> res(matriz[0][0],0,0) ;
+/*
+	for(int i = 0; i<n; i++){
+			for (int j = 0; j<n ; j++){
+				cout << matriz[i][j] << " ";
+			}
+			cout << endl;
+		}
+*/
 	for(int i = 0; i<n; i++){
 		for (int j = 0; j<n ; j++){
 			if(get<0>(res) > matriz[i][j]){
@@ -72,11 +81,13 @@ inline bool es_valido(int i, int j, int n){
 }
 
 /* Calcula los casilleros alcanzables por un caballo desde una determinada posicion*/
-void calcular_vecinos(list<pair<int,int> > vecinos, pair<int,int> actual, int n){
+void calcular_vecinos(list<pair<int,int> > &vecinos, pair<int,int> actual, int n){
 	int i = get<0>(actual);	
 	int j = get<1>(actual);	
 
-	if(es_valido(i+1,j-2,n)) vecinos.push_back(pair<int,int>(i+1,j-2));
+	if(es_valido(i+1,j-2,n)){
+		vecinos.push_back(pair<int,int>(i+1,j-2));
+	}	
 	if(es_valido(i+1,j+2,n)) vecinos.push_back(pair<int,int>(i+1,j+2));
 	if(es_valido(i-1,j-2,n)) vecinos.push_back(pair<int,int>(i-1,j-2));
 	if(es_valido(i-1,j+2,n)) vecinos.push_back(pair<int,int>(i-1,j+2));
@@ -90,7 +101,7 @@ void calcular_vecinos(list<pair<int,int> > vecinos, pair<int,int> actual, int n)
 
 /*Esta funcion llena la matriz, con el costo de movimientos de cada caballo a su respectivo casillero
  * comenzando por la posicion pasada como parametro. */
-void calcular_posiciones(matriz_int matriz, pair<int,int> pos, int n){
+void calcular_posiciones(matriz_int &matriz, pair<int,int> pos, int n){
 	queue<pair<int,int> > proximos_casilleros;
 	proximos_casilleros.push(pos);
 
@@ -108,12 +119,20 @@ void calcular_posiciones(matriz_int matriz, pair<int,int> pos, int n){
 				proximos_casilleros.push(*it);	
 			}
 			it++;
-		}
+		}/*
+	for(int i = 0; i<n; i++){
+		for (int j = 0; j<n ; j++){
+			cout << matriz[i][j] << " ";
+			}
+		cout << endl;
+	}
+	cout << endl;
+	*/
 	}
 }
 
 // Esta funcion devuelve una terna con m f c.
-tuple<int, int, int> caballos_salvajes(int n, int k, pair<int, int> posiciones_caballos[]){
+void caballos_salvajes(int n, int k, pair<int, int> posiciones_caballos[], tuple<int,int,int> &res){
 
 	vector<matriz_int> matrices_caballos(k, vector<vector<int> >(n, vector<int>(n))) ;
 	
@@ -130,24 +149,35 @@ tuple<int, int, int> caballos_salvajes(int n, int k, pair<int, int> posiciones_c
 	Asigno las posiciones iniciales de cada caballo en 0 y lleno su
 	respectiva matriz, calculando la distancia a cada casillero	
 	*/
-	for(int i = 0; i<k; i++){
-		pair<int, int> pos = posiciones_caballos[i];
-		matrices_caballos[i][get<0>(pos)][get<1>(pos)] = 0;
-		calcular_posiciones(matrices_caballos[i],pos,n);
+	for(int h = 0; h<k; h++){
+		pair<int, int> pos = posiciones_caballos[h];
+		matrices_caballos[h][get<0>(pos)][get<1>(pos)] = 0;
+		calcular_posiciones(matrices_caballos[h],pos,n);
+	
 	}
 	
 	matriz_int  matriz_res(n, vector<int>(n));
 	sumar_matrices(matriz_res, matrices_caballos,n,k);
 
+/*
+	for(int i = 0; i<n; i++){
+		for (int j = 0; j<n ; j++){
+			cout << matriz_res[i][j];
+			}
+		cout << endl;
+	}
+*/	
 	if(no_hay_sol(matriz_res,n)){
 		/* Si no hay solucion devuelvo -1 */
-		tuple<int, int, int> res(-1, -1, -1);
-		return res;
+		tuple<int, int, int> result(-1, -1, -1);
+		res = result;
+	}else{
+	
+	tuple<int, int, int> result = buscar_minimo(matriz_res,n);
+	res = result;
+
+
 	}
-	
-	tuple<int, int, int> res = buscar_minimo(matriz_res,n);
-	
-	return res;
 	
 }
 
@@ -169,16 +199,14 @@ int main(int argc, char** argv){
 		posiciones_caballos[i] = par;	
 	}
 	
-	//tuple<int,int,int> res ;
-	auto res = caballos_salvajes(n,k,posiciones_caballos);
-	
+	tuple<int,int,int> res ;
+	caballos_salvajes(n,k,posiciones_caballos,res);
+
 	if(get<0>(res) == -1){
 		cout << "NO" << endl;
+	}else{
+		cout <<  get<1>(res) << " " << get<2>(res) << " " << get<0>(res);
 	}
-	
-	
-	cout << get<1>(res) << " " << get<2>(res) << " " << get<0>(res);
-	
 	return 0;
 	}
 
