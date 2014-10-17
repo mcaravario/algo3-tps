@@ -183,10 +183,11 @@ void caballos_salvajes(int n, int k, pair<int, int> posiciones_caballos[], tuple
 }
 
 
-//Recibe la cantidad de iteraciones a realizar
+//Recibe la cantidad de iteraciones a realizar y cantidad de casilleros
 int main(int argc, char** argv){
 	
 	int iteraciones = atoi(argv[1]);
+	int cant_casilleros = atoi(argv[2]);
 	int n,k;
 	cin >> n;
 	cin >> k;
@@ -215,7 +216,7 @@ int main(int argc, char** argv){
 	iteraciones--;
 	}
 	
-	cout << n << " " << mi << endl; 
+	cout << cant_casilleros << " " << mi << endl; 
 /*	
 	if(get<0>(res) == -1){
 		cout << "NO" << endl;
