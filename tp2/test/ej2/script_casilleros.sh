@@ -8,6 +8,6 @@ ITERACIONES=$5
 SEM=$6
 
 while ((INI<CANTIDAD_CASILLEROS)); do
-        ./gen $INI $CANTIDAD_CABALLOS $SEM | ./ej2test $ITERACIONES
+        ./gen $INI $CANTIDAD_CABALLOS $SEM | ./ej2test $ITERACIONES $INI
         let INI=$INI+$INC
 done
