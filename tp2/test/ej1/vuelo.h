@@ -51,13 +51,13 @@ resultado::resultado(){
   fin = 0;
 }
 
-vuelo proximo_vuelo(cola_vuelos disponibles, int& hora, vector<bool>& habilitados)
+vuelo proximo_vuelo(cola_vuelos& disponibles, int& hora, vector<bool>& habilitados)
 {
   vuelo candidato;
-  while(!(disponibles.empty())){
+  while(!(disponibles.empty())){ //O(1)
     if (hora <= 0 ) break;
-    candidato = disponibles.top();
-    disponibles.pop();
+    candidato = disponibles.top(); //O(1)
+    disponibles.pop(); // 2logn
     if(candidato.llegada <= (hora-2) && habilitados[candidato.id]){
       habilitados[candidato.id] = false;
       return candidato;
@@ -69,22 +69,22 @@ return vuelo();
 resultado armar_ruta(string& destino, string& origen, vector<vuelo>& vuelos, mundo& m)
 { 
   mundo::iterator ciudad_a_revisar = m.find(destino);
-  resultado result;
-  vector<bool> habilitados(vuelos.size() , true);
-  int hora = m.find(destino)->second.top().llegada +2;
-    while(ciudad_a_revisar->first != origen){
-      vuelo candidato = proximo_vuelo(ciudad_a_revisar->second, hora, habilitados);
+  resultado result = resultado();
+  vector<bool> habilitados(vuelos.size() , true); // n
+  int hora = m.find(destino)->second.top().llegada +2; //log n
+    while(ciudad_a_revisar->first != origen){ // n * 3 logn
+      vuelo candidato = proximo_vuelo(ciudad_a_revisar->second, hora, habilitados); // 2logn
       if(candidato.origen == "ciudad vacia"){
         if(result.itinerario.empty()){
           break;
         }else{
- 	  ciudad_a_revisar = m.find(vuelos[result.itinerario.front()].destino);
+ 	  ciudad_a_revisar = m.find(vuelos[result.itinerario.front()].destino); // log n
 	  if(ciudad_a_revisar->first == destino){
 	    hora = ciudad_a_revisar->second.top().llegada +2;
 	  }else{
 	    hora = vuelos[result.itinerario.front()].llegada + 2;
 	  }
-  	  result.itinerario.pop_front();
+  	  result.itinerario.pop_front(); //O(1)
 	  result.cant--;
 	  continue;
         }
@@ -93,7 +93,7 @@ resultado armar_ruta(string& destino, string& origen, vector<vuelo>& vuelos, mun
 	result.cant++; 
 	if(ciudad_a_revisar->first == destino) result.fin = candidato.llegada;
         hora = candidato.salida;
-	ciudad_a_revisar = m.find(candidato.origen);
+	ciudad_a_revisar = m.find(candidato.origen); //log n
       }
     }
 return result;
