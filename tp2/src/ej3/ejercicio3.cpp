@@ -6,8 +6,8 @@ int main(){
 	int cant_vertices;
 	cin >>cant_nodos;
 	cin >> cant_vertices;
-	string linea;
-	vector <costo> costos(cant_nodos, 0);
+//	string linea;
+	vector<costo> costos(cant_nodos, 0);
 	matriz_adya matriz(cant_nodos, costos);
 	int max = 0;
 	for(int i = 0; i < cant_vertices ; i++){
@@ -21,7 +21,7 @@ int main(){
 		//Maximo costo
 		if(max < c) max = c;
 	}
-	
+	mostrar_result(armar_AGM(matriz, max, cant_nodos));	
 	mostrar_matriz_adya(matriz);
 	cout << "Maximo costo: " << max << endl;
 	return 0;
