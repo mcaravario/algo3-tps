@@ -51,9 +51,11 @@ bool hay_solucion(vector<costo>& revisar, int maximo)
 	return !(it==revisar.end());
 }
 
-enlace menor_no_utilizado()
+enlace menor_no_utilizado(list<enlace>& disponibles, list<enlace>& usados, matriz_adya& adyacencias)
 {
 //devuelve el enlace no utilizado con menor peso
+//los no usados se hacen sacando la diferencia disponibles - usados
+//se saca usando la matriz de adyacencias el de menor peso
 }
 
 list<int> armar_medio(int comienzo, vector<int>& padre)
@@ -95,21 +97,25 @@ list<enlace> armar_anillo(list<int>& uno, list<int>& dos)
 	return res;
 }
 
-result armar_resultado(vector<int>& padre_de, int cantidad, matriz_adya& adyacencias)
+result armar_resultado(vector<int>& padre_de, int cantidad, matriz_adya& adyacencias, list<enlace>& disponibles, list<enlace>& usados)
 {
 	result res;
-	enlace comienzo_anillo = menor_no_utilizado();
+	enlace comienzo_anillo = menor_no_utilizado(disponibles, usados, adyacencias);
 	list<int> medio1= armar_medio(comienzo_anillo.first, padre_de);
 	list<int> medio2= armar_medio(comienzo_anillo.second, padre_de);
 	res.anillo = armar_anillo(medio1, medio2);
+	res.cant_anillo = res.anillo.size();
 
 	for (int i = 1; i < cantidad; i++){
 		res.c = res.c + adyacencias[i][padre_de[i]];
 	}
+	//falta generar la red, osea usados - anillos
+	//res.red = diferencia usados - anillo
+	//res.cant_red = res.red.size();
 	return res;
 }
 
-result armar_AGM(matriz_adya& adyacencias, int maximo, int cantidad)
+result armar_AGM(matriz_adya& adyacencias, int maximo, int cantidad, list<enlace>& disponibles)
 {
 	vector<int> padre_de(cantidad , -1);
 	vector<costo> costos(cantidad , maximo +1);
@@ -133,7 +139,7 @@ result armar_AGM(matriz_adya& adyacencias, int maximo, int cantidad)
 		}
 	}
 	if(hay_solucion(costos, maximo)){
-		return armar_resultado(padre_de, cantidad, adyacencias);
+		return armar_resultado(padre_de, cantidad, adyacencias, disponibles, usados);
 	}else{
 		return result();
 	}
@@ -147,10 +153,10 @@ void mostrar_result(result res)
 		cout << res.c << " " << res.cant_anillo << " " << res.cant_red << endl;
 		list<enlace>::iterator it;
 		for(it = res.anillo.begin(); it != res.anillo.end(); it++){
-			cout << it->first << " " << it->second << endl;
+			cout << it->first+1 << " " << it->second+1 << endl;
 		}
 		for(it = res.red.begin(); it != res.red.end(); it++){
-			cout << it->first << " " << it->second << endl;
+			cout << it->first+1 << " " << it->second+1 << endl;
 		}
 	}
 }
