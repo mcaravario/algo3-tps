@@ -51,11 +51,27 @@ bool hay_solucion(vector<costo>& revisar, int maximo)
 	return !(it==revisar.end());
 }
 
+list<enlace> diferencia(list<enlace> uno, list<enlace> dos)
+{
+	list<enlace> res;
+	list<enlace>::iterator it1 = uno.begin();
+	while(it1 != uno.end()){
+		if( (find(dos.begin(), dos.end(), *it1) == dos.end()) && (find(dos.begin(), dos.end(), enlace(it1->second, it1->first)) == dos.end()) ) res.push_back(*it1);
+		it1++;
+	}
+}
+
 enlace menor_no_utilizado(list<enlace>& disponibles, list<enlace>& usados, matriz_adya& adyacencias)
 {
-//devuelve el enlace no utilizado con menor peso
-//los no usados se hacen sacando la diferencia disponibles - usados
-//se saca usando la matriz de adyacencias el de menor peso
+	list<enlace> no_usados = diferencia(disponibles, usados);
+	list<enlace>::iterator it = no_usados.begin();
+	list<enlace>::iterator min = no_usados.begin();
+	while(it != no_usados.end()){
+		int candidato = adyacencias[it->first][it->second]; 
+		if(candidato != -1 && candidato < adyacencias[min->first][min->second]) min = it;
+		it++;
+	}
+	return *min;
 }
 
 list<int> armar_medio(int comienzo, vector<int>& padre)
@@ -100,18 +116,18 @@ list<enlace> armar_anillo(list<int>& uno, list<int>& dos)
 result armar_resultado(vector<int>& padre_de, int cantidad, matriz_adya& adyacencias, list<enlace>& disponibles, list<enlace>& usados)
 {
 	result res;
+	
 	enlace comienzo_anillo = menor_no_utilizado(disponibles, usados, adyacencias);
 	list<int> medio1= armar_medio(comienzo_anillo.first, padre_de);
 	list<int> medio2= armar_medio(comienzo_anillo.second, padre_de);
 	res.anillo = armar_anillo(medio1, medio2);
 	res.cant_anillo = res.anillo.size();
-
+	
 	for (int i = 1; i < cantidad; i++){
 		res.c = res.c + adyacencias[i][padre_de[i]];
 	}
-	//falta generar la red, osea usados - anillos
-	//res.red = diferencia usados - anillo
-	//res.cant_red = res.red.size();
+	res.red = diferencia(usados, res.anillo);
+	res.cant_red = res.red.size();
 	return res;
 }
 
@@ -145,7 +161,7 @@ result armar_AGM(matriz_adya& adyacencias, int maximo, int cantidad, list<enlace
 	}
 }
 
-void mostrar_result(result res)
+void mostrar_result(result& res)
 {
 	if(res.cant_anillo == 0){
 		cout << "no" << endl;

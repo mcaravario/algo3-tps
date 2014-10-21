@@ -5,7 +5,7 @@ int main(){
 	int cant_vertices;
 	cin >>cant_nodos;
 	cin >> cant_vertices;
-//	string linea; lo comente porque vi que es una variable que no usas, fijarse si queda o no
+//	string linea; lo comente porque vi que es una variable que no se usa, fijarse si queda o no
 	vector<costo> costos(cant_nodos, 0);
 	matriz_adya matriz(cant_nodos, costos);
 	list<enlace> enlaces;
@@ -22,7 +22,8 @@ int main(){
 		//Maximo costo
 		if(max < c) max = c;
 	}
-	mostrar_result(armar_AGM(matriz, max, cant_nodos, enlaces));	
+	result res = armar_AGM(matriz, max, cant_nodos, enlaces);
+	mostrar_result(res);	
 	mostrar_matriz_adya(matriz);
 	cout << "Maximo costo: " << max << endl;
 	return 0;
