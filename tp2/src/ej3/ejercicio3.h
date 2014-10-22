@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <sstream>
 #include <stdlib.h>
+
 #define costo int
 #define enlace pair<int,int>
 #define matriz_adya vector< vector<costo> >
@@ -48,7 +49,7 @@ int costo_min(vector<costo> costos, vector<bool> agregado, int maximo, int canti
 bool hay_solucion(vector<costo>& revisar, int maximo)
 {
 	vector<costo>::iterator it = std::find(revisar.begin(), revisar.end(), maximo+1);
-	return !(it==revisar.end());
+	return (it==revisar.end());
 }
 
 list<enlace> diferencia(list<enlace> uno, list<enlace> dos)
@@ -56,9 +57,12 @@ list<enlace> diferencia(list<enlace> uno, list<enlace> dos)
 	list<enlace> res;
 	list<enlace>::iterator it1 = uno.begin();
 	while(it1 != uno.end()){
-		if( (find(dos.begin(), dos.end(), *it1) == dos.end()) && (find(dos.begin(), dos.end(), enlace(it1->second, it1->first)) == dos.end()) ) res.push_back(*it1);
+		if ((find(dos.begin(), dos.end(), *it1) == dos.end()) && (find(dos.begin(), dos.end(), enlace(it1->second, it1->first)) == dos.end()) ) 
+		res.push_back(*it1);
 		it1++;
 	}
+	
+	return res;
 }
 
 enlace menor_no_utilizado(list<enlace>& disponibles, list<enlace>& usados, matriz_adya& adyacencias)
@@ -84,15 +88,21 @@ list<int> armar_medio(int comienzo, vector<int>& padre)
 	return res;
 }
 
-void armar_anilloAux(list<enlace>& res, list<int> revisar, list<int>::iterator it)
+void armar_anilloAux(list<enlace>& res, list<int> revisar, int enlace_union)
 {
 	list<int>::iterator it1 = revisar.begin();
-	while(*it1 != *it){
+	while(*it1 != enlace_union){
 		int f = *it1;
 		it1++;
 		int s = *it1; 
 		res.push_back(enlace(f,s));
 	}
+}
+
+void cerrar_anillo(list<enlace>& res, list<int>& uno, list<int>& dos){
+	list<int>::iterator it_1 = uno.begin();
+	list<int>::iterator it_2 = dos.begin();
+	res.push_back(enlace(*it_1,*it_2));
 }
 
 list<enlace> armar_anillo(list<int>& uno, list<int>& dos)
@@ -108,24 +118,29 @@ list<enlace> armar_anillo(list<int>& uno, list<int>& dos)
 		}
 		it1++;
 	}
-	armar_anilloAux(res, uno, enlace_union);
-	armar_anilloAux(res, dos, enlace_union);
+	armar_anilloAux(res, uno, *enlace_union);
+	armar_anilloAux(res, dos, *enlace_union);
+	cerrar_anillo(res, uno, dos);
 	return res;
 }
 
 result armar_resultado(vector<int>& padre_de, int cantidad, matriz_adya& adyacencias, list<enlace>& disponibles, list<enlace>& usados)
 {
-	result res;
-	
+	result res = result();	
+
 	enlace comienzo_anillo = menor_no_utilizado(disponibles, usados, adyacencias);
 	list<int> medio1= armar_medio(comienzo_anillo.first, padre_de);
 	list<int> medio2= armar_medio(comienzo_anillo.second, padre_de);
 	res.anillo = armar_anillo(medio1, medio2);
+	
 	res.cant_anillo = res.anillo.size();
 	
-	for (int i = 1; i < cantidad; i++){
-		res.c = res.c + adyacencias[i][padre_de[i]];
+	list<enlace>::iterator it_c = usados.begin();
+	while(it_c!=usados.end()){
+		res.c = res.c + adyacencias[it_c->first][it_c->second];
+		it_c++;
 	}
+	res.c = res.c + adyacencias[comienzo_anillo.first][comienzo_anillo.second];
 	res.red = diferencia(usados, res.anillo);
 	res.cant_red = res.red.size();
 	return res;
@@ -136,14 +151,15 @@ result armar_AGM(matriz_adya& adyacencias, int maximo, int cantidad, list<enlace
 	vector<int> padre_de(cantidad , -1);
 	vector<costo> costos(cantidad , maximo +1);
 	vector<bool> agregado(cantidad , false);
-	costos[0] = 0;
+	//costos[0] = 0;
 	list<enlace> usados;
  
+	int u = 0;
 	for (int count = 0; count < cantidad-1 ; count++)
 	{ 	
-		int u = costo_min(costos, agregado, maximo, cantidad);
+		//int u = costo_min(costos, agregado, maximo, cantidad);
 		agregado[u] = true;
-		usados.push_back(enlace(u, padre_de[u]));
+		//usados.push_back(enlace(u, padre_de[u]));
 
 		for (int v = 0; v < cantidad; v++)
 		{
@@ -153,7 +169,13 @@ result armar_AGM(matriz_adya& adyacencias, int maximo, int cantidad, list<enlace
 				costos[v] = adyacencias[u][v];
 			}
 		}
+
+		u = costo_min(costos, agregado, maximo, cantidad);
+		usados.push_back(enlace(padre_de[u], u));
 	}
+	
+	//El costo del primer elemento siempre va a quedar en maximo+1, para que funcione bien hay_solucion lo harcodeamos
+	costos[0]=0;
 	if(hay_solucion(costos, maximo)){
 		return armar_resultado(padre_de, cantidad, adyacencias, disponibles, usados);
 	}else{
@@ -185,3 +207,4 @@ void mostrar_matriz_adya(matriz_adya& matriz){
 		cout << endl;
 	}
 }
+
