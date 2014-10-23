@@ -30,7 +30,7 @@ result::result(){
 	c = 0;
 }
 
-int costo_min(vector<costo> costos, vector<bool> agregado, int maximo, int cantidad)
+int costo_min(vector<costo>& costos, vector<bool>& agregado, int maximo, int cantidad)
 {
 	int min = maximo+1;
 	int min_index;
@@ -57,22 +57,21 @@ list<enlace> diferencia(list<enlace> uno, list<enlace> dos)
 	list<enlace> res;
 	list<enlace>::iterator it1 = uno.begin();
 	while(it1 != uno.end()){
-		if ((find(dos.begin(), dos.end(), *it1) == dos.end()) && (find(dos.begin(), dos.end(), enlace(it1->second, it1->first)) == dos.end()) ) 
-		res.push_back(*it1);
+		if ((find(dos.begin(), dos.end(), *it1) == dos.end()) && (find(dos.begin(), dos.end(), enlace(it1->second, it1->first)) == dos.end()) ) res.push_back(*it1);
 		it1++;
 	}
 	
 	return res;
 }
 
-enlace menor_no_utilizado(list<enlace>& disponibles, list<enlace>& usados, matriz_adya& adyacencias)
+enlace menor_no_utilizado(list<enlace>& disponibles, list<enlace>& usados, matriz_adya& adyacencias, vector<int>& padre_de)
 {
 	list<enlace> no_usados = diferencia(disponibles, usados);
 	list<enlace>::iterator it = no_usados.begin();
 	list<enlace>::iterator min = no_usados.begin();
 	while(it != no_usados.end()){
 		int candidato = adyacencias[it->first][it->second]; 
-		if(candidato != -1 && candidato < adyacencias[min->first][min->second]) min = it;
+		if(candidato != -1 && candidato < adyacencias[min->first][min->second] && (padre_de[it->first] != it->second) &&( padre_de[it->second] != it->first) ) min = it;
 		it++;
 	}
 	return *min;
@@ -88,7 +87,7 @@ list<int> armar_medio(int comienzo, vector<int>& padre)
 	return res;
 }
 
-void armar_anilloAux(list<enlace>& res, list<int> revisar, int enlace_union)
+void armar_anilloAux(list<enlace>& res, list<int>& revisar, int enlace_union)
 {
 	list<int>::iterator it1 = revisar.begin();
 	while(*it1 != enlace_union){
@@ -128,7 +127,7 @@ result armar_resultado(vector<int>& padre_de, int cantidad, matriz_adya& adyacen
 {
 	result res = result();	
 
-	enlace comienzo_anillo = menor_no_utilizado(disponibles, usados, adyacencias);
+	enlace comienzo_anillo = menor_no_utilizado(disponibles, usados, adyacencias, padre_de);
 	list<int> medio1= armar_medio(comienzo_anillo.first, padre_de);
 	list<int> medio2= armar_medio(comienzo_anillo.second, padre_de);
 	res.anillo = armar_anillo(medio1, medio2);
