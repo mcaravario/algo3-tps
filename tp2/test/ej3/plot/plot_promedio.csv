@@ -1,0 +1,11 @@
+g(x)=x**2
+f(x) = a*x
+fit f(x) "test_4_201_2_500.txt" using 1:($2/g($1)) via a
+set terminal png 
+set xlabel "Cantidad de Vuelos"
+set ylabel "Milisegundos"
+set title "Caso Promedio" 
+set grid
+set output 'Promedio.png'
+set style data linespoints 
+plot "test_4_201_2_500.txt" using 1:($2/g($1)) lt -1 lw 3 smooth bezier title 'Ej 2', 1.15 * f(x) with lines
