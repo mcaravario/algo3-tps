@@ -1,0 +1,8 @@
+set terminal png 
+set xlabel "Cantidad de caballos"
+set ylabel "Milisegundos"
+set title "Caso Promedio" 
+set size
+set grid
+set output 'Promedio_c_1.png'
+plot "test_c_1.out" using 1:2 lt -1 lw 3 smooth bezier title 'c_1' with dots
