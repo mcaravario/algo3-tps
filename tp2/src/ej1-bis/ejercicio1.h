@@ -7,6 +7,7 @@ typedef int hora;
 typedef int vuelo_id;
 typedef int ciudad_id;
 #define MAX_INT 2147483647
+#define INICIO -2
 
 struct vuelo{
 	string ori;
@@ -29,4 +30,4 @@ struct camino{
 
 
 
-int ruta_de_vuelo(list<int> res, list<vuelo> vuelos, string origen, string destino);
+int ruta_de_vuelo(list<int>& res, list<vuelo>& vuelos, string origen, string destino);

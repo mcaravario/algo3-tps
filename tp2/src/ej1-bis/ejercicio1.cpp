@@ -55,13 +55,25 @@ void ubicar_vuelos(vector<vector<list<vuelo_id> > >& mz, list<vuelo>& vs, Trie *
 /**
  *	Devuelve el el próximo vuelo que llega antes a destino.
  **/
-vuelo_id proximo_vuelo(hora h, list<vuelo_id>& ls, vector<vuelo>& vs){
+vuelo_id proximo_vuelo(ciudad_id ciudad, hora h, list<vuelo_id>& ls, vector<vuelo>& vs){
 
 	vuelo res = vuelo();
 
-	for (auto it = ls.begin(); it != ls.end(); it++){	
-		if (h + 2 >= vs[*it].salida && (res.id == -1 || vs[*it].llegada < res.llegada)){
-			res = vs[*it];
+	/* Si la ciudad es origen, no tengo que esperar 2 hs para tomar un vuelo.
+	**/
+	if (ciudad == 0){
+		for (auto it = ls.begin(); it != ls.end(); it++){	
+			if (res.id == -1 || vs[*it].llegada < res.llegada){
+				res = vs[*it];
+			}
+		}
+
+	} else {
+
+		for (auto it = ls.begin(); it != ls.end(); it++){	
+			if (h + 2  <= vs[*it].salida && (res.id == -1 || vs[*it].llegada < res.llegada)){
+				res = vs[*it];
+			}
 		}
 	}
 	return res.id;
@@ -72,31 +84,35 @@ vuelo_id proximo_vuelo(hora h, list<vuelo_id>& ls, vector<vuelo>& vs){
  *	Pone en la lista res (viene vacía) los vuelos tomados para
  *	llegar a destino (última posición del arreglo) desde
  *	origen (primera posición del arreglo, con ID = 0).
+ *	Si no se llega origen, no hay camino y se devuelve false.
+ *	Si lo hay, devuelve true.
  **/
-void reconstruir_camino(list<vuelo_id>& res, vector<camino>& cm){
+bool reconstruir_camino(list<vuelo_id>& res, vector<camino>& cm){
 
 	camino actual = cm.back();
-	while(actual.c != -1){
+	while(actual.c != -1 && actual.c != INICIO){
 		res.push_front(actual.v);
 		actual = cm[actual.c];
 	}
+
+	return actual.c == INICIO;
 }
 
 
-/*	Algoritmo que resuelve el problema. Solamente toma la lista de vuelos, y 
+/*	Algoritmo que resuelve el problema. Solamente toma la lista de vuelos, y
  *	las ciudades de origen y destino, junto con una lista resultante que se 
  *	modifica una vez encontrada la solución óptima.
  **/
-int ruta_de_vuelo(list<vuelo_id> res, list<vuelo> vuelos, string origen, string destino){
+int ruta_de_vuelo(list<vuelo_id>& res, list<vuelo>& vuelos, string origen, string destino){
 
-	 /* Primero creo e inicializo todas las estructuras que necesito.
-		* Un trie para mapear ciudades con un ID entero de 0 a #ciudades-1
-		* Un arreglo de vuelos, donde la posición i corresponde al vuelo con id = i.
-		* Una matriz de lista de vuelo_id que dado dos ID de ciudades me 
+	 /* Primero creo e inicializo todas las estructuras que necesito:
+		* -Un trie para mapear ciudades con un ID entero de 0 a #ciudades-1
+		* -Un arreglo de vuelos, donde la posición i corresponde al vuelo con id = i.
+		* -Una matriz de lista de vuelo_id que dado dos ID de ciudades me 
 		* 	de los vuelos que parten de una y lleguen a la otra.
-		* Un arreglo que dada una ciudad me indica cómo se llega, o sea
+		* -Un arreglo que dada una ciudad me indica cómo se llega, o sea
 		* 	qué vuelos hay que tomar.
-		* Un arreglo que dada una ciudad me indica el (menor) horario al que se llega.
+		* -Un arreglo que dada una ciudad me indica el (menor) horario al que se llega.
 	 **/
 	// Trie de ciudades
 	Trie* ciudades = new Trie();
@@ -104,7 +120,7 @@ int ruta_de_vuelo(list<vuelo_id> res, list<vuelo> vuelos, string origen, string 
 	int cant_ciudades = ciudades->size();
 
 	// Vector de vuelos
-	vector<vuelo> vuelos_por_id(cant_ciudades);
+	vector<vuelo> vuelos_por_id(vuelos.size());
 	inicializar_con_vuelos(vuelos_por_id, vuelos);
 
 	// Matriz de vuelos por par de ciudades.
@@ -120,8 +136,11 @@ int ruta_de_vuelo(list<vuelo_id> res, list<vuelo> vuelos, string origen, string 
 	// El horario de llegada a la ciudad inicial es 0.
 	arribos[0] = 0;
 
-	// No hay que tomar ningún vuelo para llegar a origen.
-	caminos[0] = camino();
+	/* No hay que tomar ningún vuelo para llegar a origen.
+	 * Se asigna el valor INICIO para saber si se llega
+	 * a origen en reconstruir camino.
+	**/
+	caminos[0] = camino(INICIO,INICIO);
 
 	/**
 	 *	La manera de resolver el ejercicio es programación dinámica
@@ -130,22 +149,25 @@ int ruta_de_vuelo(list<vuelo_id> res, list<vuelo> vuelos, string origen, string 
 	 *	destino.
 	 *
 	 *	El cilo recorre todas las ciudades, fijándose cuál es 
-	 *	la mejor forma de llegar, considerando todas las ciudades
-	 *	ya evaluadas.
+	 *	la mejor forma de llegar a dicha ciudad, considerando 
+	 *	todas las evaluadas hasta el momento.
 	 *
 	 *	Invariante de ciclo:
 	 *	Al terminar la i-ésima iteración, para todo j <= i, en
 	 *	arribos[j] tengo la mínima hora a la que puedo llegar
-	 *	a esa ciudad, considerando las ciudades 0..j.
-	 *	Entonces, como destino es la ciudad n-1, consideré
-	 *	todas las ciudades anteriores. 
+	 *	a esa ciudad, considerando las ciudades 0..j. Y en 
+	 *	caminos[j] está descripto el camino para llegar a esa
+	 *	hora.
+	 *	Entonces, como destino es la ciudad n-1, en la última
+	 *	iteración consideré	todas las ciudades anteriores
+	 *	o sea, todas. 
 	 **/
 	
 	for (int i = 1; i < cant_ciudades; i++){
 		hora h_min = MAX_INT;
 		camino cm = camino();
 		for (int j = 0; j < i; j++){
-			vuelo_id mejor_vuelo = proximo_vuelo(arribos[j], vuelos_entre[j][i], vuelos_por_id);
+			vuelo_id mejor_vuelo = proximo_vuelo(j, arribos[j], vuelos_entre[j][i], vuelos_por_id);
 			if (mejor_vuelo != -1 && h_min > vuelos_por_id[mejor_vuelo].llegada){
 				h_min = vuelos_por_id[mejor_vuelo].llegada;
 				cm.c = j;
@@ -162,8 +184,11 @@ int ruta_de_vuelo(list<vuelo_id> res, list<vuelo> vuelos, string origen, string 
 	 *	llamo a una función que recorre el arreglo
 	 *	reconstruyendo la solución.
 	 **/
-	reconstruir_camino(res, caminos);
-	return arribos[cant_ciudades-1];
+	if (reconstruir_camino(res, caminos)){
+		return arribos[cant_ciudades-1];
+	} else {
+		return -1;
+	}
 }
 
 int main(int argc, char** argv){
@@ -192,8 +217,8 @@ int main(int argc, char** argv){
 	list<vuelo_id> res;
 	int hora_llegada = ruta_de_vuelo(res, vuelos, origen, destino);
 
-	if(hora_llegada == MAX_INT){
-		cout << "NO";
+	if(hora_llegada == MAX_INT || hora_llegada == -1){
+		cout << "NO" << endl;
 	}else{
 		cout << hora_llegada << " " << res.size() << " ";
 		auto it = res.begin();
@@ -205,3 +230,4 @@ int main(int argc, char** argv){
 	} 
 
 }
+
