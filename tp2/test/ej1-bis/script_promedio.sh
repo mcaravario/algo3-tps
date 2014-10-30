@@ -1,14 +1,14 @@
 # !/bin/bash
-# PARAMS: cantidad de casilleros, cantidad de caballos, ini, incremento, cantidad de iteraciones, semilla
-CANTIDAD_CASILLEROS=$1
-CANTIDAD_CABALLOS=$2
+# PARAMS: cantidad de vuelos, hora maxima, ini, incremento, cantidad de iteraciones, semilla
+CANTIDAD_VUELOS=$1
+HORA_MAX=$2
 INI=$3
 INC=$4
 ITERACIONES=$5
 SEM=$6
 
-while ((INI<CANTIDAD_CABALLOS)); do
-        ./gen $CANTIDAD_CASILLEROS $INI $SEM | ./ej2test_c $ITERACIONES $INI
+while ((INI<CANTIDAD_VUELOS)); do
+        ./gen $INI $HORA_MAX  $SEM | ./ej1test $ITERACIONES $INI
         let INI=$INI+$INC
 done
 
