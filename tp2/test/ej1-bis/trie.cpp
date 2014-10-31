@@ -19,4 +19,8 @@ int main(int argc, char** argv){
 	cout << t->get_id("TuVieja") << endl;
 	cout << t->get_id("ASlkghlsgdj") << endl;
 	cout << t->size() << endl;
+	borrar_trie(t);
+	delete t;
+
+	return 0;
 }

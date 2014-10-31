@@ -241,3 +241,21 @@ int Trie::get_id(string word){
 int Trie::size(){
 	return elem_count;
 }
+void borrar_recursivo(Node* nodo){
+	if(nodo != NULL){
+		for(int i = 0; i<26; i++){
+			borrar_recursivo(nodo->children[i]);
+		}
+		delete nodo;
+	}
+}
+
+
+void borrar_trie(Trie * t){
+	Node * raiz = t->getRoot();
+	borrar_recursivo(raiz);
+}
+
+
+
+

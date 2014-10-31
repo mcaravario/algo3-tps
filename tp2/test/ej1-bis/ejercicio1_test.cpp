@@ -178,7 +178,9 @@ int ruta_de_vuelo(list<vuelo_id>& res, list<vuelo>& vuelos, string origen, strin
 		arribos[i] = h_min;
 		caminos[i] = cm;
 	}
-
+	borrar_trie(ciudades);
+	delete ciudades;
+	
 	/**
 	 *	Como el camino para llegar a destino está
 	 *	definido recursivamente en el arreglo "caminos"
@@ -194,7 +196,8 @@ int ruta_de_vuelo(list<vuelo_id>& res, list<vuelo>& vuelos, string origen, strin
 
 //recibe la cantidad de iteraciones y la cantidad de vuelos que recibe
 int main(int argc, char** argv){
-	string origen,destino;
+	string origen;
+	string destino;
 	int n;
 	int iteraciones = atoi(argv[1]);
 	int cant_vuelos = atoi(argv[2]);
@@ -220,9 +223,10 @@ int main(int argc, char** argv){
 	using namespace std::chrono;
 	high_resolution_clock reloj;
 	size_t mi = 99999999;
+	list<vuelo_id> res;
 	
 	while(iteraciones != 0){
-		list<vuelo_id> res;
+		res.clear();
 		auto t1 = reloj.now();
 		int hora_llegada = ruta_de_vuelo(res, vuelos, origen, destino);
 		auto t2 = reloj.now();
