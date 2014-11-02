@@ -1,6 +1,5 @@
 #include "ejercicio1.h"
 #include <chrono>
-
 using namespace std;
 
 
@@ -26,6 +25,20 @@ void mapear_ciudades(Trie* ciudades, list<vuelo>& vuelos, string origen, string 
 }
 
 
+/**
+ * Esta función modifica el horario de salida de todo vuelo
+ * cuyo ciudad de salida sea origen, restándole 2.
+ **/
+void	reducir_hora_salida_origen(list<vuelo>& vuelos, Trie* ciudades){
+	
+	auto it = vuelos.begin();
+	while (it != vuelos.end()){
+		// Si es origen, le cambio la hora de salida.
+		if (ciudades->get_id(it->ori) == 0) it->salida -= 2;
+		it++;
+	}
+}
+
 void inicializar_con_vuelos(vector<vuelo>& res, list<vuelo>& ls){
 	
 	auto it = ls.begin();			
@@ -38,73 +51,72 @@ void inicializar_con_vuelos(vector<vuelo>& res, list<vuelo>& ls){
 
 
 /**
- * Esta función ubica en la posición (i,j) de la matriz todos los vuelos
- *	que salen de i y llegan a j.
- *
- *	En la lista que está en cada posición no se agrega el vuelo, si no su
- *	identificador.
- *
+ * Agrega el id de cada vuelo al conjunto de vuelos que llegan a la ciudad que corresponde.
  **/
-void ubicar_vuelos(vector<vector<list<vuelo_id> > >& mz, list<vuelo>& vs, Trie *t){
+void inicializar_conjuntos(Trie *ciudades, vector<set<vuelo> >& vuelos_hasta, vector<vuelo>& vuelos){
+	for(int id = 0; id < vuelos.size(); id++){
+			vuelos_hasta[ciudades->get_id(vuelos[id].des)].insert(vuelos[id]);
+	}
+
+}
+
+
+/**
+ * 	Modifica la lista res, agregando los vuelos_id de los vuelos tomados.
+ * 	El resultado se reconstruye (de atrás para adelante) de forma recursiva
+ * a partir del parámetro "v" que es el vuelo que llega a destino.
+ **/
+void reconstruir_ruta(vuelo_id v, vector<vuelo_id>& ruta, list<vuelo_id>& res, vector<vuelo>& vuelos, Trie* ciudades){
 	
-	for (auto it = vs.begin(); it != vs.end(); it++){
-		mz[t->get_id(it->ori)][t->get_id(it->des)].push_back(it->id);
+	res.push_front(v);
+	
+	while(ciudades->get_id(vuelos[v].ori) != 0){
+		v = ruta[v];
+		res.push_front(v);
 	}
 }
 
 
 /**
- *	Devuelve el el próximo vuelo que llega antes a destino.
- **/
-vuelo_id proximo_vuelo(ciudad_id ciudad, hora h, list<vuelo_id>& ls, vector<vuelo>& vs){
-
-	vuelo res = vuelo();
-
-	/* Si la ciudad es origen, no tengo que esperar 2 hs para tomar un vuelo.
-	**/
-	if (ciudad == 0){
-		for (auto it = ls.begin(); it != ls.end(); it++){	
-			if (res.id == -1 || vs[*it].llegada < res.llegada){
-				res = vs[*it];
-			}
-		}
-
+*		Función recursiva que devuele VERDADERO si hay una ruta de vuelos que 
+*	llegue a origen desde el vuelo "v" (parámetro), y FALSO en caso contrario.
+*	Dado el vuelo "v", recorre la lista de sus vuelos predecesores, es decir
+*	los que llegan a la ciudad de salida de "v".
+**/
+bool buscar_ruta(vuelo_id v, vector<vuelo_id>& ruta, vector<set<vuelo> >& vuelos_hasta, vector<vuelo>& vuelos_por_id, Trie* ciudades){
+	
+	// Caso Base, estoy en ORIGEN.
+	if (ciudades->get_id(vuelos_por_id[v].ori) == 0){
+		return true;
 	} else {
+		bool hay_sol = false;
+		hora h_max = vuelos_por_id[v].salida - 2;
+		auto predecesor = vuelos_hasta[ciudades->get_id(vuelos_por_id[v].ori)].begin();
+		while (!hay_sol && predecesor->llegada <= h_max  && predecesor != vuelos_hasta[ciudades->get_id(vuelos_por_id[v].ori)].end()){
+			
+			// Escribo el tramo de la ruta
+			ruta[v] = predecesor->id;
 
-		for (auto it = ls.begin(); it != ls.end(); it++){	
-			if (h + 2  <= vs[*it].salida && (res.id == -1 || vs[*it].llegada < res.llegada)){
-				res = vs[*it];
-			}
+			// Elimino del set al elemento ya elegido, para no revisarlo posteriormente.
+			auto a_eliminar = predecesor;
+		 	vuelos_hasta[ciudades->get_id(vuelos_por_id[v].ori)].erase(a_eliminar);
+			predecesor++;
+
+			// Llamo recursivamente sobre el elemento elegido.
+			hay_sol = buscar_ruta(ruta[v], ruta, vuelos_hasta, vuelos_por_id, ciudades);
 		}
+
+		if (hay_sol) return true;
+
+		return false;
 	}
-	return res.id;
 }
-
-
-/**
- *	Pone en la lista res (viene vacía) los vuelos tomados para
- *	llegar a destino (última posición del arreglo) desde
- *	origen (primera posición del arreglo, con ID = 0).
- *	Si no se llega origen, no hay camino y se devuelve false.
- *	Si lo hay, devuelve true.
- **/
-bool reconstruir_camino(list<vuelo_id>& res, vector<camino>& cm){
-
-	camino actual = cm.back();
-	while(actual.c != -1 && actual.c != INICIO){
-		res.push_front(actual.v);
-		actual = cm[actual.c];
-	}
-
-	return actual.c == INICIO;
-}
-
 
 /*	Algoritmo que resuelve el problema. Solamente toma la lista de vuelos, y
  *	las ciudades de origen y destino, junto con una lista resultante que se 
  *	modifica una vez encontrada la solución óptima.
  **/
-int ruta_de_vuelo(list<vuelo_id>& res, list<vuelo>& vuelos, string origen, string destino){
+hora ruta_de_vuelo(list<vuelo_id>& res, list<vuelo>& vuelos, string origen, string destino){
 
 	 /* Primero creo e inicializo todas las estructuras que necesito:
 		* -Un trie para mapear ciudades con un ID entero de 0 a #ciudades-1
@@ -120,87 +132,57 @@ int ruta_de_vuelo(list<vuelo_id>& res, list<vuelo>& vuelos, string origen, strin
 	mapear_ciudades(ciudades, vuelos, origen, destino);
 	int cant_ciudades = ciudades->size();
 
+	/**
+	 *  Se modifican los vuelos que salen de origen, restando 2 a su horario de salida
+	 * con el fin de facilitar la búsqueda de vuelos en funciones posteriores.
+	 * Esta modifición se necesita para la función "buscar_ruta".
+	 **/
+	reducir_hora_salida_origen(vuelos, ciudades);
+
 	// Vector de vuelos
 	vector<vuelo> vuelos_por_id(vuelos.size());
 	inicializar_con_vuelos(vuelos_por_id, vuelos);
-
-	// Matriz de vuelos por par de ciudades.
-	vector<vector<list<vuelo_id> > >  vuelos_entre(cant_ciudades, vector<list<vuelo_id> >(cant_ciudades));
-	ubicar_vuelos(vuelos_entre, vuelos, ciudades);
-
-	// Vector de caminos (vuelos que tomar) a una ciudad.
-	vector<camino> caminos(cant_ciudades);
-
-	// Vector de horario de llegada a una ciudad.
-	vector<hora> arribos(cant_ciudades);
-
-	// El horario de llegada a la ciudad inicial es 0.
-	arribos[0] = 0;
-
-	/* No hay que tomar ningún vuelo para llegar a origen.
-	 * Se asigna el valor INICIO para saber si se llega
-	 * a origen en reconstruir camino.
-	**/
-	caminos[0] = camino(INICIO,INICIO);
-
-	/**
-	 *	La manera de resolver el ejercicio es programación dinámica
-	 *	"bottom-up", es decir, iremos resolviendo primero la mejor
-	 *	forma para llegar a las primeras ciudades, hasta llegar a
-	 *	destino.
-	 *
-	 *	El cilo recorre todas las ciudades, fijándose cuál es 
-	 *	la mejor forma de llegar a dicha ciudad, considerando 
-	 *	todas las evaluadas hasta el momento.
-	 *
-	 *	Invariante de ciclo:
-	 *	Al terminar la i-ésima iteración, para todo j <= i, en
-	 *	arribos[j] tengo la mínima hora a la que puedo llegar
-	 *	a esa ciudad, considerando las ciudades 0..j. Y en 
-	 *	caminos[j] está descripto el camino para llegar a esa
-	 *	hora.
-	 *	Entonces, como destino es la ciudad n-1, en la última
-	 *	iteración consideré	todas las ciudades anteriores
-	 *	o sea, todas. 
-	 **/
 	
-	for (int i = 1; i < cant_ciudades; i++){
-		hora h_min = MAX_INT;
-		camino cm = camino();
-		for (int j = 0; j < i; j++){
-			vuelo_id mejor_vuelo = proximo_vuelo(j, arribos[j], vuelos_entre[j][i], vuelos_por_id);
-			if (mejor_vuelo != -1 && h_min > vuelos_por_id[mejor_vuelo].llegada){
-				h_min = vuelos_por_id[mejor_vuelo].llegada;
-				cm.c = j;
-				cm.v = vuelos_por_id[mejor_vuelo].id;
-			}
-		}
-		arribos[i] = h_min;
-		caminos[i] = cm;
+	// Vector de conjunto de vuelos por ciudad.
+	vector<set<vuelo> > vuelos_hasta(cant_ciudades);
+	inicializar_conjuntos(ciudades, vuelos_hasta, vuelos_por_id);
+
+	// Vector de vuelo_id, dado un vuelo me indica que proximo vuelo debo tomar
+	vector<vuelo_id> ruta(vuelos.size());
+
+	// Creo un iterador al vuelo que llega antes a destino
+	auto v = vuelos_hasta[cant_ciudades - 1].begin();
+	
+	bool hay_solucion = false;
+	vuelo_id vuelo_final;
+	
+	while(v != vuelos_hasta[cant_ciudades - 1].end() && !hay_solucion){
+		vuelo_final = v->id;
+		auto a_borrar = v;
+		v++;
+		vuelos_hasta[cant_ciudades - 1].erase(a_borrar);
+		hay_solucion = buscar_ruta(vuelo_final, ruta, vuelos_hasta, vuelos_por_id, ciudades);
 	}
-	borrar_trie(ciudades);
+	
+
+	hora hora_res = -1;
+
+	if (hay_solucion) {
+		reconstruir_ruta(vuelo_final, ruta, res, vuelos_por_id,  ciudades);
+		hora_res = vuelos_por_id[vuelo_final].llegada;
+	}
+
 	delete ciudades;
-	
-	/**
-	 *	Como el camino para llegar a destino está
-	 *	definido recursivamente en el arreglo "caminos"
-	 *	llamo a una función que recorre el arreglo
-	 *	reconstruyendo la solución.
-	 **/
-	if (reconstruir_camino(res, caminos)){
-		return arribos[cant_ciudades-1];
-	} else {
-		return -1;
-	}
+	return hora_res;	
 }
 
-//recibe la cantidad de iteraciones y la cantidad de vuelos que recibe
+//Recibe la cantidad de iteraciones a realizar y la cantidad de vuelos de la instancia
 int main(int argc, char** argv){
-	string origen;
-	string destino;
+	string origen,destino;
 	int n;
 	int iteraciones = atoi(argv[1]);
 	int cant_vuelos = atoi(argv[2]);
+	
 	cin >> origen;
 	cin >> destino;
 	cin >> n;
@@ -219,22 +201,27 @@ int main(int argc, char** argv){
 		vuelos.push_back(vuelo(ori,des,ini,fin,id));
 		id++;
 	}
-
 	using namespace std::chrono;
 	high_resolution_clock reloj;
 	size_t mi = 99999999;
-	list<vuelo_id> res;
 	
+	list<vuelo_id> res;
+
 	while(iteraciones != 0){
-		res.clear();
+	
 		auto t1 = reloj.now();
-		int hora_llegada = ruta_de_vuelo(res, vuelos, origen, destino);
+	 	hora hora_llegada = ruta_de_vuelo(res, vuelos, origen, destino);
 		auto t2 = reloj.now();
+
 		auto total = duration_cast<microseconds>(t2-t1).count();
 
 		if(total < mi) mi = total;
+
 		iteraciones--;
 	}
-	cout << cant_vuelos << " " << mi << endl;	
+
+	cout << cant_vuelos << " " << mi << endl;
+
+	return 0;
 }
 
