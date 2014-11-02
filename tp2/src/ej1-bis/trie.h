@@ -51,7 +51,9 @@ Node::Node(char value)
 */
 Node::~Node()
 {
-    // free resources
+  for(int i = 0; i<26; i++){
+		delete this->children[i];
+	}
 }
  
 /**
@@ -84,6 +86,7 @@ Trie::Trie()
     root = new Node(' ');
     root->end = true;
     free_id = 0;
+		elem_count = 0;
 }
  
 /**
@@ -91,9 +94,13 @@ Trie::Trie()
 */
 Trie::~Trie()
 {
-    // Free resources
+ 	Node * raiz = this->getRoot();
+	delete raiz;
 }
  
+	
+				
+				
 /**
 * Gets the root of the trie
 * @return Node *    Pointer to the root node
