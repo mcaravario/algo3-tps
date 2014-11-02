@@ -10,6 +10,8 @@ typedef vector<vector<int> > matriz_int;
 
 
 
+
+
 /* Esta funcion modifica la primer matriz, dejando la suma de la primera con la segunda
  **/
 void sumar_matrices(matriz_int&  matriz_res, matriz_int& actual, int n){
@@ -135,16 +137,15 @@ void caballos_salvajes(int n, int k, pair<int, int> posiciones_caballos[], tuple
 }
 
 
-//Recibe la cantidad de iteraciones a realizar y la cantidad de caballos
+//Recibe la cantidad de iteraciones a realizar y cantidad de casilleros
 int main(int argc, char** argv){
-
+	
 	if (argc < 3){
-		cout << "Dame más parámetros" <<endl;
+		cout << "Dame más parámetros cabeza" << endl;
 		return 0;
-	}
-		
+	}		
 	int iteraciones = atoi(argv[1]);
-	int cant_caballos = atoi(argv[2]);
+	int cant_casilleros = atoi(argv[2]);
 	int n,k;
 	cin >> n;
 	cin >> k;
@@ -173,7 +174,14 @@ int main(int argc, char** argv){
 	iteraciones--;
 	}
 	
-	cout << cant_caballos << " " << mi << endl; 
+	cout << cant_casilleros << " " << mi << endl; 
+/*	
+	if(get<0>(res) == -1){
+		cout << "NO" << endl;
+	}else{
+		cout <<  get<1>(res) << " " << get<2>(res) << " " << get<0>(res);
+	}
+*/
 	return 0;
-}
+	}
 
