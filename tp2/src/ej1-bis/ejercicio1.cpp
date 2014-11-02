@@ -41,8 +41,9 @@ void	reducir_hora_salida_origen(list<vuelo>& vuelos, Trie* ciudades){
 
 void inicializar_con_vuelos(vector<vuelo>& res, list<vuelo>& ls){
 	
-	auto it = ls.begin();			
-	for (int i = 0; i < ls.size(); i++){
+	auto it = ls.begin();		
+	int tam = ls.size();	
+	for (int i = 0; i < tam; i++){
 		res[i] = *it;
 		it++;
 	}
@@ -92,15 +93,15 @@ bool buscar_ruta(vuelo_id v, vector<vuelo_id>& ruta, vector<set<vuelo> >& vuelos
 		bool hay_sol = false;
 		hora h_max = vuelos_por_id[v].salida - 2;
 		auto predecesor = vuelos_hasta[ciudades->get_id(vuelos_por_id[v].ori)].begin();
-		while (!hay_sol && predecesor->llegada <= h_max  && predecesor != vuelos_hasta[ciudades->get_id(vuelos_por_id[v].ori)].end()){
+		while (!hay_sol && predecesor != vuelos_hasta[ciudades->get_id(vuelos_por_id[v].ori)].end() && predecesor->llegada <= h_max){
 			
 			// Escribo el tramo de la ruta
 			ruta[v] = predecesor->id;
 
 			// Elimino del set al elemento ya elegido, para no revisarlo posteriormente.
 			auto a_eliminar = predecesor;
-		 	vuelos_hasta[ciudades->get_id(vuelos_por_id[v].ori)].erase(a_eliminar);
 			predecesor++;
+		 	vuelos_hasta[ciudades->get_id(vuelos_por_id[v].ori)].erase(a_eliminar);
 
 			// Llamo recursivamente sobre el elemento elegido.
 			hay_sol = buscar_ruta(ruta[v], ruta, vuelos_hasta, vuelos_por_id, ciudades);
@@ -121,11 +122,9 @@ hora ruta_de_vuelo(list<vuelo_id>& res, list<vuelo>& vuelos, string origen, stri
 	 /* Primero creo e inicializo todas las estructuras que necesito:
 		* -Un trie para mapear ciudades con un ID entero de 0 a #ciudades-1
 		* -Un arreglo de vuelos, donde la posición i corresponde al vuelo con id = i.
-		* -Una matriz de lista de vuelo_id que dado dos ID de ciudades me 
-		* 	de los vuelos que parten de una y lleguen a la otra.
-		* -Un arreglo que dada una ciudad me indica cómo se llega, o sea
-		* 	qué vuelos hay que tomar.
-		* -Un arreglo que dada una ciudad me indica el (menor) horario al que se llega.
+		* -Un arreglo que dada una ciudad me indica	qué vuelos llega ahí.
+		* -Un arreglo de vuelos, que dado un vuelo_id me indica que vuelo fue tomado
+		* antes de tomar ese (sirve para reconstruir el camino).
 	 **/
 	// Trie de ciudades
 	Trie* ciudades = new Trie();

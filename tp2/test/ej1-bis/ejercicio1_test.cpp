@@ -41,8 +41,9 @@ void	reducir_hora_salida_origen(list<vuelo>& vuelos, Trie* ciudades){
 
 void inicializar_con_vuelos(vector<vuelo>& res, list<vuelo>& ls){
 	
-	auto it = ls.begin();			
-	for (int i = 0; i < ls.size(); i++){
+	auto it = ls.begin();	
+	int tam = ls.size();	
+	for (int i = 0; i < tam; i++){
 		res[i] = *it;
 		it++;
 	}
@@ -127,7 +128,9 @@ hora ruta_de_vuelo(list<vuelo_id>& res, list<vuelo>& vuelos, string origen, stri
 		* 	qué vuelos hay que tomar.
 		* -Un arreglo que dada una ciudad me indica el (menor) horario al que se llega.
 	 **/
+	int tam = vuelos.size();
 	// Trie de ciudades
+	
 	Trie* ciudades = new Trie();
 	mapear_ciudades(ciudades, vuelos, origen, destino);
 	int cant_ciudades = ciudades->size();
@@ -140,7 +143,7 @@ hora ruta_de_vuelo(list<vuelo_id>& res, list<vuelo>& vuelos, string origen, stri
 	reducir_hora_salida_origen(vuelos, ciudades);
 
 	// Vector de vuelos
-	vector<vuelo> vuelos_por_id(vuelos.size());
+	vector<vuelo> vuelos_por_id(tam);
 	inicializar_con_vuelos(vuelos_por_id, vuelos);
 	
 	// Vector de conjunto de vuelos por ciudad.
@@ -148,7 +151,7 @@ hora ruta_de_vuelo(list<vuelo_id>& res, list<vuelo>& vuelos, string origen, stri
 	inicializar_conjuntos(ciudades, vuelos_hasta, vuelos_por_id);
 
 	// Vector de vuelo_id, dado un vuelo me indica que proximo vuelo debo tomar
-	vector<vuelo_id> ruta(vuelos.size());
+	vector<vuelo_id> ruta(tam);
 
 	// Creo un iterador al vuelo que llega antes a destino
 	auto v = vuelos_hasta[cant_ciudades - 1].begin();
@@ -218,6 +221,7 @@ int main(int argc, char** argv){
 		if(total < mi) mi = total;
 
 		iteraciones--;
+		res.clear();
 	}
 
 	cout << cant_vuelos << " " << mi << endl;
