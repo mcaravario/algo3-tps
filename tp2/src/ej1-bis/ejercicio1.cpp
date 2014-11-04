@@ -67,44 +67,50 @@ void inicializar_conjuntos(Trie *ciudades, vector<set<vuelo> >& vuelos_hasta, ve
  * 	El resultado se reconstruye (de atrás para adelante) de forma recursiva
  * a partir del parámetro "v" que es el vuelo que llega a destino.
  **/
-void reconstruir_ruta(vuelo_id v, vector<vuelo_id>& ruta, list<vuelo_id>& res, vector<vuelo>& vuelos, Trie* ciudades){
+void reconstruir_ruta(vector<vuelo_id>& ruta, list<vuelo_id>& res, vector<vuelo>& vuelos, Trie* ciudades){
 	
-	res.push_front(v);
+	ciudad_id c_actual = ruta.size()-1;
 	
-	while(ciudades->get_id(vuelos[v].ori) != 0){
-		v = ruta[v];
-		res.push_front(v);
+	while(c_actual != 0){
+		res.push_front(ruta[c_actual]);
+		c_actual = ciudades->get_id(vuelos[ruta[c_actual]].ori);
 	}
 }
 
 
 /**
 *		Función recursiva que devuele VERDADERO si hay una ruta de vuelos que 
-*	llegue a origen desde el vuelo "v" (parámetro), y FALSO en caso contrario.
-*	Dado el vuelo "v", recorre la lista de sus vuelos predecesores, es decir
-*	los que llegan a la ciudad de salida de "v".
+*	llegue a origen desde la ciudad "c" (parámetro), y FALSO en caso contrario.
+*	Dada la ciudad "c", recorre la lista de los vuelos predecesores, es decir
+*	los que llegan a "c" y no superen la hora h-2.
 **/
-bool buscar_ruta(vuelo_id v, vector<vuelo_id>& ruta, vector<set<vuelo> >& vuelos_hasta, vector<vuelo>& vuelos_por_id, Trie* ciudades){
+bool buscar_ruta(ciudad_id c, hora h_max,  vector<vuelo_id>& ruta, vector<set<vuelo> >& vuelos_hasta, vector<vuelo>& vuelos_por_id, Trie* ciudades){
 	
 	// Caso Base, estoy en ORIGEN.
-	if (ciudades->get_id(vuelos_por_id[v].ori) == 0){
+	if (c == 0){
 		return true;
 	} else {
 		bool hay_sol = false;
-		hora h_max = vuelos_por_id[v].salida - 2;
-		auto predecesor = vuelos_hasta[ciudades->get_id(vuelos_por_id[v].ori)].begin();
-		while (!hay_sol && predecesor != vuelos_hasta[ciudades->get_id(vuelos_por_id[v].ori)].end() && predecesor->llegada <= h_max){
+		auto predecesor = vuelos_hasta[c].begin();
+		ciudad_id proxima_ciudad;
+		hora proximo_horario;
+
+		while (!hay_sol && predecesor != vuelos_hasta[c].end() && predecesor->llegada <= h_max-2){
 			
 			// Escribo el tramo de la ruta
-			ruta[v] = predecesor->id;
+			ruta[c] = predecesor->id;
+
+			// Parámetros que usare en la llamada recursiva
+			proxima_ciudad = ciudades->get_id(predecesor->ori);
+			proximo_horario = predecesor->salida;
 
 			// Elimino del set al elemento ya elegido, para no revisarlo posteriormente.
 			auto a_eliminar = predecesor;
 			predecesor++;
-		 	vuelos_hasta[ciudades->get_id(vuelos_por_id[v].ori)].erase(a_eliminar);
+		 	vuelos_hasta[c].erase(a_eliminar);
 
 			// Llamo recursivamente sobre el elemento elegido.
-			hay_sol = buscar_ruta(ruta[v], ruta, vuelos_hasta, vuelos_por_id, ciudades);
+			hay_sol = buscar_ruta(proxima_ciudad, proximo_horario, ruta, vuelos_hasta, vuelos_por_id, ciudades);
 		}
 
 		if (hay_sol) return true;
@@ -147,28 +153,16 @@ hora ruta_de_vuelo(list<vuelo_id>& res, list<vuelo>& vuelos, string origen, stri
 	inicializar_conjuntos(ciudades, vuelos_hasta, vuelos_por_id);
 
 	// Vector de vuelo_id, dado un vuelo me indica que proximo vuelo debo tomar
-	vector<vuelo_id> ruta(vuelos.size());
+	vector<vuelo_id> ruta(cant_ciudades);
 
-	// Creo un iterador al vuelo que llega antes a destino
-	auto v = vuelos_hasta[cant_ciudades - 1].begin();
 	
-	bool hay_solucion = false;
-	vuelo_id vuelo_final;
-	
-	while(v != vuelos_hasta[cant_ciudades - 1].end() && !hay_solucion){
-		vuelo_final = v->id;
-		auto a_borrar = v;
-		v++;
-		vuelos_hasta[cant_ciudades - 1].erase(a_borrar);
-		hay_solucion = buscar_ruta(vuelo_final, ruta, vuelos_hasta, vuelos_por_id, ciudades);
-	}
-	
+	bool hay_solucion = buscar_ruta(cant_ciudades-1, MAX_INT, ruta, vuelos_hasta, vuelos_por_id, ciudades);
 
 	hora hora_res = -1;
 
 	if (hay_solucion) {
-		reconstruir_ruta(vuelo_final, ruta, res, vuelos_por_id,  ciudades);
-		hora_res = vuelos_por_id[vuelo_final].llegada;
+		reconstruir_ruta(ruta, res, vuelos_por_id,  ciudades);
+		hora_res = vuelos_por_id[ruta[cant_ciudades-1]].llegada;
 	}
 
 	delete ciudades;
