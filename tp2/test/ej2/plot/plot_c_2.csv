@@ -6,4 +6,4 @@ set size
 set grid
 set output 'Promedio_c_2.png'
 set style data linespoints 
-plot "test_c_2.out" using 1:2 lt -1 lw 3 smooth bezier title 'c_2' with dots
+plot "test_c_2.out" using 1:2 lt -1 lw 3 smooth bezier title 'c_2' with points

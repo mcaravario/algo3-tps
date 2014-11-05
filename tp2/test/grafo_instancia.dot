@@ -1,0 +1,14 @@
+digraph A {
+BsAs -> Rio [label="0-1"];
+BsAs -> Tokio [label="5-12"];
+BsAs -> Madrid [label="1-8"];
+Rio -> Madrid [label="3-4"];
+Rio -> Roma [label="2-9"];
+Madrid -> Roma [label="5-7"];
+Madrid -> Tokio [label="9-10"];
+Roma -> Tokio [label="7-11"];
+BsAs [style=bold];
+Tokio [style=bold]; 
+}
+
+
