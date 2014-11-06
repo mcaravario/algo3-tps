@@ -1,0 +1,11 @@
+g(x)= x
+f(x) = a*x
+fit f(x) "test_conexo_4_201_2_500.txt" using 1:($2/g($1)) via a
+set terminal png 
+set xlabel "Cantidad Computadoras"
+set ylabel "Milisegundos"
+set title "Experimento 2" 
+set grid
+set output 'Grafos Conexos.png'
+set style data linespoints 
+plot "test_conexo_4_201_2_500.txt" using 1:($2/g($1)) lt -1 lw 0.5 smooth bezier title 'Ej 3' with points, 1.05 * f(x) lt "gray" lw 0.05 with points
