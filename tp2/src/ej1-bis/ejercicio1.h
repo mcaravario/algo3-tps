@@ -7,6 +7,7 @@
 typedef int hora;
 typedef int vuelo_id;
 typedef int ciudad_id;
+#define MAX_INT 2147483647 
 
 struct vuelo{
 	string ori;

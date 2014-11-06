@@ -147,6 +147,10 @@ int main(){
 		int f,c;
 		cin >> f;
 		cin >> c;
+		
+		f--;
+		c--:
+		
 		auto par = make_pair(f,c);
 		posiciones_caballos[i] = par;	
 	}
@@ -157,7 +161,7 @@ int main(){
 	if(get<0>(res) == -1){
 		cout << "NO" << endl;
 	}else{
-		cout <<  get<1>(res) << " " << get<2>(res) << " " << get<0>(res);
+		cout <<  get<1>(res)++ << " " << get<2>(res)++ << " " << get<0>(res);
 	}
 	return 0;
 	}

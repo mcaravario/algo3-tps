@@ -6,5 +6,5 @@ set title "Caso Promedio"
 set size
 set grid
 set output 'Promedio_t_1.png'
-plot "test_t_1.out"  using 1:($2/f($1)) lt -1 lw 3 smooth bezier title 't_1' with dots
+plot "test_t_1.out"  using 1:($2/f($1)) lt -1 lw 3 smooth bezier title 't_1' with points
 
