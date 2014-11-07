@@ -1,0 +1,9 @@
+f(x) = log(x)
+set terminal png 
+set xlabel "Cantidad de vuelos"
+set ylabel "Milisegundos"
+set title "Caso Aleatorio" 
+set size
+set grid
+set output 'ej1.png'
+plot "test_100000_60_10_50_25_18.out" using 1:($2/f($1)) lt -1 lw 1 smooth bezier title 'ej1' with points

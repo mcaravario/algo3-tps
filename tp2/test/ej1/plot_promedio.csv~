@@ -1,0 +1,9 @@
+f(x) = log(x)
+set terminal png 
+set xlabel "Cantidad de vuelos"
+set ylabel "Milisegundos"
+set title "Caso Aleatorio" 
+set size
+set grid
+set output 'promedio.png'
+plot "test.txt" using 1:($2/f($1)) lt -1 lw 3 smooth bezier title 'c_1' with points
