@@ -2,8 +2,8 @@ f(x) = x
 set terminal png 
 set xlabel "Cantidad de casilleros"
 set ylabel "Milisegundos"
-set title "Caso Promedio" 
+set title "Caso Aleatorio" 
 set size
 set grid
 set output 'Promedio_t_2.png'
-plot "test_t_2.out" using 1:($2/f($1)) lt -1 lw 3 smooth bezier title 't_2' with points
+plot "test_t_2.out" using 1:($2/f($1)) lw 0.5 lc rgb "black" smooth bezier title 't_2' with points
