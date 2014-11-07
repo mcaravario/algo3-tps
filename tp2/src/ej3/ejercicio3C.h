@@ -11,16 +11,15 @@ using namespace std;
 
 struct enlace{
 	pair<int,int> arista;
-	bool usado;
 	enlace(int, int);
 };
 
-struct costos{
+struct info{
 		int costo;
 		pair<int,int>arista;
 		bool usado;
 		bool en_anillo;
-		costos(int, int, int);
+		info(int, int, int);
 };
 
 struct result{
@@ -35,10 +34,9 @@ struct result{
 enlace::enlace(int a, int b){
 	arista.first = a;
 	arista.second = b;
-	usado = false;
 }
 
-costos::costos(int a, int b, int c){
+info::info(int a, int b, int c){
 	costo = c;
 	arista.first = a;
 	arista.second = b;
@@ -53,7 +51,7 @@ result::result(){
 	red = list<enlace>();
 	c = 0;
 }
-#define matriz_adya vector< vector<costos> >
+#define matriz_adya vector< vector<info> >
 
 int costo_min(vector<int>& costos, vector<bool>& agregado, int maximo, int cantidad)
 {
@@ -156,6 +154,7 @@ result armar_resultado(vector<int>& padre_de, int cantidad, matriz_adya& adyacen
 {
 	result res = result();	
 	enlace comienzo_anillo = menor_no_utilizado(adyacencias, padre_de, cantidad,maximo);
+	if(comienzo_anillo.arista.first == -1 && comienzo_anillo.arista.second == -1) return res;
 	list<int> medio1= armar_medio(comienzo_anillo.arista.first, padre_de);
 	list<int> medio2= armar_medio(comienzo_anillo.arista.second, padre_de);
 	res.anillo = armar_anillo(medio1, medio2, adyacencias);
