@@ -11,15 +11,16 @@ using namespace std;
 
 struct enlace{
 	pair<int,int> arista;
+	bool usado;
 	enlace(int, int);
 };
 
-struct info{
+struct costos{
 		int costo;
 		pair<int,int>arista;
 		bool usado;
 		bool en_anillo;
-		info(int, int, int);
+		costos(int, int, int);
 };
 
 struct result{
@@ -34,9 +35,10 @@ struct result{
 enlace::enlace(int a, int b){
 	arista.first = a;
 	arista.second = b;
+	usado = false;
 }
 
-info::info(int a, int b, int c){
+costos::costos(int a, int b, int c){
 	costo = c;
 	arista.first = a;
 	arista.second = b;
@@ -51,7 +53,7 @@ result::result(){
 	red = list<enlace>();
 	c = 0;
 }
-#define matriz_adya vector< vector<info> >
+#define matriz_adya vector< vector<costos> >
 
 int costo_min(vector<int>& costos, vector<bool>& agregado, int maximo, int cantidad)
 {
@@ -154,7 +156,6 @@ result armar_resultado(vector<int>& padre_de, int cantidad, matriz_adya& adyacen
 {
 	result res = result();	
 	enlace comienzo_anillo = menor_no_utilizado(adyacencias, padre_de, cantidad,maximo);
-	if(comienzo_anillo.arista.first == -1 && comienzo_anillo.arista.second == -1) return res;
 	list<int> medio1= armar_medio(comienzo_anillo.arista.first, padre_de);
 	list<int> medio2= armar_medio(comienzo_anillo.arista.second, padre_de);
 	res.anillo = armar_anillo(medio1, medio2, adyacencias);
@@ -182,7 +183,6 @@ result armar_AGM(matriz_adya& adyacencias, int maximo, int cantidad)
 	vector<int> padre_de(cantidad , -1);
 	vector<int> cost(cantidad , maximo +1);
 	vector<bool> agregado(cantidad , false);
- 
 	int u = 0;
 	for (int count = 0; count < cantidad-1 ; count++)
 	{ 	

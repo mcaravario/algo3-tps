@@ -15,10 +15,12 @@ int main(int argc, char** argv){
 }
 
 void generar_valida(int n,int m){
-  for(int j = 1; j <= m; j++){
-			for (int i = (j+1); i<=n; i++){
-			int arista = rand()% 20 -1;
-			cout << j << " " <<  i << " " << arista << endl;
+  for(int j = 1; j <= m-1; j++){
+			int arista = rand()% 20;
+			cout << j << " " <<  j+1 << " " << arista << endl;
+			if (j==1){
+				arista = rand()% 20;
+				cout << j << " " <<  j+2 << " " << arista << endl;
 			}
 	}
 }
