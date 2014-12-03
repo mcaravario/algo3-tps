@@ -27,7 +27,7 @@ int suma_total(vector<particion>& partes) {
 int peso_asociado(nodo v, particion& parte, vector<vector<int> >& mz_ady){
 	int res = 0;
 	for (auto it = parte.elementos.begin(); it != parte.elementos.end(); it++){
-		if(mz_ady[v][*it]){
+		if(mz_ady[v][*it] != -1){
 			res += mz_ady[v][*it];
 		}
 	}
