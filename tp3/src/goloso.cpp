@@ -60,7 +60,6 @@ void ubicar_en_menor(int u, vector<particion>& partes, int k, vector<vector<int>
 		partes[n_part].peso += min;
 		/* Actualizo el arreglo donde tengo los vertices que ya ubique */
 		vistos[u] = n_part;
-		cout << "ubique el nodo " << u << "en la particion " << n_part << endl;
 	}
 }
 
@@ -73,20 +72,13 @@ void ubicar_en_menor(int u, vector<particion>& partes, int k, vector<vector<int>
  * vector(int) vistos: la posicion i indica en que particion se encuentra el nodo i. si no fue ubicado en ninguna particion tiene el valor -2
 */
 
-vector<particion> heuristica_golosa(vector<vector<int> >& mz_ady, vector<particion>& partes, list<tuple<int,int,int> >& aristas, int k, vector<int>& vistos){
+vector<particion> heuristica_golosa(vector<vector<int> >& mz_ady, vector<particion>& partes, list<int>& candidatos, int k, vector<int>& vistos){
 				
-	while(!aristas.empty()){    																						//O(M) *
+	while(!candidatos.empty()){    																						//O(M) *
 		/* Elijo arista de mayor peso */
-		auto arista = elegir_mayor(aristas);																	//O(M)
-		int u = get<0>(*arista);
-		int v = get<1>(*arista);
-		ubicar_en_menor(u, partes, k, mz_ady, vistos);						//O(K*K + K*N)
-		ubicar_en_menor(v, partes, k, mz_ady, vistos);						//O(K*K + K*N)
-		/* Una vez analizada la arista la saco de la matriz de adyacencia y de
-		 * mi lista de aristas restantes */
-		mz_ady[u][v] = -1;	
-		mz_ady[v][u] = -1;	
-		aristas.erase(arista);				
+		int elegido = candidatos.front();
+		candidatos.pop_front();
+		ubicar_en_menor(elegido, partes, k, mz_ady, vistos);						//O(K*K + K*N)
 	}
 	return partes;
 }
@@ -98,9 +90,12 @@ int main(){
 	cin >> m;
 	cin >> k;
 	vector<vector<int> > mz_ady(n, vector<int>(n));
-	list<tuple<int,int,int> > aristas;
+	list<int> candidatos;
 	vector<int> vistos(n);
-
+	
+	for(int i = 0; i < n; i++){
+		candidatos.push_back(i);
+	}
 
 	/* Inicializo matriz de adyacencias */
 	for(int i = 0; i < n; i++){
@@ -118,11 +113,8 @@ int main(){
 		u--;
 		v--;
 
-		if(mz_ady[u][v] == -1 || mz_ady[v][u] == -1){
-			mz_ady[u][v] = w; 
-			mz_ady[v][u] = w; 
-			aristas.push_back(make_tuple(u,v,w));
-		} 	
+		mz_ady[u][v] = w; 
+		mz_ady[v][u] = w; 
 	}
 	/* Inicializo los no vistos nunca en -2 */
 	for(int i = 0; i<n ; i++){
@@ -131,7 +123,7 @@ int main(){
 
 	/* Funcion que resuelve el ejercicio */
 	vector<particion> partes(k);
-	vector<particion> res = heuristica_golosa(mz_ady, partes, aristas, k, vistos);
+	vector<particion> res = heuristica_golosa(mz_ady, partes, candidatos, k, vistos);
 	
 	/* Preparacion del resultado */
 
