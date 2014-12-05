@@ -10,7 +10,7 @@ using namespace std;
 struct particion{
 	list<int> elementos;
 	int peso;
-	particion():peso(0), elementos() {}
+	particion():elementos(), peso(0){}
 };
 
 struct {
@@ -116,6 +116,9 @@ void  grasp(vector<vector<int> >& mz_ady, vector<particion>& partes, list<int>& 
 }
 
 int main(int argc, char** argv){
+	
+	if(argc < 2) return 0;
+				
 	int n,m,k,u,v,w,iteraciones,cant_elegir;
 	cin >> n;
 	cin >> m;
