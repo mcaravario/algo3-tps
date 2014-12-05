@@ -10,7 +10,7 @@ using namespace std;
 struct particion{
 	list<int> elementos;
 	int peso;
-	particion():peso(0), elementos() {}
+	particion(): elementos(), peso(0) {}
 };
 
 list<tuple<int,int,int> >::iterator elegir_mayor(list<tuple<int,int,int> >& aristas){
