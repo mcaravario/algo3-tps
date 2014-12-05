@@ -3,7 +3,7 @@
 #include <iostream>
 #include <tuple>
 #include <algorithm>
-#include <ctime.h>
+#include <time.h>
 
 using namespace std;
 
@@ -35,6 +35,16 @@ list<tuple<int,int,int> >::iterator elegir_mayor(list<tuple<int,int,int> >& aris
 
 }
 
+/* Devuelve la suma total de pesos */
+int suma_total(vector<particion>& partes) {
+	int res = 0;
+	for (unsigned int i = 0; i < partes.size(); i++){
+		res += partes[i].peso;
+	}
+	return res;	
+}
+
+
 /* Devuelve el peso asociado del nodo v, al conjunto i */
 int peso_asociado(int v, vector<particion>& partes, int i,  vector<vector<int> >& mz_ady){
 	int res = 0;
@@ -62,7 +72,7 @@ void ubicar_en_menor(int u, vector<particion>& partes, int k, vector<vector<int>
 	}
 	
 	/* Ordeno el arreglo para luego quedarme con los mejores.  */
-	sort(pesos, claseComp);
+	sort(pesos.begin(), pesos.end(), claseComp);
 	
 	/* Eligo de forma aleatoria el conjunto donde ubicar el nodo. */
 	int conj_elegido = rand() % cant_elegir;
@@ -72,21 +82,41 @@ void ubicar_en_menor(int u, vector<particion>& partes, int k, vector<vector<int>
 }
 
 
-vector<particion> golosa_aleatorizada(vector<vector<int> >& mz_ady, vector<particion>& partes, list<int>& candidatos, int k, vector<int>& vistos){
+vector<particion> golosa_aleatorizada(vector<vector<int> >& mz_ady, vector<particion>& partes, list<int>& candidatos, int k, vector<int>& vistos, int cant_elegir){
 	/* Inicializo la semilla pues es utilizada en ubicar_menor. */			
 	srand(time(NULL));
 
 	while(!candidatos.empty()){    																						//O(M) *
 		int elegido = candidatos.front();
 		candidatos.pop_front();
-		ubicar_en_menor(elegido, partes, k, mz_ady, vistos);						//O(K*K + K*N)
+		ubicar_en_menor(elegido, partes, k, mz_ady, vistos, cant_elegir);						//O(K*K + K*N)
 	}
 	return partes;
 }
 
+/*TODO*/
+/*BORRAR*/
+void busqueda_local(vector<particion>) {
 
-int main(){
-	int n,m,k,u,v,w;
+}
+
+void  grasp(vector<vector<int> >& mz_ady, vector<particion>& partes, list<int>& candidatos, int k, vector<int>& vistos, int iteraciones, int cant_elegir){
+	
+	vector<particion> res = golosa_aleatorizada(mz_ady, partes, candidatos, k, vistos, cant_elegir);
+	busqueda_local(res);
+	iteraciones--;
+	
+	while(iteraciones != 0){
+		vector<particion> res_2 = golosa_aleatorizada(mz_ady, partes, candidatos, k, vistos, cant_elegir);
+		busqueda_local(res);
+	
+		if(suma_total(res_2) < suma_total(res)) res = res_2;
+		iteraciones--;	
+	}
+}
+
+int main(int argc, char** argv){
+	int n,m,k,u,v,w,iteraciones,cant_elegir;
 	cin >> n;
 	cin >> m;
 	cin >> k;
@@ -94,6 +124,9 @@ int main(){
 	list<int> candidatos;
 	vector<int> vistos(n);
 	
+	iteraciones = atoi(argv[0]);
+	cant_elegir = atoi(argv[1]);
+
 	for(int i = 0; i < n; i++){
 		candidatos.push_back(i);
 	}
@@ -124,9 +157,7 @@ int main(){
 
 	/* Funcion que resuelve el ejercicio */
 	vector<particion> partes(k);
-	vector<particion> res = heuristica_golosa(mz_ady, partes, candidatos, k, vistos);
-	
-	/* Preparacion del resultado */
+	grasp(mz_ady, partes, candidatos, k, vistos, iteraciones, cant_elegir);
 
 	for(int i = 0; i < n ; i++){
 		cout << vistos[i] << " "; 
