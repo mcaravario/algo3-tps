@@ -2,16 +2,57 @@
 #include <list>
 #include <iostream>
 #include <tuple>
+#include <algorithm>
 
 using namespace std;
 
 #define MAX_INT 2147483647
+
+struct nodo_p{
+	int nro;
+	int peso;
+	nodo_p(): nro(-1), peso(0) {}
+	nodo_p(int n, int p): nro(n), peso(p) {}
+	bool operator<(const nodo_p& a) const{
+		return this->peso < a.peso || (this->peso == a.peso && this->nro < a.nro);
+	}
+};
 
 struct particion{
 	list<int> elementos;
 	int peso;
 	particion(): elementos(), peso(0) {}
 };
+
+int peso_nodo(int nodo, vector<vector<int> > mz_ady, int n){
+	int res = 0;
+	for(int i = 0; i < n; i++){
+		if(mz_ady[nodo][i] != -1){
+			res += mz_ady[nodo][i]; 
+		}
+	}
+	return res;
+}
+
+
+
+list<int> ordenar_nodos(list<int> nodos, vector<vector<int> > mz_ady, int n){
+	auto it = nodos.begin();
+	list<int> res;
+	vector<nodo_p> res_parcial(n);
+	for(int i = 0; i < n; i++){
+		int peso = peso_nodo(*it, mz_ady, n);
+		res_parcial[i] = nodo_p(*it, peso);
+		it++;
+	}
+	
+	sort(res_parcial.begin(), res_parcial.end());
+	for(auto it = res_parcial.begin(); it != res_parcial.end(); it++){
+		res.push_back(it->nro);
+	}
+
+	return res;
+}
 
 list<tuple<int,int,int> >::iterator elegir_mayor(list<tuple<int,int,int> >& aristas){
 	list<tuple<int,int,int> >::iterator res;
@@ -30,7 +71,7 @@ list<tuple<int,int,int> >::iterator elegir_mayor(list<tuple<int,int,int> >& aris
 /* Devuelve el peso asociado del nodo v, al conjunto i */
 int peso_asociado(int v, vector<particion>& partes, int i,  vector<vector<int> >& mz_ady){
 	int res = 0;
-	for (auto it = partes[i].elementos.begin(); it != partes[i].elementos.end(); it++){
+	for (auto it = partes[i].elementos.begin(); it != partes[i].elementos.end(); it++){				//O(N)
 		if(mz_ady[v][*it] != -1){
 			res += mz_ady[v][*it];
 		}
@@ -74,11 +115,10 @@ void ubicar_en_menor(int u, vector<particion>& partes, int k, vector<vector<int>
 
 vector<particion> heuristica_golosa(vector<vector<int> >& mz_ady, vector<particion>& partes, list<int>& candidatos, int k, vector<int>& vistos){
 				
-	while(!candidatos.empty()){    																						//O(M) *
-		/* Elijo arista de mayor peso */
+	while(!candidatos.empty()){    																						//O(N) *
 		int elegido = candidatos.front();
 		candidatos.pop_front();
-		ubicar_en_menor(elegido, partes, k, mz_ady, vistos);						//O(K*K + K*N)
+		ubicar_en_menor(elegido, partes, k, mz_ady, vistos);						//O(K*N)
 	}
 	return partes;
 }
