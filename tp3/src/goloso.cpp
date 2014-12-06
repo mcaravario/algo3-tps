@@ -4,6 +4,7 @@
 #include <tuple>
 #include <algorithm>
 
+
 using namespace std;
 
 #define MAX_INT 2147483647
@@ -14,7 +15,7 @@ struct nodo_p{
 	nodo_p(): nro(-1), peso(0) {}
 	nodo_p(int n, int p): nro(n), peso(p) {}
 	bool operator<(const nodo_p& a) const{
-		return this->peso < a.peso || (this->peso == a.peso && this->nro < a.nro);
+		return this->peso >= a.peso || (this->peso == a.peso && this->nro >= a.nro);
 	}
 };
 
@@ -23,6 +24,16 @@ struct particion{
 	int peso;
 	particion(): elementos(), peso(0) {}
 };
+
+// Borrar
+void mostrar_lista(list<int> ls){
+		cout << ">>>>Lista: ";
+		for (auto it = ls.begin(); it != ls.end(); it++){
+			cout << *it << " ";
+		}
+		cout << endl;
+}
+
 
 int peso_nodo(int nodo, vector<vector<int> > mz_ady, int n){
 	int res = 0;
@@ -34,9 +45,19 @@ int peso_nodo(int nodo, vector<vector<int> > mz_ady, int n){
 	return res;
 }
 
+/* Devuelve la suma total de pesos */
+int suma_total(vector<particion>& partes) {
+	int res = 0;
+	for (unsigned int i = 0; i < partes.size(); i++){
+		res += partes[i].peso;
+	}
+	return res;	
+}
 
 
-list<int> ordenar_nodos(list<int> nodos, vector<vector<int> > mz_ady, int n){
+
+list<int> ordenar_nodos(list<int> nodos, vector<vector<int> > mz_ady){
+	int n = nodos.size();
 	auto it = nodos.begin();
 	list<int> res;
 	vector<nodo_p> res_parcial(n);
@@ -132,6 +153,7 @@ int main(){
 	vector<vector<int> > mz_ady(n, vector<int>(n));
 	list<int> candidatos;
 	vector<int> vistos(n);
+
 	
 	for(int i = 0; i < n; i++){
 		candidatos.push_back(i);
@@ -163,13 +185,16 @@ int main(){
 
 	/* Funcion que resuelve el ejercicio */
 	vector<particion> partes(k);
-	vector<particion> res = heuristica_golosa(mz_ady, partes, candidatos, k, vistos);
+	/* Ordeno la lista de nodos, como estrategia para mejorar el funcionamiento. */
+	list<int> candidatos_ordenados = ordenar_nodos(candidatos, mz_ady);
+	mostrar_lista(candidatos_ordenados);
+	vector<particion> res = heuristica_golosa(mz_ady, partes, candidatos_ordenados, k, vistos);
+	cout << ">>Peso: " << suma_total(res) << endl;
 	
-	/* Preparacion del resultado */
 
 	for(int i = 0; i < n ; i++){
 		cout << vistos[i] << " "; 
 	}
-
+	cout << endl;
 	return 0;
 }
