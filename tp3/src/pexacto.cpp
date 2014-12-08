@@ -2,7 +2,7 @@
 
 
 /* Sirve para saber si ya encontre una solución.  */
-bool hay_una = false;
+bool hay_una;
 
 /* Inicializado en el main*/
 bool es_solucion(vector<particion>& res, vector<particion>& ss, particion& p, nodo n, vector<vector<int> > mz_ady);
@@ -21,6 +21,7 @@ void mejor_particion(vector<particion>& res, vector<particion>& bolsas, list<nod
 		candidatos.pop_front();
 		for (unsigned int i = 0; i < bolsas.size(); i++){
 			bolsas[i].elementos.push_back(elegido);
+			int tam = bolsas[i].elementos.size();
 			/* Si sigue siendo una solución, exploro la rama.*/
 			if (es_solucion(res, bolsas, bolsas[i], elegido, mz_ady)){
 				bolsas[i].peso += peso_asociado(elegido, bolsas[i], mz_ady);
@@ -28,6 +29,8 @@ void mejor_particion(vector<particion>& res, vector<particion>& bolsas, list<nod
 				bolsas[i].peso -= peso_asociado(elegido, bolsas[i], mz_ady);
 			}
 			bolsas[i].elementos.pop_back();
+			/* Poda para no repetir soluciones. */
+			if (tam == 1) i = bolsas.size();
 		}
 	}
 }
@@ -107,6 +110,9 @@ int main(){
 	/* Creacion de la lista de nodos. */
 	list<nodo> ns;
 	for (int i = 0; i < n; i++) ns.push_back(i);
+
+	/* Inicializo el bool hay_una. */
+	hay_una = false;
 
 	/* Funcion que resuelve el ejercicio. */
 	mejor_particion(res, bolsas, ns, mz_ady);

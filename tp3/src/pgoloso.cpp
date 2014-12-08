@@ -182,13 +182,13 @@ int main(){
 	for(int i = 0; i<n ; i++){
 		vistos[i] = -1;
 	}
-	
-	list<int> candidatos;
-	for(int i = 0; i < n; i++){
-		candidatos.push_back(i);
-	}
+
 	/* Funcion que resuelve el ejercicio */
-	vector<particion> res = heuristica_golosa(mz_ady, partes, candidatos, k, vistos);
+	vector<particion> partes(k);
+	/* Ordeno la lista de nodos, como estrategia para mejorar el funcionamiento. */
+	list<int> candidatos_ordenados = ordenar_nodos(candidatos, mz_ady);
+	mostrar_lista(candidatos_ordenados);
+	vector<particion> res = heuristica_golosa(mz_ady, partes, candidatos_ordenados, k, vistos);
 	cout << ">>Peso: " << suma_total(res) << endl;
 	
 

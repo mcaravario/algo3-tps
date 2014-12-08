@@ -3,6 +3,7 @@
 #include <iostream>
 #include <tuple>
 #include <algorithm>
+#include <chrono>
 
 
 using namespace std;
@@ -145,15 +146,21 @@ vector<particion> heuristica_golosa(vector<vector<int> >& mz_ady, vector<partici
 }
 
 
-int main(){
-	int n,m,k,u,v,w;
+int main(int argc, char** argv){
+	
+	if (argc < 2) {
+		cout << "Se necesitan las iteraciones como argumento." << endl;
+		return 0;
+	}
+	
+	int n,m,k,u,v,w, iteraciones;
 	cin >> n;
 	cin >> m;
 	cin >> k;
 	vector<vector<int> > mz_ady(n, vector<int>(n));
 	list<int> candidatos;
 	vector<int> vistos(n);
-
+	iteraciones = atoi(argv[1]);
 	
 	for(int i = 0; i < n; i++){
 		candidatos.push_back(i);
@@ -182,19 +189,30 @@ int main(){
 	for(int i = 0; i<n ; i++){
 		vistos[i] = -1;
 	}
-	
-	list<int> candidatos;
-	for(int i = 0; i < n; i++){
-		candidatos.push_back(i);
-	}
-	/* Funcion que resuelve el ejercicio */
-	vector<particion> res = heuristica_golosa(mz_ady, partes, candidatos, k, vistos);
-	cout << ">>Peso: " << suma_total(res) << endl;
-	
 
-	for(int i = 0; i < n ; i++){
-		cout << vistos[i] << " "; 
+
+	using namespace std::chrono;
+	high_resolution_clock reloj;
+	size_t mi = 99999999;
+	
+	while(iteraciones != 0){
+		auto t1 = reloj.now();	
+		/* Funcion que resuelve el ejercicio */
+		vector<particion> partes(k);
+		/* Ordeno la lista de nodos, como estrategia para mejorar el funcionamiento. */
+		list<int> candidatos_ordenados = ordenar_nodos(candidatos, mz_ady);
+		vector<particion> res = heuristica_golosa(mz_ady, partes, candidatos_ordenados, k, vistos);
+
+		auto t2 = reloj.now();
+
+		unsigned int  total = duration_cast<microseconds>(t2-t1).count();
+
+		if(total < mi) mi = total;
+
+		iteraciones--;
+
 	}
-	cout << endl;
-	return 0;
+	cout << n << " " << k << " " << mi << endl;	
+
+return 0;
 }
