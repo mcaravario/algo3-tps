@@ -153,7 +153,7 @@ int main(){
 	vector<vector<int> > mz_ady(n, vector<int>(n));
 	list<int> candidatos;
 	vector<int> vistos(n);
-
+	vector<particion> partes(k);
 	
 	for(int i = 0; i < n; i++){
 		candidatos.push_back(i);
@@ -183,7 +183,6 @@ int main(){
 		vistos[i] = -1;
 	}
 	
-	list<int> candidatos;
 	for(int i = 0; i < n; i++){
 		candidatos.push_back(i);
 	}

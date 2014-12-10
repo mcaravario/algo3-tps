@@ -4,14 +4,10 @@
 #include <tuple>
 #include <algorithm>
 #include <time.h>
+#include "busqueda_local.h"
 
 using namespace std;
 
-struct particion{
-	list<int> elementos;
-	int peso;
-	particion():elementos(), peso(0){}
-};
 
 struct {
 	
@@ -94,26 +90,40 @@ vector<particion> golosa_aleatorizada(vector<vector<int> >& mz_ady, vector<parti
 	return partes;
 }
 
-/*TODO*/
-/*BORRAR*/
-void busqueda_local(vector<particion>) {
 
-}
-
-void  grasp(vector<vector<int> >& mz_ady, vector<particion>& partes, list<int>& candidatos, int k, vector<int>& vistos, int iteraciones, int cant_elegir){
+void  grasp(vector<vector<int> >& mz_ady, vector<particion>& partes, list<int>& candidatos, int k, vector<int>& vistos, int iteraciones, int cant_elegir, int n){
 	
 	vector<particion> res = golosa_aleatorizada(mz_ady, partes, candidatos, k, vistos, cant_elegir);
-	busqueda_local(res);
+	int c = costoTotal(res,k);
+	busquedaLocal(res, k, mz_ady, n, c, false);
 	iteraciones--;
 	
 	while(iteraciones != 0){
 		vector<particion> res_2 = golosa_aleatorizada(mz_ady, partes, candidatos, k, vistos, cant_elegir);
-		busqueda_local(res);
+		busquedaLocal(res_2, k, mz_ady, n, c, false);
 	
 		if(suma_total(res_2) < suma_total(res)) res = res_2;
 		iteraciones--;	
 	}
 }
+
+/* Inicializa las estructuras necesarias para grasp y llama a la funcion que hace el trabajo*/
+vector<int> iniciar_grasp(list<arista>& aristas, int n, int k, int  iteraciones, int cant_elegir){
+
+	vector<int> vistos(n);
+	vector<particion> partes(k);
+	vector<vector<int> > mz_ady = crear_adyacencias(aristas, n);
+	list<int> candidatos;
+
+	for(int i = 0; i < n; i++){
+		candidatos.push_back(i);
+	}
+
+	grasp(mz_ady, partes, candidatos, k, vistos, iteraciones, cant_elegir, n);
+	
+	return vistos;
+}
+
 
 int main(int argc, char** argv){
 	
@@ -123,45 +133,25 @@ int main(int argc, char** argv){
 	cin >> n;
 	cin >> m;
 	cin >> k;
-	vector<vector<int> > mz_ady(n, vector<int>(n));
-	list<int> candidatos;
-	vector<int> vistos(n);
-	
+	list<arista> aristas;
 	iteraciones = atoi(argv[0]);
 	cant_elegir = atoi(argv[1]);
 
-	for(int i = 0; i < n; i++){
-		candidatos.push_back(i);
-	}
 
-	/* Inicializo matriz de adyacencias */
-	for(int i = 0; i < n; i++){
-		for(int j = 0; j < n; j++){
-			mz_ady[i][j] = -1;
-		}
-	}
-
-	/* Inicializacion de estructuras */
+	/* Creo la lista de aristas */
 	for (int i = 0; i < m; i++){
 		cin >> u;
 		cin >> v;
 		cin >> w;
-		/* Resto uno para que no haya problemas con los bordes. Los nodos estan numerados de 0 a n-1*/
 		u--;
 		v--;
-
-		mz_ady[u][v] = w; 
-		mz_ady[v][u] = w; 
-	}
-	/* Inicializo los no vistos nunca en -2 */
-	for(int i = 0; i<n ; i++){
-		vistos[i] = -1;
+		aristas.push_back(arista(u,v,w));
 	}
 
 	/* Funcion que resuelve el ejercicio */
-	vector<particion> partes(k);
-	grasp(mz_ady, partes, candidatos, k, vistos, iteraciones, cant_elegir);
+	vector<int> vistos = iniciar_grasp(aristas, n, k, iteraciones, cant_elegir);
 
+	/* Imprimo por salida esandar el resulado. */
 	for(int i = 0; i < n ; i++){
 		cout << vistos[i] << " "; 
 	}
