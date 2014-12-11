@@ -1,6 +1,8 @@
 CXXFLAGS=-Wall -Wextra -pedantic -ggdb -std=c++0x
 BINDIR=../bin
-BINS=exactot pexactot generador_grafo golosot
+#BINS=ejercicio1 ejercicio2 ejercicio3
+#BINS=exacto goloso grasp pexacto busqueda_local  
+BINS= exacto pexacto goloso pgoloso busqueda_local grasp
 
 .PHONY: all clean
 
@@ -8,8 +10,7 @@ all: $(BINS)
 	mv $(BINS) $(BINDIR)
 
 clean:
-	rm $(BINDIR)/exactot
-	rm $(BINDIR)/pexactot
-	rm $(BINDIR)/generador_grafo
-	rm $(BINDIR)/golosot
-	 
+	rm $(BINDIR)/goloso
+	rm $(BINDIR)/exacto
+	rm $(BINDIR)/grasp
+	rm $(BINDIR)/pexacto

@@ -9,6 +9,6 @@
 ./goloso_run_n.sh 100 13 15 10 10000 100 > k100.out
 
 # Lineal en k.
-./goloso_run_k.sh 100 13 15 10 10000 100 > k100.out
-./goloso_run_k.sh 1000 13 15 10 10000 100 > k100.out
-./goloso_run_k.sh 10000 13 15 10 10000 100 > k100.out
+./goloso_run_k.sh 100 13 15 10 10000 100 > n100.out
+./goloso_run_k.sh 1000 13 15 10 10000 100 > n1000.out
+./goloso_run_k.sh 10000 13 15 10 10000 100 > n10000.out

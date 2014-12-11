@@ -1,0 +1,45 @@
+struct {
+	
+	bool operator() (tuple<int,int> a, tuple<int,int> b) {
+			return get<1>(a) < get<1>(b);
+	}
+
+} claseComp;
+
+/** 
+ * Este algoritmo elige donde ubicar al nodo u de forma golosa y aleatoria,
+ * es decir, entre las mejores cant_elegir opciones (conjuntos) elige una
+ * al azar y luego ubica al nodo allí.
+ **/
+void ubicar_en_menor_rand(int u, vector<conjunto>& partes, int k, vector<vector<int> >& mz_ady, vector<int>& vistos, int cant_elegir){
+	
+	vector<tuple<int,int> > pesos(k);
+	
+	/* Creo un arreglo que contegna a una bolsa y el peso de agregar a u a dicha bolsa. */
+	for (int i = 0; i<k; i++){																			
+		get<0>(pesos[i]) = i;
+		get<1>(pesos[i]) = peso_asociado(partes[i], mz_ady, u);
+	}
+	
+	/* Ordeno el arreglo para luego quedarme con los mejores.  */
+	sort(pesos.begin(), pesos.end(), claseComp);
+	
+	/* Eligo de forma aleatoria el conjunto donde ubicar el nodo. */
+	int conj_elegido = rand() % cant_elegir;
+	partes[get<0>(pesos[conj_elegido])].elementos.push_back(u);
+	partes[get<0>(pesos[conj_elegido])].peso += get<1>(pesos[conj_elegido]);
+	vistos[u] = get<0>(pesos[conj_elegido]);
+}
+
+
+vector<conjunto> golosa_aleatorizada(vector<vector<int> >& mz_ady, vector<conjunto>& partes, list<int>& candidatos, int k, vector<int>& vistos, int cant_elegir, int semilla){
+	/* Inicializo la semilla pues es utilizada en ubicar_menor. */			
+	srand(semilla);
+
+	while(!candidatos.empty()){    																						//O(M) *
+		int elegido = candidatos.front();
+		candidatos.pop_front();
+		ubicar_en_menor_rand(elegido, partes, k, mz_ady, vistos, cant_elegir);						//O(K*K + K*N)
+	}
+	return partes;
+}
