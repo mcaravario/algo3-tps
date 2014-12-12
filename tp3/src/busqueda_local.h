@@ -113,6 +113,7 @@ void busquedaLocal_2opt(vector<conjunto>& res, vector<vector<int> >& mz_ady, int
 				tope--;
 				while(itNodo1 != tope){
 					auto itNodo2 = itNodo1;
+					itNodo2++;
 					while(itNodo2 != res[i].elementos.end()){
 						int dst = 0;
 						while(dst < k){
@@ -139,6 +140,7 @@ void busquedaLocal_2opt(vector<conjunto>& res, vector<vector<int> >& mz_ady, int
 		res= res_vecino;
 	}
 }
+
 
 vector<int> iniciar_local_1opt(list<arista> aristas, int n, int k){
 	
