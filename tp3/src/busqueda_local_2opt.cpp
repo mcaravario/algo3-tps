@@ -19,7 +19,7 @@ int main() {
    }
 
 	/* Funcion que resuelve el ejercicio. */
-	vector<int> posiciones = iniciar_local(aristas, n, k);
+	vector<int> posiciones = iniciar_local_2opt(aristas, n, k);
 
 	/* Imprimo por salida estandar el resultado. */
 	mostrar_res(posiciones);

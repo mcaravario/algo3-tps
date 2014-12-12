@@ -13,7 +13,7 @@ void  grasp(vector<vector<int> >& mz_ady, vector<conjunto>& partes, list<int>& c
 	
 	while(iteraciones != 0){
 		vector<conjunto> res_2 = golosa_aleatorizada(mz_ady, partes, candidatos, k, vistos, cant_elegir, semilla);
-		busquedaLocal(res_2, mz_ady, k);
+		busquedaLocal_1opt(res_2, mz_ady, k);
 	
 		if(suma_total(res_2) < suma_total(res)) res = res_2;
 		iteraciones--;	
