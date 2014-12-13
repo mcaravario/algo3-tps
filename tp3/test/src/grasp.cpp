@@ -1,10 +1,14 @@
 #include "grasp.h"
+#include <chrono>
 
 int main(int argc, char** argv){
 	
-	if(argc < 3) return 0;
-				
-	int n, m, k, u, v, w, iteraciones, cant_elegir, semilla;
+	if(argc < 4) {
+		cout << "Se necesitan como parámetros: iteraciones, cant_elegir, semilla e iteraciones del test." << endl;
+		return 0;
+	}
+
+	int n, m, k, u, v, w, iteraciones, cant_elegir, semilla, iteraciones_test;
 	cin >> n;
 	cin >> m;
 	cin >> k;
@@ -12,6 +16,7 @@ int main(int argc, char** argv){
 	iteraciones = atoi(argv[0]);
 	cant_elegir = atoi(argv[1]);
 	semilla = atoi(argv[2]);
+	iteraciones_test = atoi(argv[3]);
 
 
 	/* Creo la lista de aristas */
@@ -23,11 +28,22 @@ int main(int argc, char** argv){
 		v--;
 		aristas.push_back(arista(u,v,w));
 	}
+	using namespace std::chrono;
+	high_resolution_clock reloj;
+	size_t minimo = MAX_INT;
 
-	/* Funcion que resuelve el ejercicio */
-	vector<int> posiciones = iniciar_grasp(aristas, n, k, iteraciones, cant_elegir, semilla);
+	while (iteraciones_test > 0) {
+		auto t_inicial = reloj.now();
+		iniciar_grasp(aristas, n, k, iteraciones, cant_elegir, semilla);
+		auto t_final = reloj.now();
+		
+		auto t_total = duration_cast<microseconds>(t_final - t_inicial).count();
+		
+		if ((unsigned int) t_total < minimo) minimo = t_total;
+		iteraciones_test--; 
+	}
 
-	/* Imprimo por salida esandar el resulado. */
-	mostrar_res(posiciones);
+	cout << n << " " << k << " " << minimo << endl;	
+
 	return 0;
 }
