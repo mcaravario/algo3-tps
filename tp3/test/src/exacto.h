@@ -1,7 +1,7 @@
 #include "kpmp.h"
 
 /* Sirve para saber si ya encontre una solución.  */
-bool hay_una = false;
+bool hay_una;
 
 /**
 * Indica si la sub-solución (al agregarle un elemento) sigue 
@@ -84,6 +84,9 @@ vector<int> iniciar_exacto(list<arista> aristas, int n, int k){
 	list<nodo> ns;
 	for (int i = 0; i < n; i++) ns.push_back(i);
 
+	/* Este flag es necesario para la función es_solucion. */
+	hay_una = false;
+
 	/* Funcion que resuelve el ejercicio. */
 	mejor_particion(res, bolsas, ns, mz_ady);
 
@@ -106,6 +109,9 @@ vector<int> iniciar_exacto_poda(list<arista> aristas, int n, int k){
 	/* Creacion de la lista de nodos. */
 	list<nodo> ns;
 	for (int i = 0; i < n; i++) ns.push_back(i);
+
+	/* Este flag es necesario para la función es_solucion. */
+	hay_una = false;
 
 	/* Funcion que resuelve el ejercicio. */
 	mejor_particion_poda(res, bolsas, ns, mz_ady);

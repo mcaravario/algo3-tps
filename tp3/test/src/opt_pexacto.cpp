@@ -19,7 +19,7 @@ int main(){
 	}
 
 	/* Llamo a la funcion que resuelve el ejercicio. */
-	cout << peso_de_exacto_poda(aristas, n, k); 
+	cout << n << " " << peso_de_exacto_poda(aristas, n, k) << endl;
 
 	return 0;
 }

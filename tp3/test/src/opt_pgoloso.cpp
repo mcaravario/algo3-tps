@@ -19,9 +19,7 @@ int main(){
 	}
 
 	/* Llamo a la función que resuelve el ejercicio. */
-  cout << peso_de_golosa_ordenada(aristas, n, k);
-
-	/* Muestro el resultado por salida estandar. */
+  cout << n << " " << peso_de_golosa_ordenada(aristas, n, k) << endl;
 
 	return 0;
 }
