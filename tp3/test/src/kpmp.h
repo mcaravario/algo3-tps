@@ -109,3 +109,11 @@ void mostrar_res(vector<int> res){
 	for (auto it = res.begin(); it != res.end(); it++) cout << *it << " ";
 	cout << endl;
 }
+
+
+void mostrar_aristas(list<arista> aristas){
+	for(auto it = aristas.begin(); it != aristas.end(); it++){
+		cout << it->u << " " << it->v << " " << it->peso << endl;
+	}
+
+}
