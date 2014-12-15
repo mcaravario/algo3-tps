@@ -9,7 +9,8 @@ h=$5
 inc=$6
 
 while (($d<$h)); do
-				../../../bin/generador_grafo $n $d $s | ../../../bin/pgoloso $i
+				../../../bin/generador_malo_k $n $d $s | ../../../bin/pgoloso $i
         let d=$d+$inc
 
 done
+
