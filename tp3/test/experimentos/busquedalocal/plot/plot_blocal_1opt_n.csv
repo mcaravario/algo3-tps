@@ -4,7 +4,7 @@ fit f(x) "test_1opt_5_13_10_30_151_1.txt" using 1:($2/g($1)) via a
 set terminal png 
 set xlabel "Cantidad de Nodos ( k cte = 5)"
 set ylabel "Microsegundos"
-set title "Vecindad 2-Nodos - K constante" 
+set title "Vecindad 1-Nodo - K constante" 
 set grid
 set output 'Blocal_1opt_n.png'
 set style data linespoints 
