@@ -46,43 +46,43 @@ void  modificarRes(vector<conjunto>& result, int ori, int dst, int nodo, vector<
 /*complejidad O(n) */
 void  modificarRes_2opt(vector<conjunto>& result, int ori, int dst, int nodo1, int nodo2, vector<vector<int> >& mz_ady){
 	if (ori != -1){
-		result[dst].peso += peso_asociado(result[dst], mz_ady, nodo1);
-		result[dst].peso += peso_asociado(result[dst], mz_ady, nodo2);
+		int p_dst1 = peso_asociado(result[dst], mz_ady, nodo1);	
+		int p_dst2 = peso_asociado(result[dst], mz_ady, nodo2);	
+		result[dst].peso =  result[dst].peso + p_dst1 +p_dst2;
 		if(mz_ady[nodo1][nodo2] != -1) result[dst].peso += mz_ady[nodo1][nodo2];
-		result[ori].peso -= peso_asociado(result[ori], mz_ady, nodo1);
-		result[ori].peso -= peso_asociado(result[ori], mz_ady, nodo2);
+		
+		int p_ori1 = peso_asociado(result[ori], mz_ady, nodo1);
+		int p_ori2 = peso_asociado(result[ori], mz_ady, nodo2);
+		result[ori].peso = result[ori].peso - (p_ori1 + p_ori2); 
 		if(mz_ady[nodo1][nodo2] != -1) result[ori].peso += mz_ady[nodo1][nodo2];
+		
 		result[dst].elementos.push_back(nodo1);
 		result[dst].elementos.push_back(nodo2);
 		result[ori].elementos.remove(nodo1);
 		result[ori].elementos.remove(nodo2);
 	}
 }
-
+//O(n²*k)
 void busquedaLocal_1opt(vector<conjunto>& res, vector<vector<int> >& mz_ady, int k){
-	bool encontrado = false;
-	while(!encontrado){
+	//bool encontrado = false;
+	//while(!encontrado){
 		vector<conjunto> res_vecino = res;
 		int i = 0;
 		int costoParcial = suma_total(res); // O(k)
-		bool hayMejor = false;
-		//int ultimo_dst = -1;
-		//int ultimo_ori = -1;
-		while(i < k){//O(n3) final a prueba
+		//bool hayMejor = false;
+		while(i < k){
 			if(res[i].peso > 0){
 				auto itNodo = res[i].elementos.begin();
-				while(itNodo != res[i].elementos.end()){ //O(kn2+k2n)
+				while(itNodo != res[i].elementos.end()){ //O(n²*k)
 					int dst = 0;
-					while(dst < k){ //O(kn+k2)
+					while(dst < k){ //O(k*n)
 						if(dst != i){
-							if(costoParcial > costoNuevo(res, i, dst,*itNodo, mz_ady, suma_total(res))){ //o(n+k)
-								res_vecino = res;
-								//	modificarRes(res_vecino, ultimo_dst, ultimo_ori, *itNodo, mz_ady);  //o(n)
+							int p_costo = costoNuevo(res, i, dst,*itNodo, mz_ady, suma_total(res)); //O(n)
+							if(costoParcial > p_costo ){
+								res_vecino = res;//O=(n)
 								modificarRes(res_vecino, i, dst, *itNodo, mz_ady); //O(n)
-								//ultimo_dst = dst;
-								//ultimo_ori = i;
-								hayMejor = true;
-								costoParcial = suma_total(res_vecino); //o(k)
+								//hayMejor = true;
+								costoParcial = p_costo;
 							}
 						}
 						dst++;
@@ -92,35 +92,37 @@ void busquedaLocal_1opt(vector<conjunto>& res, vector<vector<int> >& mz_ady, int
 			}
 			i++;
 		}
-		if(!hayMejor) encontrado = true;
+		/*if(!hayMejor) encontrado = true;
 		res= res_vecino;
-	}
+	}*/
 }
 
+//O(k*n³)
 void busquedaLocal_2opt(vector<conjunto>& res, vector<vector<int> >& mz_ady, int k){
-	bool encontrado = false;
-	while(!encontrado){
+	//bool encontrado = false;
+	//while(!encontrado){
 		vector<conjunto> res_vecino = res;
 		int i = 0;
 		int costoParcial = suma_total(res);
-		bool hayMejor = false;
+		//bool hayMejor = false;
 		while(i < k){
 			if(res[i].peso > 0 && res[i].elementos.size()>1){
 				auto itNodo1 = res[i].elementos.begin();
 				auto tope = res[i].elementos.end();
 				tope--;
-				while(itNodo1 != tope){
+				while(itNodo1 != tope){ //O(k*n³)
 					auto itNodo2 = itNodo1;
 					itNodo2++;
-					while(itNodo2 != res[i].elementos.end()){
+					while(itNodo2 != res[i].elementos.end()){ //O(k*n²)
 						int dst = 0;
-						while(dst < k){
+						while(dst < k){ // O(k*n)
 							if(dst != i){
-								if(costoParcial > costoNuevo_2opt(res, i, dst,*itNodo1, *itNodo2, mz_ady, suma_total(res) )){
+								int p_costo = costoNuevo_2opt(res, i, dst,*itNodo1, *itNodo2, mz_ady, suma_total(res)) ;
+								if(costoParcial > p_costo){
 									res_vecino = res;
 									modificarRes_2opt(res_vecino, i, dst, *itNodo1, *itNodo2, mz_ady);
-									hayMejor = true;
-									costoParcial = suma_total(res_vecino);
+									//hayMejor = true;
+									costoParcial = p_costo;
 								}
 							}
 							dst++;
@@ -132,13 +134,13 @@ void busquedaLocal_2opt(vector<conjunto>& res, vector<vector<int> >& mz_ady, int
 			}
 			i++;
 		}
-		if(!hayMejor) encontrado = true;
-		res= res_vecino;
-	}
+		//if(!hayMejor) encontrado = true;
+		//res= res_vecino;
+	//}
 }
 
 
-vector<int> iniciar_local_1opt(list<arista> aristas, int n, int k){
+vector<int> iniciar_local_1opt(list<arista>& aristas, int n, int k){
 	
 	vector<vector<int> > mz_ady = crear_adyacencias(aristas, n);
 	vector<conjunto> res_inicial = resultado_aleatorio(mz_ady, n, k);
@@ -148,7 +150,7 @@ vector<int> iniciar_local_1opt(list<arista> aristas, int n, int k){
 	return vistos;
 }
 
-vector<int> iniciar_local_2opt(list<arista> aristas, int n, int k){
+vector<int> iniciar_local_2opt(list<arista>& aristas, int n, int k){
 	
 	vector<vector<int> > mz_ady = crear_adyacencias(aristas, n);
 	vector<conjunto> res_inicial = resultado_aleatorio(mz_ady, n, k);
