@@ -11,7 +11,7 @@ struct nodo_p{
 	}
 };
 
-int peso_nodo(int nodo, vector<vector<int> > mz_ady, int n){
+int peso_nodo(int nodo, vector<vector<int> >& mz_ady, int n){
 	int res = 0;
 	for(int i = 0; i < n; i++){
 		if(mz_ady[nodo][i] != -1){
@@ -22,7 +22,7 @@ int peso_nodo(int nodo, vector<vector<int> > mz_ady, int n){
 }
 
 
-list<int> ordenar_nodos(list<int> nodos, vector<vector<int> > mz_ady){
+list<int> ordenar_nodos(list<int>& nodos, vector<vector<int> >& mz_ady){
 	int n = nodos.size();
 	auto it = nodos.begin();
 	list<int> res;
