@@ -30,6 +30,7 @@ int main(int argc, char** argv){
 		aristas.push_back(arista(u,v,w));
 	}
 
+
 	while(iteraciones != 0){
 		auto t_inicial = reloj.now();
 		vector<int> posiciones = iniciar_local_1opt(aristas, n, k);
@@ -41,7 +42,6 @@ int main(int argc, char** argv){
 
 		iteraciones--; 
 	}		
-
 	cout << n << " " << k << " " << minimo << endl;
 
 	return 0;

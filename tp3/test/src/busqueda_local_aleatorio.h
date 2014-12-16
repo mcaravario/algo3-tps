@@ -12,47 +12,32 @@ vector<conjunto> resultado_aleatorio(vector<vector<int> >& mz_ady, int n, int k)
 	return resultado;
 }
 
-/*Calcula el costo de la solucion entera, complejidad O(k+n)   */
-int costoNuevo(vector<conjunto>& res,int k, int pos, int i, int nodo, vector<vector<int> >& mz_ady){
-	int conteo = 0;
-	int j= 0;
-	while(j < k){
-		if(j == pos){
-			conteo += (res[j].peso - peso_asociado(res[j], mz_ady, nodo));
-		}else if(j == i){
-			conteo += (res[j].peso + peso_asociado(res[j], mz_ady, nodo));
-		}else{
-			 conteo += res[j].peso;
-		}
-		j++;
-	}
+/*Calcula el costo de la solucion entera, complejidad O(n)   */
+int costoNuevo(vector<conjunto>& res,int ori, int dst, int nodo, vector<vector<int> >& mz_ady, int costo){
+	
+	int conteo = costo;
+	conteo = conteo - peso_asociado(res[ori], mz_ady, nodo);
+	conteo += peso_asociado(res[dst], mz_ady, nodo);
 	return conteo;
 }
 
-/* complejidad O(k+n) */
-int costoNuevo_2opt(vector<conjunto>& res,int k, int pos, int i, int nodo1, int nodo2, vector<vector<int> >& mz_ady){
-	int conteo = 0;
-	int j= 0;
-	while(j < k){
-		if(j == pos){
-			conteo += (res[j].peso - peso_asociado(res[j], mz_ady, nodo1) - peso_asociado(res[j], mz_ady, nodo2));
-			if(mz_ady[nodo1][nodo2] != -1) conteo += mz_ady[nodo1][nodo2];
-		}else if(j == i){
-			conteo += (res[j].peso + peso_asociado(res[j], mz_ady, nodo1) + peso_asociado(res[j], mz_ady, nodo2));
-			if(mz_ady[nodo1][nodo2] != -1) conteo += mz_ady[nodo1][nodo2];
-		}else{
-			 conteo += res[j].peso;
-		}
-		j++;
-	}
+/* complejidad O(n) */
+int costoNuevo_2opt(vector<conjunto>& res, int pos, int i, int nodo1, int nodo2, vector<vector<int> >& mz_ady, int costo){
+	int conteo = costo;
+	conteo -= (peso_asociado(res[pos], mz_ady, nodo1) +  peso_asociado(res[pos], mz_ady, nodo2));
+	if(mz_ady[nodo1][nodo2] != -1) conteo += mz_ady[nodo1][nodo2];
+	conteo += peso_asociado(res[i], mz_ady, nodo1) + peso_asociado(res[i], mz_ady, nodo2);
+	if(mz_ady[nodo1][nodo2] != -1) conteo += mz_ady[nodo1][nodo2];
 	return conteo;
 }
 
 /*complejidad O(n) */
 void  modificarRes(vector<conjunto>& result, int ori, int dst, int nodo, vector<vector<int> >& mz_ady){
 	if (ori != -1){
-		result[dst].peso += peso_asociado(result[dst], mz_ady, nodo);
-		result[ori].peso -= peso_asociado(result[ori], mz_ady, nodo);
+		int p_dst = peso_asociado(result[dst], mz_ady, nodo);
+		result[dst].peso =  	result[dst].peso + p_dst;
+		int p_ori = peso_asociado(result[ori], mz_ady, nodo);
+		result[ori].peso = result[ori].peso - p_ori;
 		result[dst].elementos.push_back(nodo);
 		result[ori].elementos.remove(nodo);
 	}
@@ -81,8 +66,8 @@ void busquedaLocal_1opt(vector<conjunto>& res, vector<vector<int> >& mz_ady, int
 		int i = 0;
 		int costoParcial = suma_total(res); // O(k)
 		bool hayMejor = false;
-		int ultimo_dst = -1;
-		int ultimo_ori = -1;
+		//int ultimo_dst = -1;
+		//int ultimo_ori = -1;
 		while(i < k){//O(n3) final a prueba
 			if(res[i].peso > 0){
 				auto itNodo = res[i].elementos.begin();
@@ -90,11 +75,12 @@ void busquedaLocal_1opt(vector<conjunto>& res, vector<vector<int> >& mz_ady, int
 					int dst = 0;
 					while(dst < k){ //O(kn+k2)
 						if(dst != i){
-							if(costoParcial > costoNuevo(res, k, i, dst,*itNodo, mz_ady )){ //o(n+k)
-								modificarRes(res_vecino, ultimo_ori, ultimo_dst, *itNodo, mz_ady);  //o(n)
+							if(costoParcial > costoNuevo(res, i, dst,*itNodo, mz_ady, suma_total(res))){ //o(n+k)
+								res_vecino = res;
+								//	modificarRes(res_vecino, ultimo_dst, ultimo_ori, *itNodo, mz_ady);  //o(n)
 								modificarRes(res_vecino, i, dst, *itNodo, mz_ady); //O(n)
-								ultimo_dst = dst;
-								ultimo_ori = i;
+								//ultimo_dst = dst;
+								//ultimo_ori = i;
 								hayMejor = true;
 								costoParcial = suma_total(res_vecino); //o(k)
 							}
@@ -118,8 +104,6 @@ void busquedaLocal_2opt(vector<conjunto>& res, vector<vector<int> >& mz_ady, int
 		int i = 0;
 		int costoParcial = suma_total(res);
 		bool hayMejor = false;
-		int ultimo_dst = -1;
-		int ultimo_ori = -1;
 		while(i < k){
 			if(res[i].peso > 0 && res[i].elementos.size()>1){
 				auto itNodo1 = res[i].elementos.begin();
@@ -132,11 +116,9 @@ void busquedaLocal_2opt(vector<conjunto>& res, vector<vector<int> >& mz_ady, int
 						int dst = 0;
 						while(dst < k){
 							if(dst != i){
-								if(costoParcial > costoNuevo_2opt(res, k, i, dst,*itNodo1, *itNodo2, mz_ady )){
-									modificarRes_2opt(res_vecino, ultimo_ori, ultimo_dst, *itNodo1, *itNodo2,  mz_ady);
+								if(costoParcial > costoNuevo_2opt(res, i, dst,*itNodo1, *itNodo2, mz_ady, suma_total(res) )){
+									res_vecino = res;
 									modificarRes_2opt(res_vecino, i, dst, *itNodo1, *itNodo2, mz_ady);
-									ultimo_dst = dst;
-									ultimo_ori = i;
 									hayMejor = true;
 									costoParcial = suma_total(res_vecino);
 								}
