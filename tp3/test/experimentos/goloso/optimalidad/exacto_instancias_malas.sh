@@ -11,5 +11,6 @@ d=$3
 h=$4
 
 while (($d<=$h)); do
-	../../../bin/generador_malo $n (($n*2)) $k $d | ../../../bin/opt_pexacto
+	../../../bin/generador_malo $n $k $d | ../../../bin/opt_pexacto
 	let d=$d+1
+done

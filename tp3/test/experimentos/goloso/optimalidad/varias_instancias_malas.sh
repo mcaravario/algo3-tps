@@ -10,6 +10,7 @@ n=$2
 d=$3
 h=$4
 
-while (($d<=$h)); do
-	../../../bin/generador_malo $n (($n*2)) $k $d | ../../../bin/opt_pgoloso
+while (($d<$h)); do
+	../../../bin/generador_malo $n $k $d | ../../../bin/opt_pgoloso
 	let d=$d+1
+done

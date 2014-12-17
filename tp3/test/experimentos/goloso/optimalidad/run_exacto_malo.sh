@@ -10,6 +10,7 @@ d=$2
 h=$3
 s=$4
 
-while (($d<=$h)); do
+while (($d<$h)); do
 	../../../bin/generador_malo $d $k $s | ../../../bin/opt_pexacto
 	let d=$d+1
+done

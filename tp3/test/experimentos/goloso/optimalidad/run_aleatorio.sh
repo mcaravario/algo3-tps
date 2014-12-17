@@ -10,6 +10,8 @@ d=$2
 h=$3
 s=$4
 
-while (($d<=$h)); do
-	../../../bin/generador_grafo_aristas $d (($d*2)) $k $s | ../../../bin/opt_pgoloso
+while (($d<$h)); do
+	let m=$((d*2)) 
+	../../../bin/generador_grafo_aristas $d $m $k $s | ../../../bin/opt_pgoloso
 	let d=$d+1
+done
