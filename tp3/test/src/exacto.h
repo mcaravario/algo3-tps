@@ -123,3 +123,24 @@ vector<int> iniciar_exacto_poda(list<arista> aristas, int n, int k){
 	
 	return posiciones;
 }
+
+int peso_de_exacto_poda(list<arista> aristas, int n, int k){
+
+	vector<vector<int> > mz_ady = crear_adyacencias(aristas, n);
+
+	/* Creo la partición resultado, y la particion parcial. */
+	vector<conjunto> res(k);
+	vector<conjunto> bolsas(k);
+
+	/* Creacion de la lista de nodos. */
+	list<nodo> ns;
+	for (int i = 0; i < n; i++) ns.push_back(i);
+
+	/* Este flag es necesario para la función es_solucion. */
+	hay_una = false;
+
+	/* Funcion que resuelve el ejercicio. */
+	mejor_particion_poda(res, bolsas, ns, mz_ady);
+	
+	return suma_total(res);
+}

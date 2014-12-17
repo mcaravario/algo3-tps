@@ -6,6 +6,30 @@ struct {
 
 } claseComp;
 
+
+void ubicar_en_menor(int u, vector<conjunto>& partes, int k, vector<vector<int> >& mz_ady, vector<int>& vistos){
+	
+	int n_part;
+	int min = MAX_INT;
+	
+	/* Trato de ubicar el vertice u, si es que no lo ubique previamente */
+	for (int i = 0; i<k; i++){																						//O(K)*
+		int peso_nuevo = peso_asociado(partes[i],  mz_ady, u);							//O(N)
+		if (peso_nuevo < min) {
+			min = peso_nuevo;
+			n_part = i;
+		}
+	}
+	/**
+	 * En n_part tengo el conjunto donde va u.
+	 **/
+	partes[n_part].elementos.push_front(u);
+	partes[n_part].peso += min;
+
+	/* Actualizo el arreglo donde tengo los vertices que ya ubique */
+	vistos[u] = n_part;
+}
+
 /** 
  * Este algoritmo elige donde ubicar al nodo u de forma golosa y aleatoria,
  * es decir, entre las mejores cant_elegir opciones (conjuntos) elige una
@@ -31,15 +55,37 @@ void ubicar_en_menor_rand(int u, vector<conjunto>& partes, int k, vector<vector<
 	vistos[u] = get<0>(pesos[conj_elegido]);
 }
 
+/* Devuelve el nodo ganador y lo elimina de la lista. */
+int nodo_ganador(list<int>& l, int nro){
+	if ((unsigned int)nro >= l.size()){
+		nro = nro % l.size();
+	}
+	auto it = l.begin();
+	while (nro > 0){
+		it++;
+		nro--;
+	}
+	int res = *it;
+	l.erase(it);
+	return res;
+}
 
-vector<conjunto> golosa_aleatorizada(vector<vector<int> >& mz_ady, vector<conjunto>& partes, list<int>& candidatos, int k, vector<int>& vistos, int cant_elegir, int semilla){
+vector<conjunto> golosa_aleatorizada(vector<vector<int> >& mz_ady, vector<conjunto>& partes, list<int>& candidatos, int k, vector<int>& vistos, int cant_elegir, int semilla, int modo_uso_goloso){
 	/* Inicializo la semilla pues es utilizada en ubicar_menor. */			
 	srand(semilla);
+		
+	if(modo_uso_goloso){
+		int ganador = rand() % cant_elegir;
+		int nodo = nodo_ganador(candidatos, ganador);
+		ubicar_en_menor(nodo, partes, k, mz_ady, vistos);	
 
-	while(!candidatos.empty()){    																						//O(M) *
-		int elegido = candidatos.front();
-		candidatos.pop_front();
-		ubicar_en_menor_rand(elegido, partes, k, mz_ady, vistos, cant_elegir);						//O(K*K + K*N)
+	} else {
+		while(!candidatos.empty()){    																						//O(M) *
+			int elegido = candidatos.front();
+			candidatos.pop_front();
+			ubicar_en_menor_rand(elegido, partes, k, mz_ady, vistos, cant_elegir);						//O(K*K + K*N)
+		}
 	}
+
 	return partes;
 }

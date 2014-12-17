@@ -114,3 +114,21 @@ vector<int> iniciar_golosa_ordenada(list<arista>& aristas, int n, int k){
 	
 	return vistos;
 }
+
+int peso_de_golosa_ordenada(list<arista>& aristas, int n, int k){
+
+	vector<vector<int> > mz_ady = crear_adyacencias(aristas, n);
+	list<int> candidatos;
+	vector<int> vistos(n);
+	vector<conjunto> partes(k);
+	
+	for(int i = 0; i < n; i++){
+		candidatos.push_back(i);
+	}
+
+	/* Llamo a la herística propiamente dicha. */
+	list<int> candidatos_ordenados = ordenar_nodos(candidatos, mz_ady);
+	vector<conjunto> res = heuristica_golosa(mz_ady, partes, candidatos_ordenados, k, vistos);	
+	
+	return suma_total(res);
+}

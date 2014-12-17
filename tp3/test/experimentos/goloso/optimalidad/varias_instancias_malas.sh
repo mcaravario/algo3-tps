@@ -9,8 +9,11 @@ k=$1
 n=$2
 d=$3
 h=$4
+centrales=$k
+satelites=0
 
 while (($d<$h)); do
-	../../../bin/generador_malo $n $k $d | ../../../bin/opt_pgoloso
+	let satelites=$n-$centrales
+	../../../bin/generador_malo $centrales $satelites $k $d | ../../../bin/opt_pgoloso
 	let d=$d+1
 done

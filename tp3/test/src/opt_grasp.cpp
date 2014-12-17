@@ -3,12 +3,12 @@
 
 int main(int argc, char** argv){
 	
-	if (argc < 7) {
+	if (argc < 6) {
 		cout << "Se necesitan como parámetros: semilla, modo de uso de grasp, modo de uso del goloso aleatorio, cantidad de iteraciones para grasp, y el parametro aleatorio del goloso." << endl;
 		return 0;
 	}
 
-	int n, m, k, u, v, w, semilla, m_uso_grasp, m_uso_gol, it_grasp, cant_elegir, iteraciones_test;
+	int n, m, k, u, v, w, semilla, m_uso_grasp, m_uso_gol, it_grasp, cant_elegir;
 	cin >> n;
 	cin >> m;
 	cin >> k;
@@ -30,7 +30,14 @@ int main(int argc, char** argv){
 		aristas.push_back(arista(u,v,w));
 	}
 
-	mostrar_res(iniciar_grasp(aristas, n, k, semilla, m_uso_grasp, m_uso, gol, it_grasp, cant_elegir));
+	using namespace std::chrono;
+	high_resolution_clock reloj;
+
+	auto t_i = reloj.now();
+	int peso = 	peso_grasp(aristas, n, k, semilla, m_uso_grasp, m_uso_gol, it_grasp, cant_elegir);
+	auto t_f = reloj.now();
+
+	cout << n << " " << peso << " " << duration_cast<microseconds>(t_f - t_i).count() << endl;	
 
 	return 0;
 }

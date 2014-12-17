@@ -3,20 +3,21 @@
 
 int main(int argc, char** argv){
 	
-	if(argc < 4) {
-		cout << "Se necesitan como parámetros: iteraciones, cant_elegir, semilla e iteraciones del test." << endl;
+	if (argc < 7) {
+		cout << "Se necesitan como parámetros: semilla, modo de uso de grasp, modo de uso del goloso aleatorio, cantidad de iteraciones para grasp, el parametro aleatorio del goloso y iteraciones para el test.." << endl;
 		return 0;
 	}
 
-	int n, m, k, u, v, w, iteraciones, cant_elegir, semilla, iteraciones_test;
+	int n, m, k, u, v, w, semilla, m_uso_grasp, m_uso_gol, it_grasp, cant_elegir, iteraciones_test;
 	cin >> n;
 	cin >> m;
 	cin >> k;
 	list<arista> aristas;
-	iteraciones = atoi(argv[0]);
-	cant_elegir = atoi(argv[1]);
-	semilla = atoi(argv[2]);
-	iteraciones_test = atoi(argv[3]);
+	semilla = atoi(argv[1]);
+	m_uso_grasp	= atoi(argv[2]);
+	m_uso_gol	= atoi(argv[3]);
+	it_grasp	= atoi(argv[4]);
+	cant_elegir	= atoi(argv[5]);
 
 
 	/* Creo la lista de aristas */
@@ -34,7 +35,7 @@ int main(int argc, char** argv){
 
 	while (iteraciones_test > 0) {
 		auto t_inicial = reloj.now();
-		iniciar_grasp(aristas, n, k, iteraciones, cant_elegir, semilla);
+		iniciar_grasp(aristas, n, k, semilla, m_uso_grasp, m_uso_gol, it_grasp, cant_elegir);
 		auto t_final = reloj.now();
 		
 		auto t_total = duration_cast<microseconds>(t_final - t_inicial).count();

@@ -1,6 +1,6 @@
 CXXFLAGS=-Wall -Wextra -pedantic -ggdb -std=c++0x
 BINDIR=../bin
-BINS= exacto pexacto goloso pgoloso busqueda_local_1opt_aleatorio busqueda_local_2opt_aleatorio grasp generador_grafo generador_malo grafos_completos generador_arbol generador_bipartito generador_grafo_aristas 
+BINS= exacto pexacto goloso pgoloso busqueda_local_1opt_aleatorio busqueda_local_2opt_aleatorio grasp generador_grafo generador_malo grafos_completos generador_arbol generador_bipartito generador_grafo_aristas opt_pgoloso opt_pexacto opt_grasp
 
 .PHONY: all clean
 
@@ -21,3 +21,6 @@ clean:
 	rm $(BINDIR)/generador_arbol
 	rm $(BINDIR)/generador_bipartito
 	rm $(BINDIR)/generador_grafo_aristas
+	rm $(BINDIR)/opt_pgoloso
+	rm $(BINDIR)/opt_pexacto
+	rm $(BINDIR)/opt_grasp
