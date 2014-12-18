@@ -64,6 +64,42 @@ void  modificarRes_2opt(vector<conjunto>& result, int ori, int dst, int nodo1, i
 }
 //O(n²*k)
 void busquedaLocal_1opt(vector<conjunto>& res, vector<vector<int> >& mz_ady, int k){
+	bool encontrado = false;
+	while(!encontrado){
+		vector<conjunto> res_vecino = res;
+		int i = 0;
+		int costoParcial = suma_total(res); // O(k)
+		bool hayMejor = false;
+		while(i < k){
+			if(res[i].peso > 0){
+				auto itNodo = res[i].elementos.begin();
+				while(itNodo != res[i].elementos.end()){ //O(n²*k)
+					int dst = 0;
+					while(dst < k){ //O(k*n)
+						if(dst != i){
+							int p_costo = costoNuevo(res, i, dst,*itNodo, mz_ady, suma_total(res)); //O(n)
+							if(costoParcial > p_costo ){
+								res_vecino = res;//O=(n)
+								modificarRes(res_vecino, i, dst, *itNodo, mz_ady); //O(n)
+								hayMejor = true;
+								costoParcial = p_costo;
+							}
+						}
+						dst++;
+					}
+					itNodo++;
+				}
+			}
+			i++;
+		}
+		if(!hayMejor) encontrado = true;
+		res= res_vecino;
+	}
+}
+
+
+/* Para testeo de complejidad. */
+void busquedaLocal_1opt_test(vector<conjunto>& res, vector<vector<int> >& mz_ady, int k){
 	//bool encontrado = false;
 	//while(!encontrado){
 		vector<conjunto> res_vecino = res;
@@ -96,6 +132,7 @@ void busquedaLocal_1opt(vector<conjunto>& res, vector<vector<int> >& mz_ady, int
 		res= res_vecino;
 	}*/
 }
+
 
 //O(k*n³)
 void busquedaLocal_2opt(vector<conjunto>& res, vector<vector<int> >& mz_ady, int k){
