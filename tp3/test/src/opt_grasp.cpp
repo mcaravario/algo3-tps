@@ -37,7 +37,7 @@ int main(int argc, char** argv){
 	int peso = 	peso_grasp(aristas, n, k, semilla, m_uso_grasp, m_uso_gol, it_grasp, cant_elegir);
 	auto t_f = reloj.now();
 
-	cout << n << " " << peso << " " << duration_cast<microseconds>(t_f - t_i).count() << endl;	
+	cout << n << " " << it_grasp  << " " << peso << " " << duration_cast<microseconds>(t_f - t_i).count() << endl;	
 
 	return 0;
 }
