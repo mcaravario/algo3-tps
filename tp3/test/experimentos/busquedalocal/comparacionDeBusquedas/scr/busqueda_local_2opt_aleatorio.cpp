@@ -8,11 +8,12 @@ int main(int argc, char** argv){
 		return 0;
 	}
 
-	int n,m,k,u,v,w,iteraciones;
+	int n,m,k,u,v,w,iteraciones, tipoResultado;
   cin >> n; 
 	cin >> m;
   cin >> k;
 	iteraciones = atoi(argv[2]);
+	tipoResultado = atoi(argv[3]);
 
 	using namespace std::chrono;
 	high_resolution_clock reloj;
@@ -28,11 +29,12 @@ int main(int argc, char** argv){
     v--;
 		aristas.push_back(arista(u,v,w));
    }
-
+	
+	int pesoTotal= 0;
 	while(iteraciones != 0){
   	srand(atoi(argv[1]));
 		auto t_inicial = reloj.now();
-		vector<int> posiciones = iniciar_local_2opt(aristas, n, k);
+		vector<int> posiciones = iniciar_local_2opt(aristas, n, k, pesoTotal, tipoResultado);
 		auto t_final = reloj.now();
 	
 		auto t_total = duration_cast<microseconds>(t_final - t_inicial).count();
@@ -42,8 +44,9 @@ int main(int argc, char** argv){
 
 		iteraciones--; 
 	}		
-
-	cout << k << " " << minimo << endl;
+	cout << "Busqueda Local 2-opt " << endl << "Nodos: " << n << endl;
+	cout << "Resultado: " << pesoTotal << endl;
+	cout << "Tiempo: " << minimo << endl << endl;
 
 	return 0;
 }

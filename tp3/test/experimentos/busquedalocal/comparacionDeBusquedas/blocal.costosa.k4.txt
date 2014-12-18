@@ -1,0 +1,150 @@
+Busqueda Local 1-opt
+Nodos: 5
+Resultado: 2
+Tiempo: 74
+
+Busqueda Local 2-opt 
+Nodos: 5
+Resultado: 105
+Tiempo: 18
+
+Busqueda Local 1-opt
+Nodos: 6
+Resultado: 12
+Tiempo: 116
+
+Busqueda Local 2-opt 
+Nodos: 6
+Resultado: 68
+Tiempo: 86
+
+Busqueda Local 1-opt
+Nodos: 7
+Resultado: 25
+Tiempo: 134
+
+Busqueda Local 2-opt 
+Nodos: 7
+Resultado: 77
+Tiempo: 123
+
+Busqueda Local 1-opt
+Nodos: 8
+Resultado: 44
+Tiempo: 155
+
+Busqueda Local 2-opt 
+Nodos: 8
+Resultado: 78
+Tiempo: 146
+
+Busqueda Local 1-opt
+Nodos: 9
+Resultado: 54
+Tiempo: 356
+
+Busqueda Local 2-opt 
+Nodos: 9
+Resultado: 119
+Tiempo: 224
+
+Busqueda Local 1-opt
+Nodos: 10
+Resultado: 88
+Tiempo: 379
+
+Busqueda Local 2-opt 
+Nodos: 10
+Resultado: 173
+Tiempo: 264
+
+Busqueda Local 1-opt
+Nodos: 11
+Resultado: 156
+Tiempo: 352
+
+Busqueda Local 2-opt 
+Nodos: 11
+Resultado: 197
+Tiempo: 576
+
+Busqueda Local 1-opt
+Nodos: 12
+Resultado: 189
+Tiempo: 529
+
+Busqueda Local 2-opt 
+Nodos: 12
+Resultado: 250
+Tiempo: 713
+
+Busqueda Local 1-opt
+Nodos: 13
+Resultado: 235
+Tiempo: 612
+
+Busqueda Local 2-opt 
+Nodos: 13
+Resultado: 270
+Tiempo: 723
+
+Busqueda Local 1-opt
+Nodos: 14
+Resultado: 232
+Tiempo: 679
+
+Busqueda Local 2-opt 
+Nodos: 14
+Resultado: 398
+Tiempo: 484
+
+Busqueda Local 1-opt
+Nodos: 15
+Resultado: 323
+Tiempo: 471
+
+Busqueda Local 2-opt 
+Nodos: 15
+Resultado: 498
+Tiempo: 392
+
+Busqueda Local 1-opt
+Nodos: 16
+Resultado: 425
+Tiempo: 272
+
+Busqueda Local 2-opt 
+Nodos: 16
+Resultado: 518
+Tiempo: 671
+
+Busqueda Local 1-opt
+Nodos: 17
+Resultado: 400
+Tiempo: 417
+
+Busqueda Local 2-opt 
+Nodos: 17
+Resultado: 571
+Tiempo: 529
+
+Busqueda Local 1-opt
+Nodos: 18
+Resultado: 608
+Tiempo: 404
+
+Busqueda Local 2-opt 
+Nodos: 18
+Resultado: 688
+Tiempo: 503
+
+Busqueda Local 1-opt
+Nodos: 19
+Resultado: 618
+Tiempo: 761
+
+Busqueda Local 2-opt 
+Nodos: 19
+Resultado: 708
+Tiempo: 1286
+
