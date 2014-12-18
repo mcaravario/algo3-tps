@@ -42,7 +42,7 @@ int main(int argc, char** argv){
 
 		iteraciones--; 
 	}		
-	cout << k  << " " << minimo << endl;
+	cout << n << " " << k  << " " << minimo << endl;
 
 	return 0;
 }
