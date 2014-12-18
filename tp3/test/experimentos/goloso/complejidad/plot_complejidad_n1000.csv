@@ -1,0 +1,8 @@
+set terminal png 
+set xlabel "Cantidad de conjuntos"
+set ylabel "Microsegundos"
+set title "Analisis de complejidad fijando n = 1000" 
+set size
+set grid
+set output 'gol_complejidad_n1000.png'
+plot "r_n1000.out" using 2:3 lt -1 lw 2 smooth bezier title 'n = 1000' with points 
