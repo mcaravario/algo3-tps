@@ -5,4 +5,4 @@ set title "Comparacion del exacto con y sin poda, utilizando k=3"
 set size
 set grid
 set output 'exacto_comp_k3.png'
-plot "ek3.out" using 1:3 lt -1 lw 2 smooth bezier title 'exacto sin poda' with points, "pek3.out" using 1:3 lt "gray" lw 2 smooth bezier title 'exacto con poda' with points
+plot "ek3.out" using 1:3 lt -1 lw 0.5 smooth bezier title 'exacto sin poda' with points, "pek3.out" using 1:3 lt "gray" lw 0.5 smooth bezier title 'exacto con poda' with points
