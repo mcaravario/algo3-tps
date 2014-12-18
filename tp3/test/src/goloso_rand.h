@@ -6,15 +6,54 @@ struct {
 
 } claseComp;
 
+struct nodo_p{
+	int nro;
+	int peso;
+	nodo_p(): nro(-1), peso(0) {}
+	nodo_p(int n, int p): nro(n), peso(p) {}
+	bool operator<(const nodo_p& a) const{
+		return this->peso >= a.peso || (this->peso == a.peso && this->nro >= a.nro);
+	}
+};
+
+
+int peso_nodo(int nodo, vector<vector<int> >& mz_ady, int n){
+	int res = 0;
+	for(int i = 0; i < n; i++){
+		if(mz_ady[nodo][i] != -1){
+			res += mz_ady[nodo][i]; 
+		}
+	}
+	return res;
+}
+
+
+list<int> ordenar_nodos(list<int>& nodos, vector<vector<int> >& mz_ady){
+	int n = nodos.size();
+	auto it = nodos.begin();
+	list<int> res;
+	vector<nodo_p> res_parcial(n);
+	for(int i = 0; i < n; i++){
+		int peso = peso_nodo(*it, mz_ady, n);
+		res_parcial[i] = nodo_p(*it, peso);
+		it++;
+	}
+	
+	sort(res_parcial.begin(), res_parcial.end());
+	for(auto it = res_parcial.begin(); it != res_parcial.end(); it++){
+		res.push_back(it->nro);
+	}
+
+	return res;
+}
 
 void ubicar_en_menor(int u, vector<conjunto>& partes, int k, vector<vector<int> >& mz_ady, vector<int>& vistos){
 	
 	int n_part;
 	int min = MAX_INT;
 	
-	/* Trato de ubicar el vertice u, si es que no lo ubique previamente */
-	for (int i = 0; i<k; i++){																						//O(K)*
-		int peso_nuevo = peso_asociado(partes[i],  mz_ady, u);							//O(N)
+	for (int i = 0; i<k; i++){																		
+		int peso_nuevo = peso_asociado(partes[i],  mz_ady, u);
 		if (peso_nuevo < min) {
 			min = peso_nuevo;
 			n_part = i;
@@ -70,9 +109,15 @@ int nodo_ganador(list<int>& l, int nro){
 	return res;
 }
 
-vector<conjunto> golosa_aleatorizada(vector<vector<int> >& mz_ady, vector<conjunto>& partes, list<int>& candidatos, int k, vector<int>& vistos, int cant_elegir, int semilla, int modo_uso_goloso){
+vector<conjunto> golosa_aleatorizada(vector<vector<int> >& mz_ady, list<int> candidatos, int k, vector<int>& vistos, int cant_elegir, int semilla, int modo_uso_goloso){
 	/* Inicializo la semilla pues es utilizada en ubicar_menor. */			
 	srand(semilla);
+
+	/* Creo la partición vacía. */
+	vector<conjunto> partes(k);
+
+	/* Ordeno los nodos por peso. */
+	ordenar_nodos(candidatos, mz_ady);
 		
 	if (modo_uso_goloso){
 		while (!candidatos.empty()) {
