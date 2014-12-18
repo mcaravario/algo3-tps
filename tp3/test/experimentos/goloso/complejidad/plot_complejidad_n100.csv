@@ -5,4 +5,4 @@ set title "Analisis de complejidad fijando n = 100"
 set size
 set grid
 set output 'gol_complejidad_n100.png'
-plot "r_n100.out" using 2:3 lt -1 lw 2 smooth bezier title 'n = 100' with points 
+plot "r_n100.out" using 2:3 lt -1 lw 0.5 smooth bezier title 'n = 100' with points 
