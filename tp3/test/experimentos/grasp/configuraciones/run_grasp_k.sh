@@ -18,9 +18,8 @@ divisor=20
 proporcion=0
 
 while (($d<=$h)); do
-	let m=$(((d*(d-1))/2))
 	let	k=$((d/divisor))
 	let proporcion=$((k/cant_elegir))
-	../../../bin/grafos_completos $d $m $k | ../../../bin/opt_grasp $s $mugrasp $mugol $it_grasp $proporcion
+	../../../bin/grafos_completos $d $k $s | ../../../bin/opt_grasp $s $mugrasp $mugol $it_grasp $proporcion
 	let d=$d+$inc
 done
