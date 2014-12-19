@@ -14,6 +14,6 @@ satelites=0
 
 while (($d<$h)); do
 	let satelites=$n-$centrales
-	../../../bin/generador_malo $centrales $satelites $k $d | ../../../bin/opt_grasp
+	../../../bin/generador_malo $centrales $satelites $k $d | ../../../bin/opt_grasp $s 1 1 5 3 
 	let d=$d+1
 done
