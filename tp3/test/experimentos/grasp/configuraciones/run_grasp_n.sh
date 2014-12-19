@@ -19,7 +19,7 @@ proporcion=0
 
 while (($d<=$h)); do
 	let	k=$((d/divisor))
-	let propocion=$((d/cant_elegir))
+	let proporcion=$((d/cant_elegir))
 	../../../bin/grafos_completos $d $k $s | ../../../bin/opt_grasp $s $mugrasp $mugol $it_grasp $proporcion
 	let d=$d+$inc
 done
