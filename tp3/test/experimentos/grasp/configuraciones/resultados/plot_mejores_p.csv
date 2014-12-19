@@ -1,0 +1,8 @@
+set terminal png 
+set xlabel "Cantidad de nodos"
+set ylabel "Peso total"
+set title "Pesos grasp utilizando las mejores configuraciones de cada uno" 
+set size
+set grid
+set output 'grasp_mejores_p.png'
+plot "grasp.00.10.5.out" using 1:3 lt -1 title 'config 00, k = 10 proporcion = 1/5' with lines , "grasp.01.10.40.out" using 1:3 title 'config 01, k = 10 proporcion = 1/40' with lines, "grasp.10.5.5.out" using 1:3  title 'config  10, k = 5 proporcion = 1/5' with points pt 1, "grasp.11.5.40.out" using 1:3 title 'config 11, k = 5 proporcion = 1/40' with points pt 2
