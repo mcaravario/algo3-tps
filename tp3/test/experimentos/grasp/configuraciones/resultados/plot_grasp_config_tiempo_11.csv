@@ -5,4 +5,4 @@ set title "Tiempo grasp utilizando la configuracion 11"
 set size
 set grid
 set output 'grasp_config_t_11.png'
-plot "grasp.11.5.20.out" using 1:4 title 'k = 5, proporcion = 1/20' with lines , "grasp.11.25.20.out" using 1:4 title 'k = 25, proporcion = 1/20' with lines, "grasp.11.5.40.out" using 1:4  title 'k = 5, proporcion = 1/40' with lines, "grasp.11.25.40.out" using 1:4 title 'k = 25, proporcion = 1/40' with lines
+plot "grasp.11.5.20.out" using 1:4 lt -1 title 'k = 5, proporcion = 1/20' with lines , "grasp.11.25.20.out" using 1:4 title 'k = 25, proporcion = 1/20' with points pt 1, "grasp.11.5.40.out" using 1:4  title 'k = 5, proporcion = 1/40' with lines, "grasp.11.25.40.out" using 1:4 title 'k = 25, proporcion = 1/40' with points pt 2
