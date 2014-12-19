@@ -12,6 +12,6 @@ h=$4
 
 while (($d<$h)); do
 	m=$((n*2))
-	../../../bin/grafos_completos $n $k $d | ../../../bin/opt_pgoloso
+	../../../bin/grafos_completos $n $k $d | ../../../bin/opt_grasp
 	let d=$d+1
 done
