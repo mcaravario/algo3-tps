@@ -12,7 +12,6 @@ int main(int argc, char** argv){
   cin >> n; 
 	cin >> m;
   cin >> k;
-  srand(atoi(argv[1]));
 	iteraciones = atoi(argv[2]);
 
 	using namespace std::chrono;
@@ -31,6 +30,7 @@ int main(int argc, char** argv){
    }
 
 	while(iteraciones != 0){
+  	srand(atoi(argv[1]));
 		auto t_inicial = reloj.now();
 		vector<int> posiciones = iniciar_local_2opt(aristas, n, k);
 		auto t_final = reloj.now();
@@ -43,7 +43,7 @@ int main(int argc, char** argv){
 		iteraciones--; 
 	}		
 
-	cout << k << " " << minimo << endl;
+	cout << n << " " << k << " " << minimo << endl;
 
 	return 0;
 }

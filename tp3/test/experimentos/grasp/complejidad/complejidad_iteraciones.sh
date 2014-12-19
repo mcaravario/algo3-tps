@@ -16,6 +16,6 @@ cant_elegir=$9
 let m=19900
 
 while (($d<=$h)); do
-	../../bin/grafos_completos $n $m $k | ../../bin/opt_grasp $s $mugrasp $mugol $d $cant_elegir
+	../../../bin/grafos_completos $n $k $s | ../../../bin/opt_grasp $s $mugrasp $mugol $d $cant_elegir
 	let d=$d+$inc
 done

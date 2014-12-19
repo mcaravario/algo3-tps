@@ -69,6 +69,7 @@ void busquedaLocal_1opt(vector<conjunto>& res, vector<vector<int> >& mz_ady, int
 		vector<conjunto> res_vecino = res;
 		int i = 0;
 		int costoParcial = suma_total(res); // O(k)
+		int costoRes = suma_total(res);
 		bool hayMejor = false;
 		while(i < k){
 			if(res[i].peso > 0){
@@ -77,7 +78,7 @@ void busquedaLocal_1opt(vector<conjunto>& res, vector<vector<int> >& mz_ady, int
 					int dst = 0;
 					while(dst < k){ //O(k*n)
 						if(dst != i){
-							int p_costo = costoNuevo(res, i, dst,*itNodo, mz_ady, suma_total(res)); //O(n)
+							int p_costo = costoNuevo(res, i, dst,*itNodo, mz_ady, costoRes); //O(n)
 							if(costoParcial > p_costo ){
 								res_vecino = res;//O=(n)
 								modificarRes(res_vecino, i, dst, *itNodo, mz_ady); //O(n)
@@ -98,22 +99,23 @@ void busquedaLocal_1opt(vector<conjunto>& res, vector<vector<int> >& mz_ady, int
 }
 
 
-/* Para testeo de complejidad. */
+/* Para testeo de complejidad O(k²n + kn²). */
 void busquedaLocal_1opt_test(vector<conjunto>& res, vector<vector<int> >& mz_ady, int k){
 	//bool encontrado = false;
 	//while(!encontrado){
 		vector<conjunto> res_vecino = res;
 		int i = 0;
 		int costoParcial = suma_total(res); // O(k)
+		int costoRes = suma_total(res);
 		//bool hayMejor = false;
 		while(i < k){
 			if(res[i].peso > 0){
 				auto itNodo = res[i].elementos.begin();
-				while(itNodo != res[i].elementos.end()){ //O(n²*k)
+				while(itNodo != res[i].elementos.end()){ //O(k²n +kn²)
 					int dst = 0;
-					while(dst < k){ //O(k*n)
+					while(dst < k){ //O(k²+kn)
 						if(dst != i){
-							int p_costo = costoNuevo(res, i, dst,*itNodo, mz_ady, suma_total(res)); //O(n)
+							int p_costo = costoNuevo(res, i, dst,*itNodo, mz_ady, costoRes);//O(k+n)
 							if(costoParcial > p_costo ){
 								res_vecino = res;//O=(n)
 								modificarRes(res_vecino, i, dst, *itNodo, mz_ady); //O(n)
@@ -134,27 +136,71 @@ void busquedaLocal_1opt_test(vector<conjunto>& res, vector<vector<int> >& mz_ady
 }
 
 
-//O(k*n³)
+///O(n²k² + kn³)
 void busquedaLocal_2opt(vector<conjunto>& res, vector<vector<int> >& mz_ady, int k){
+	bool encontrado = false;
+	while(!encontrado){
+		vector<conjunto> res_vecino = res;
+		int i = 0;
+		int costoParcial = suma_total(res);
+		int costoRes = suma_total(res);
+		bool hayMejor = false;
+		while(i < k){
+			if(res[i].peso > 0){
+				auto itNodo1 = res[i].elementos.begin();
+				auto tope = res[i].elementos.end();
+				tope--;
+				while(itNodo1 != tope){ //O(n²k² + kn³)
+					auto itNodo2 = itNodo1;
+					itNodo2++;
+					while(itNodo2 != res[i].elementos.end()){ //O(nk² +kn²)
+						int dst = 0;
+						while(dst < k){ // O(k²+ kn)
+							if(dst != i){
+								int p_costo = costoNuevo_2opt(res, i, dst,*itNodo1, *itNodo2, mz_ady, costoRes) ;//O(k+n)
+								if(costoParcial > p_costo){
+									res_vecino = res;
+									modificarRes_2opt(res_vecino, i, dst, *itNodo1, *itNodo2, mz_ady);
+									hayMejor = true;
+									costoParcial = p_costo;
+								}
+							}
+							dst++;
+						}
+						itNodo2++;
+					}
+					itNodo1++;
+				}
+			}
+			i++;
+		}
+		if(!hayMejor) encontrado = true;
+		res= res_vecino;
+	}
+}
+
+/* Para testeo de complejidad. */
+void busquedaLocal_2opt_test(vector<conjunto>& res, vector<vector<int> >& mz_ady, int k){
 	//bool encontrado = false;
 	//while(!encontrado){
 		vector<conjunto> res_vecino = res;
 		int i = 0;
 		int costoParcial = suma_total(res);
+		int costoRes = suma_total(res);
 		//bool hayMejor = false;
 		while(i < k){
-			if(res[i].peso > 0 && res[i].elementos.size()>1){
+			if(res[i].peso > 0){
 				auto itNodo1 = res[i].elementos.begin();
 				auto tope = res[i].elementos.end();
 				tope--;
-				while(itNodo1 != tope){ //O(k*n³)
+				while(itNodo1 != tope){
 					auto itNodo2 = itNodo1;
 					itNodo2++;
-					while(itNodo2 != res[i].elementos.end()){ //O(k*n²)
+					while(itNodo2 != res[i].elementos.end()){
 						int dst = 0;
-						while(dst < k){ // O(k*n)
+						while(dst < k){
 							if(dst != i){
-								int p_costo = costoNuevo_2opt(res, i, dst,*itNodo1, *itNodo2, mz_ady, suma_total(res)) ;
+								int p_costo = costoNuevo_2opt(res, i, dst,*itNodo1, *itNodo2, mz_ady, costoRes);
 								if(costoParcial > p_costo){
 									res_vecino = res;
 									modificarRes_2opt(res_vecino, i, dst, *itNodo1, *itNodo2, mz_ady);
@@ -176,13 +222,12 @@ void busquedaLocal_2opt(vector<conjunto>& res, vector<vector<int> >& mz_ady, int
 	//}
 }
 
-
 vector<int> iniciar_local_1opt(list<arista>& aristas, int n, int k){
 	
 	vector<vector<int> > mz_ady = crear_adyacencias(aristas, n);
 	vector<conjunto> res_inicial = resultado_aleatorio(mz_ady, n, k);
 	vector<int> vistos(n);
-	busquedaLocal_1opt(res_inicial, mz_ady, k);
+	busquedaLocal_1opt_test(res_inicial, mz_ady, k);
 	establecer_posiciones(res_inicial, vistos);
 	return vistos;
 }
@@ -192,7 +237,7 @@ vector<int> iniciar_local_2opt(list<arista>& aristas, int n, int k){
 	vector<vector<int> > mz_ady = crear_adyacencias(aristas, n);
 	vector<conjunto> res_inicial = resultado_aleatorio(mz_ady, n, k);
 	vector<int> vistos(n);
-	busquedaLocal_2opt(res_inicial, mz_ady, k);
+	busquedaLocal_2opt_test(res_inicial, mz_ady, k);
 	establecer_posiciones(res_inicial, vistos);
 	return vistos;
 }

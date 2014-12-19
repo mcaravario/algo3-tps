@@ -1,0 +1,10 @@
+f(x) = a*x
+fit f(x) "test_k_2opt_10_13_250_151_1.txt" using 1:2 via a
+set terminal png 
+set xlabel "Cantidad de Conjuntos ( n cte = 150)"
+set ylabel "Microsegundos"
+set title "Vecindad 2-Nodo - N constante" 
+set grid
+set output 'Blocal_2opt_k.png'
+set style data linespoints
+plot "test_k_2opt_10_13_250_151_1.txt" using 1:2 lt -1 lw 0.5 smooth bezier title 'Busqueda Local' with points, 1.1* f(x) lt "gray" lw 0.05 with points
