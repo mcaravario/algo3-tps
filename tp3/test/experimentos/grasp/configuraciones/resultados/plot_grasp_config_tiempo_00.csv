@@ -1,0 +1,8 @@
+set terminal png 
+set xlabel "Cantidad de nodos"
+set ylabel "Microsegundos"
+set title "Tiempos grasp utilizando la configuracion 00" 
+set size
+set grid
+set output 'grasp_config_t_00.png'
+plot "grasp.00.10.5.out" using 1:4 lt -1 title 'k = 10 proporcion = 1/5' with lines , "grasp.00.10.10.out" using 1:4 title 'k = 10 proporcion = 1/10' with lines, "grasp.00.100.5.out" using 1:4  title 'k = 100 proporcion = 1/5' with points pt 1, "grasp.00.100.10.out" using 1:4 title 'k = 100 proporcion = 1/10' with points pt 2

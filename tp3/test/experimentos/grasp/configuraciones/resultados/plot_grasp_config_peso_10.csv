@@ -1,0 +1,8 @@
+set terminal png 
+set xlabel "Cantidad de nodos"
+set ylabel "Peso total"
+set title "Pesos grasp utilizando la configuracion 10" 
+set size
+set grid
+set output 'grasp_config_p_10.png'
+plot "grasp.10.25.10.out" using 1:3 lt -1 title 'k = 25 proporcion = 1/10' with lines , "grasp.10.25.5.out" using 1:3 title 'k = 25 proporcion = 1/5' with lines, "grasp.10.5.5.out" using 1:3  title 'k = 5 proporcion = 1/5' with points pt 1, "grasp.10.5.10.out" using 1:3 title 'k = 5 proporcion = 1/10' with points pt 2
