@@ -1,0 +1,8 @@
+set terminal png 
+set xlabel "Cantidad de iteraciones"
+set ylabel "Microsegundos"
+set title "Tiempos grasp utilizando el criterio 1 (no hay mejora en k iteraciones)" 
+set size
+set grid
+set output 'grasp_it_1.png'
+plot "grasp.compl.1.out" using 2:4 lt -1 lw 0.5 smooth bezier title 'grasp criterio 1' with points
