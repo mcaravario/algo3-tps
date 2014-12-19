@@ -9,10 +9,7 @@ h=$5
 inc=$6
 
 while (($k<$h)); do
-	let CUENTA1=$d\*$d
-	let CUENTA2=$CUENTA1-$d
-	let ARISTAS=$CUENTA2/2
-	../../../../bin/grafos_completos $d $ARISTAS $k | ../../../../bin/busqueda_local_1opt_aleatorio $s $i 
+	../../../../bin/grafos_completos $d $k $s | ../../../../bin/busqueda_local_1opt_aleatorio $s $i 
   let k=$k+$inc
 
 done
