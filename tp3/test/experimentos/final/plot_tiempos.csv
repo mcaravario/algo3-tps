@@ -1,0 +1,8 @@
+set terminal png 
+set xlabel "Cantidad de Nodos"
+set ylabel "Microsegundos"
+set title "Comparativo Final Tiempos" 
+set grid
+set output 'final_tiempo.png'
+set style data linespoints 
+plot "goloso.final.out" using 1:3 lt -1 lw 0.5 pt 6 title 'Goloso' with points, "grasp.final.out" using 1:4 lt -1 lw 0.5 pt 2 title 'Grasp' with points, "local1.final.out" using 1:3 lt -1 lw 0.5 pt 3 title '1-opt' with points,"local2.final.out" using 1:3 lt -1 lw 0.5 pt 4 title '2-opt' with points
