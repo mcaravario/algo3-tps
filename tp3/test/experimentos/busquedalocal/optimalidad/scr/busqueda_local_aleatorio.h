@@ -1,4 +1,4 @@
-#include "kpmp.h"
+#include "goloso.h"
 
 /*REPARTE ALEATORIAMENTE LOS NODOS EN LOS CONJUNTOS*/
 vector<conjunto> resultado_aleatorio(vector<vector<int> >& mz_ady, int n, int k){
@@ -186,7 +186,7 @@ vector<int> iniciar_local_1opt(list<arista>& aristas, int n, int k, int& pesoTot
 	if (tipoResultado == 1){
 		 res_inicial = resultado_aleatorio(mz_ady, n, k);
 	}else if (tipoResultado == 2){
-		res_inicial = resultado_costosa_en_conjunto(mz_ady, n, k);
+		res_inicial = golosa_para_local(mz_ady, n, k);
 	}
 	vector<int> vistos(n);
 	busquedaLocal_1opt(res_inicial, mz_ady, k);
@@ -202,7 +202,7 @@ vector<int> iniciar_local_2opt(list<arista>& aristas, int n, int k, int& pesoTot
 	if (tipoResultado == 1){
 		res_inicial = resultado_aleatorio(mz_ady, n, k);
 	}else if (tipoResultado == 2){
-		res_inicial = resultado_costosa_en_conjunto(mz_ady, n, k);
+		res_inicial = golosa_para_local(mz_ady, n, k);
 	}
 	vector<int> vistos(n);
 	busquedaLocal_2opt(res_inicial, mz_ady, k);

@@ -1,0 +1,180 @@
+Busqueda Local 1-opt
+Nodos: 5
+Resultado: 25
+Tiempo: 20
+
+Busqueda Local 2-opt 
+Nodos: 5
+Resultado: 49
+Tiempo: 33
+
+Busqueda Local 1-opt
+Nodos: 6
+Resultado: 43
+Tiempo: 48
+
+Busqueda Local 2-opt 
+Nodos: 6
+Resultado: 94
+Tiempo: 84
+
+Busqueda Local 1-opt
+Nodos: 7
+Resultado: 59
+Tiempo: 56
+
+Busqueda Local 2-opt 
+Nodos: 7
+Resultado: 78
+Tiempo: 149
+
+Busqueda Local 1-opt
+Nodos: 8
+Resultado: 87
+Tiempo: 91
+
+Busqueda Local 2-opt 
+Nodos: 8
+Resultado: 96
+Tiempo: 114
+
+Busqueda Local 1-opt
+Nodos: 9
+Resultado: 77
+Tiempo: 228
+
+Busqueda Local 2-opt 
+Nodos: 9
+Resultado: 129
+Tiempo: 249
+
+Busqueda Local 1-opt
+Nodos: 10
+Resultado: 195
+Tiempo: 144
+
+Busqueda Local 2-opt 
+Nodos: 10
+Resultado: 253
+Tiempo: 239
+
+Busqueda Local 1-opt
+Nodos: 11
+Resultado: 316
+Tiempo: 211
+
+Busqueda Local 2-opt 
+Nodos: 11
+Resultado: 396
+Tiempo: 298
+
+Busqueda Local 1-opt
+Nodos: 12
+Resultado: 371
+Tiempo: 435
+
+Busqueda Local 2-opt 
+Nodos: 12
+Resultado: 433
+Tiempo: 541
+
+Busqueda Local 1-opt
+Nodos: 13
+Resultado: 419
+Tiempo: 543
+
+Busqueda Local 2-opt 
+Nodos: 13
+Resultado: 539
+Tiempo: 459
+
+Busqueda Local 1-opt
+Nodos: 14
+Resultado: 479
+Tiempo: 607
+
+Busqueda Local 2-opt 
+Nodos: 14
+Resultado: 611
+Tiempo: 540
+
+Busqueda Local 1-opt
+Nodos: 15
+Resultado: 606
+Tiempo: 212
+
+Busqueda Local 2-opt 
+Nodos: 15
+Resultado: 616
+Tiempo: 920
+
+Busqueda Local 1-opt
+Nodos: 16
+Resultado: 706
+Tiempo: 343
+
+Busqueda Local 2-opt 
+Nodos: 16
+Resultado: 807
+Tiempo: 519
+
+Busqueda Local 1-opt
+Nodos: 17
+Resultado: 739
+Tiempo: 991
+
+Busqueda Local 2-opt 
+Nodos: 17
+Resultado: 747
+Tiempo: 891
+
+Busqueda Local 1-opt
+Nodos: 18
+Resultado: 930
+Tiempo: 412
+
+Busqueda Local 2-opt 
+Nodos: 18
+Resultado: 995
+Tiempo: 713
+
+Busqueda Local 1-opt
+Nodos: 19
+Resultado: 1178
+Tiempo: 839
+
+Busqueda Local 2-opt 
+Nodos: 19
+Resultado: 1159
+Tiempo: 1019
+
+Busqueda Local 1-opt
+Nodos: 20
+Resultado: 1149
+Tiempo: 581
+
+Busqueda Local 2-opt 
+Nodos: 20
+Resultado: 1187
+Tiempo: 2709
+
+Busqueda Local 1-opt
+Nodos: 21
+Resultado: 1374
+Tiempo: 568
+
+Busqueda Local 2-opt 
+Nodos: 21
+Resultado: 1376
+Tiempo: 2079
+
+Busqueda Local 1-opt
+Nodos: 22
+Resultado: 1648
+Tiempo: 888
+
+Busqueda Local 2-opt 
+Nodos: 22
+Resultado: 1819
+Tiempo: 1551
+
