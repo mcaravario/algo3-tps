@@ -44,8 +44,7 @@ int main(int argc, char** argv){
 		iteraciones--; 
 	}
 	
-	cout << "Busqueda Local 1-opt" << endl << "Nodos: " << n << endl;
-	cout << "Resultado: " << pesoTotal<< endl;
-	cout << "Tiempo: " << minimo << endl << endl;
+	cout << n << " " << pesoTotal << " " << minimo << endl;		
+
 	return 0;
 }

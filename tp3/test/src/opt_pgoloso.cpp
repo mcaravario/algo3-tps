@@ -1,4 +1,5 @@
 #include "goloso.h"
+#include <chrono>
 
 int main(){
 	int n,m,k,u,v,w;
@@ -17,9 +18,17 @@ int main(){
 		v--;
 		aristas.push_back(arista(u,v,w));
 	}
-
+	
+	using namespace std::chrono;
+	high_resolution_clock reloj;
+	
+	auto t_inicial = reloj.now();
 	/* Llamo a la función que resuelve el ejercicio. */
-  cout << n << " " << peso_de_golosa_ordenada(aristas, n, k) << endl;
+	int peso = peso_de_golosa_ordenada(aristas, n, k);
+	auto t_final = reloj.now();
 
+	auto t_total = duration_cast<microseconds>(t_final - t_inicial).count();
+
+  cout << n << " " << peso << " " << t_total << endl; 	
 	return 0;
 }
